@@ -1,0 +1,39 @@
+{% extends "pred/base_layout.html" %}
+
+{%block content_right_panel %}
+
+    {% if username %}
+      {% include "pred/user_header.html" %}
+    {% endif %}
+
+<h2>SubCons</h2>
+<p>Please paste your amino acid sequences in <a href='http://blast.ncbi.nlm.nih.gov/blastcgihelp.shtml' target=\'_blank\'>FASTA</a> format (max 100000 chars)<br>Allowed characters: "ABCDEFGHIKLMNPQRSTUVWYZX*", of which "BUZ*" will be converted to 'X'
+<br>
+(Sequences should be no shorter than 10 amino acids)
+</p>
+
+<form name="seq_form" action="/pred/" enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+    {{form.as_p}}
+
+    Force run (do not use cached results): <input type="checkbox" name="forcerun">
+
+        <script language="javascript">
+document.getElementById('options').style.display = 'none';
+        </script>
+        <br><br>
+        <p> <input type="submit" name=do value="Submit" /> <INPUT type="reset" value="Clear" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="Generate example input" onclick="example_fill();"></p>
+
+</form>
+    <br><br><br>
+    <hr>
+   <table cellspacing=0 cellpadding=5 border=0>
+     <tr><td><img src="{{STATIC_URL}}/images/0.gif" border=0 height=1 width=400></td>
+       <td><img src="{{STATIC_URL}}/images/0.gif" border=0 height=1 width=50></td>
+     </tr>
+     <tr><td>
+         <h3>Reference</h3>
+     </td></tr>
+ </table>
+
+{% endblock %}

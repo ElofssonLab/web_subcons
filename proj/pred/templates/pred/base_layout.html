@@ -1,0 +1,231 @@
+<html>
+<head>
+<title>SubCons</title>
+<title></title>
+<meta name="description" content="TOPCONS" />
+<meta name="keywords" content="localization, bioinformatics, prediction, system
+biology" />
+<meta name="robots" content="index, follow" />
+
+{% block html_head_meta %}{% endblock %}
+
+<link rel="stylesheet" href="{{STATIC_URL}}css/template_css.css" type="text/css" />
+<link rel="stylesheet" href="{{STATIC_URL}}css/jquery.dataTables.css" type="text/css" />
+
+<!--<script type="text/javascript" charset="utf8" src="{{STATIC_URL}}js/sorttable.js"></script>-->
+<script type="text/javascript" charset="utf8" src="{{STATIC_URL}}js/jquery.js"></script>
+<script type="text/javascript" charset="utf8" src="{{STATIC_URL}}js/jquery.dataTables.min.js"></script>
+<script>
+
+$(function(){
+        $("#jobtable").dataTable();
+        })
+</script>
+
+<script language="javascript">
+if (document.images) {
+  arrow = new Image(); arrow.src = "{{STATIC_URL}}images/arrow.png";
+  arrow90 = new Image(); arrow90.src = "{{STATIC_URL}}images/arrow90.png";
+}
+
+function print_todays_date( ) {
+  var d = new Date( );                  // Get today's date and time
+  document.write(d.toLocaleString( ));  // Insert it into the document
+}
+
+function hideShow(element){
+  if((document.getElementById(element).style.display == 'none') || (document.getElementById(element).style.display == '')) {
+    document.getElementById(element).style.display = 'block';
+    if (document.images) {
+      document.getElementById("arrow").src=arrow.src;
+    }
+  } else if(document.getElementById(element).style.display == 'block') {
+    document.getElementById(element).style.display = 'none';
+    if (document.images) {
+      document.getElementById("arrow").src=arrow90.src;
+    }
+  }
+}
+
+function example_fill(){
+  document.seq_form.rawseq.value='>sp|P04201|MAS_HUMAN\nMDGSNVTSFVVEEPTNISTGRNASVGNAHRQIPIVHWVIMSISPVGFVENGILLWFLCFRMRRNPFTVYITHLSIADISLLFCIFILSIDYALDYELSSGHYYTIVTLSVTFLFGYNTGLYLLTAISVERCLSVLYPIWYRCHRPKYQSALVCALLWALSCLVTTMEYVMCIDREEESHSRNDCRAVIIFIAILSFLVFTPLMLVSSTILVVKIRKNTWASHSSKLYIVIMVTIIIFLIFAMPMRLLYLLYYEYWSTFGNLHHISLLFSTINSSANPFIYFFVGSSKKKRFKESLKVVLTRAFKDEMQPRRQKDNCNTVTVETVV\n';
+}
+
+var ImgArraySubmitNumJob = [
+    "{{STATIC_URL}}log/stat/submit_day.stat.txt.numjob.png",
+    "{{STATIC_URL}}log/stat/submit_week.stat.txt.numjob.png",
+    "{{STATIC_URL}}log/stat/submit_month.stat.txt.numjob.png"
+];
+function ChangeImgSubmitNumJob(imgPtr) {
+    document.getElementById('imgNumJobSubmit').src = ImgArraySubmitNumJob[imgPtr];
+}
+var ImgArraySubmitNumSeq = [
+    "{{STATIC_URL}}log/stat/submit_day.stat.txt.numseq.png",
+    "{{STATIC_URL}}log/stat/submit_week.stat.txt.numseq.png",
+    "{{STATIC_URL}}log/stat/submit_month.stat.txt.numseq.png"
+];
+function ChangeImgSubmitNumSeq(imgPtr) {
+    document.getElementById('imgNumSeqSubmit').src = ImgArraySubmitNumSeq[imgPtr];
+}
+
+
+{% block javascript_function %}{% endblock %}
+
+</script>
+
+<noscript>
+    <style type="text/css">
+.pagecontainer {display:none;}
+    </style>
+    <div class="noscriptmsg">
+        <p><font color="red" size="4"> You don't have javascript enabled. The web-server may behave improperly.</font></p>
+    </div>
+</noscript>
+
+</head>
+
+<body>
+<!-- TOP panel begins-->
+<table width="800" height=134 border="0" cellspacing="0" cellpadding="0" align="center">
+
+  <!--
+  <tr>
+    <td align="left" class="title">TOPCONS2</td>
+
+    <td></td>
+    <td align="right" class="headerdate">
+      <script language="JavaScript"> print_todays_date(); </script>
+    </td>
+  </tr>
+  -->
+
+  <tr>
+    <td width="100%" height="124" colspan="100%" align="right" valign="top" background="{{STATIC_URL}}images/header_subcons.png">
+    </td>
+
+  </tr>
+</table>
+<!-- TOP panel ends-->
+
+<!-- Main part begins-->
+<table width="800" height="80%" border="0" align="center" cellpadding="5" cellspacing="0" bgcolor="#FFFFFF">
+  <tr>
+    <!-- LEFT panel begins -->
+    <td width="20%" valign="top" style="background-repeat: repeat-y; background-position: top left;" background="{{STATIC_URL}}images/cbr_graymeny160_shadow.png">
+      <table cellpadding="0" cellspacing="0" class="moduletable">
+        <!--<tr> <th valign="top">Main Menu</th> </tr>-->
+
+        <tr>
+          <td>
+            <table width="80%" border="0" cellpadding="0" cellspacing="0">
+              <tr align="left"> <td><a href="/pred/" class="mainlevel" id="active_menu">New query</a></td> </tr>
+              <!--<tr align="left"> <td><a href="/pred/scampi/" class="mainlevel">SCAMPI</a></td> </tr> -->
+              <!--<tr align="left"> <td><a href="/pred/octopus/" class="mainlevel">OCTOPUS</a></td> </tr>-->
+              <!--<tr align="left"> <td><a href="/pred/deltag/" class="mainlevel">&Delta;G-scale</a></td> </tr>-->
+              <!--<tr align="left"> <td><a href="/pred/zpred/" class="mainlevel">ZPRED</a></td> </tr> -->
+              <!--<tr align="left"> <td><a href="/pred/proprodiv/" class="mainlevel">PRO/PRODIV</a></td> </tr>-->
+              <tr align="left"> <td><a href="/pred/help-wsdl-api/" class="mainlevel">Batch WSDL API</a></td> </tr>
+              <tr align="left"> <td><a href="/pred/download/" class="mainlevel">Download</a></td> </tr>
+              <tr align="left"> <td><a href="/pred/reference/" class="mainlevel">References</a></td> </tr>
+              <tr align="left"> <td><a href="/pred/news/" class="mainlevel">News</a></td> </tr>
+              <tr align="left"> <td><a href="/pred/serverstatus/" class="mainlevel">Server status</a></td> </tr>
+              <tr align="left"> <td><a href="/pred/example/" class="mainlevel">Example results</a></td> </tr>
+              <!--<tr align="left"> <td><a href="/pred/oldtopcons/" class="mainlevel">Old TOPCONS</a></td> </tr>-->
+              <tr align="left"> <td><a href="/pred/help/" class="mainlevel">Help</a></td> </tr>
+            </table>
+            <br>
+
+
+            <div id="job_counter">
+              <p style="padding-left:5px"><b>Your recent jobs:</b></p>
+              <table style="padding-left: 15px;" border="0" cellspacing="0" cellpadding="2" >
+                <tr> <td><a href="/pred/queue/" ><font color="black">Queued</font></a></td>     <td>&nbsp;&nbsp;</td> <td align="right">{{jobcounter.queued}}</td></tr>
+                <tr> <td><a href="/pred/running/" ><font color="blue">Running</font></a></td>   <td>&nbsp;&nbsp;</td> <td align="right">{{jobcounter.running}}</td></tr>
+                <tr> <td><a href="/pred/finished/" ><font color="green">Finished</font></a></td><td>&nbsp;&nbsp;</td> <td align="right">{{jobcounter.finished}}</td></tr>
+                <tr> <td><a href="/pred/failed/" ><font color="red">Failed</font></a></td>      <td>&nbsp;&nbsp;</td> <td align="right">{{jobcounter.failed}}</td></tr>
+              </table>
+            </div>
+            <br>
+          </td>
+        </tr>
+      </table>
+    </td>
+    <!-- LEFT panel Ends -->
+
+    <!-- Right panel with input forms-->
+    <td width="100%" valign="top" style="background-repeat: repeat-y; background-position: top right;" background="{{STATIC_URL}}images/cbr_right_shadow.png">
+      <table class="blog" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top">
+            <!-- add div to set the fixed width for the table -->
+            <div id="content_right_panel" style=height:100%;width:600;overflow:auto>
+              <table width="100%"  cellpadding="0" cellspacing="0">
+                <tr>
+                  <td valign="top" width="100%">
+                    {% block content_right_panel %}{% endblock %}
+                  </td>
+                </tr>
+              </table>
+
+              <table cellpadding="0" cellspacing="0" class="moduletable">
+                <tr>
+                  <td>&nbsp;</td>
+                </tr>
+              </table>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </td>
+    <!-- Right panel with input forms ends-->
+  </tr>
+</table>
+
+
+<!-- Add a line separator -->
+<!--<hr>-->
+<!-- BOTTOM panel begins -->
+<table width="800" height=75 border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td width="23"><img src="{{STATIC_URL}}images/cbr_lower_left_gray.png" alt="" width="23" height="75" border="0" /></td>
+
+    <td height="5%" align="center" bgcolor="#FFFFFF" style="background-repeat: repeat-y; background-position: top left;" background="{{STATIC_URL}}images/cbr_graymenu_bg137.png">
+
+      <div align="left">
+        <table width="10%" border="0" cellpadding="0" cellspacing="0">
+          <tr>
+            <td align="left" style="min-width:100px">
+              &#169; <a href="http://bioinfo.se" target="_blank">Arne Elofsson</a>
+            </td>
+          </tr>
+        </table>
+        <br>
+        <table width="10%" border="0" cellpadding="1" cellspacing="0">
+          <tr>
+            <td align="left">
+              <a href="http://www.scilifelab.se" title="http://www.scilifelab.se"><img src="{{STATIC_URL}}images/logo_scilifelab.jpg" alt="SciLifeLab Logotype" style="border: none;  height: 20; " target="_blank"></a>
+            </td>
+            <td align="left">
+              <a href="http://www.bils.se" title="http://www.bils.se"><img src="{{STATIC_URL}}images/logo_BILS.jpg" alt="BILS Logotype" style="border: none;  height: 20; " target="_blank"></a>
+            </td>
+          </tr>
+          <tr>
+            <td align="left">
+              <a href="http://www.e-science.se" title="http://www.e-science.se"><img src="{{STATIC_URL}}images/logo_SeRC.png" alt="SeRC Logotype" style="border: none;  height: 20; " target="_blank"></a>
+            </td>
+            <td align="left">
+              <a href="http://www.su.se" title="http://www.su.se"><img src="{{STATIC_URL}}images/logo_SU.gif" alt="Stockholm University logotype" style="border: none;  height: 20; " target="_blank"></a>
+            </td>
+          </tr>
+        <tr></tr>
+        </table>
+
+      </div>
+    </td>
+
+    <td width="23"><img src="{{STATIC_URL}}images/cbr_lower_right.png" alt="" width="23" height="75" border="0" /></td>
+  </tr>
+</table>
+<!-- BOTTOM panel ends -->
+</body>
+</html>

@@ -1,0 +1,25 @@
+{% extends "pred/base_layout.html" %}
+
+{%block content_right_panel %}
+    {% if username %}
+      {% include "pred/user_header.html" %}
+    {% endif %}
+   <h2>Example results</h2>
+
+   {%comment%}
+   <p>
+   The result page of an example job with multiple sequences: 
+   <a href="/pred/result/example_56seq"> A job with multiple sequences</a>
+   </p>
+   <p>
+   The result page of an example job with a single sequence:
+   <a href="/pred/result/example_1seq"> A job with one sequence</a>
+   </p>
+   <p>
+   A snapshot of a running job with multiple sequences:
+   <a href="{{STATIC_URL}}images/example_10seq_snapshot.png"><img src="{{STATIC_URL}}images/example_10seq_snapshot.thumb.png" alt="snapshot of example with multi-seqs" style="border: none; height: 50;"></a>
+   </p>
+   {%endcomment%}
+
+{% endblock %}
+

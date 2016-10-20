@@ -1,0 +1,43 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+BASEURL	views.py	/^BASEURL = "\/pred\/";$/;"	v
+GetJobCounter	views.py	/^def GetJobCounter(client_ip, logfile_query):#{{{$/;"	f
+MAXSIZE_UPLOAD_FILE_IN_BYTE	views.py	/^MAXSIZE_UPLOAD_FILE_IN_BYTE = MAXSIZE_UPLOAD_FILE_IN_MB * 1024*1024$/;"	v
+MAXSIZE_UPLOAD_FILE_IN_MB	views.py	/^MAXSIZE_UPLOAD_FILE_IN_MB = 100$/;"	v
+MAX_DAYS_TO_SHOW	views.py	/^MAX_DAYS_TO_SHOW = 30$/;"	v
+Query	models.py	/^class Query(models.Model):$/;"	c
+RunQuery	views.py	/^def RunQuery(request, query):#{{{$/;"	f
+SITE_ROOT	views.py	/^SITE_ROOT = os.path.dirname(os.path.realpath(__file__))$/;"	v
+SubmissionForm	models.py	/^class SubmissionForm(forms.Form):$/;"	c
+SubmitQueryToQueue	views.py	/^def SubmitQueryToQueue(query, tmpdir, rstdir):#{{{$/;"	f
+ValidateQuery	views.py	/^def ValidateQuery(request, query):#{{{$/;"	f
+WaitForResult	views.py	/^def WaitForResult(jobid, MAX_WAIT_TIME=2):#{{{$/;"	f
+download	views.py	/^def download(request):#{{{$/;"	f
+email	models.py	/^    email = forms.CharField(label='Email (optional)', max_length=100, required=False)$/;"	v	class:SubmissionForm
+get_failed_job	views.py	/^def get_failed_job(request):#{{{$/;"	f
+get_finished_job	views.py	/^def get_finished_job(request):#{{{$/;"	f
+get_help	views.py	/^def get_help(request):#{{{$/;"	f
+get_queue	views.py	/^def get_queue(request):#{{{$/;"	f
+get_results	views.py	/^def get_results(request, jobid="1"):#{{{$/;"	f
+get_running	views.py	/^def get_running(request):#{{{$/;"	f
+index	views.py	/^def index(request):#{{{$/;"	f
+jobname	models.py	/^    jobname = forms.CharField(label='Job name (optional)', max_length=100, required=False)$/;"	v	class:SubmissionForm
+my_view	views.py	/^def my_view(request):#{{{$/;"	f
+path_app	views.py	/^path_app = "%s\/app"%(SITE_ROOT)$/;"	v
+raw_seq	models.py	/^    raw_seq = models.CharField(max_length=20000)$/;"	v	class:Query
+rawseq	models.py	/^    rawseq = forms.CharField(label='', max_length=100000,$/;"	v	class:SubmissionForm
+required	models.py	/^            required=False)$/;"	v	class:SubmissionForm
+rundir	views.py	/^rundir = SITE_ROOT$/;"	v
+search	views.py	/^def search(request):#{{{$/;"	f
+search_form	views.py	/^def search_form(request):#{{{$/;"	f
+seqfile	models.py	/^    seqfile = forms.FileField(label="Alternatively, upload a text file in FASTA format upto 100 MB", required=False)$/;"	v	class:SubmissionForm
+seqname	models.py	/^    seqname = models.CharField(max_length=100)$/;"	v	class:Query
+submit_date	models.py	/^    submit_date = models.DateTimeField('date submitted')$/;"	v	class:Query
+submit_seq	views.py	/^def submit_seq(request):#{{{$/;"	f
+thanks	views.py	/^def thanks(request):#{{{$/;"	f
+urlpatterns	urls.py	/^urlpatterns = patterns('',$/;"	v
+widget	models.py	/^            widget=forms.Textarea(attrs={'cols': 62, 'rows': 10}),$/;"	v	class:SubmissionForm

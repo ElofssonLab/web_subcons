@@ -1,0 +1,128 @@
+{% extends "pred/base_layout.html" %}
+
+{%block content_right_panel %}
+    {% if username %}
+      {% include "pred/user_header.html" %}
+    {% endif %}
+  <h2>Help</h2>
+  <table cellspacing=0 cellpadding=0 border=0>
+    <tr>
+      <td class="Greylink"><a href="#1">1.&nbsp;Summary<img src="{{STATIC_URL}}/images/0.gif" height=1 width=5 border=0><img src="{{STATIC_URL}}/images/arrow.png" border=0><img src="{{STATIC_URL}}/images/0.gif" height=1 width=40 border=0></a><td>
+      <td class="Greylink"><a href="#2">2.&nbsp;Usage<img src="{{STATIC_URL}}/images/0.gif" height=1 width=5 border=0><img src="{{STATIC_URL}}/images/arrow.png" border=0><img src="{{STATIC_URL}}/images/0.gif" height=1 width=40 border=0></a><td>
+      <td class="Greylink"><a href="#3">3.&nbsp;Output<img src="{{STATIC_URL}}/images/0.gif" height=1 width=5 border=0><img src="{{STATIC_URL}}/images/arrow.png" border=0><img src="{{STATIC_URL}}/images/0.gif" height=1 width=40 border=0></a><td>
+      <td class="Greylink"><a href="#4">4.&nbsp;References<img src="{{STATIC_URL}}/images/0.gif" height=1 width=5 border=0><img src="{{STATIC_URL}}/images/arrow.png" border=0><img src="{{STATIC_URL}}/images/0.gif" height=1 width=40 border=0></a><td>
+      <td class="Greylink"><a href="#5">5.&nbsp;Contact<img src="{{STATIC_URL}}/images/0.gif" height=1 width=5 border=0><img src="{{STATIC_URL}}/images/arrow.png" border=0><img src="{{STATIC_URL}}/images/0.gif" height=1 width=40 border=0></a><td>
+      </tr>
+  </table>
+
+  <table>
+    <tr>
+      <td valign="top" colspan="2">
+      <br><br>
+      <a name="1"></a>
+      <h3>1. Summary</h3><br>
+      <table cellspacing=0 cellpadding=0 border=0>
+        <tr>
+          <td><img src="{{STATIC_URL}}/images/0.gif" border=0 height=1 width=400></td>
+          <td><img src="{{STATIC_URL}}/images/0.gif" border=0 height=1 width=50></td>
+        </tr>
+        <tr><td>
+
+        </td></tr>
+      </table>
+
+      <br><br>
+
+      <a name="2"></a>
+      <h3>2. Usage</h3><br>
+      <table cellspacing=0 cellpadding=0 border=0>
+        <tr>
+          <td><img src="{{STATIC_URL}}/images/0.gif" border=0 height=1 width=400></td>
+          <td><img src="{{STATIC_URL}}/images/0.gif" border=0 height=1 width=50></td>
+        </tr>
+        <tr><td>
+            <p>
+            Input to the server is an amino acid sequence in <a
+              href='http://blast.ncbi.nlm.nih.gov/blastcgihelp.shtml'
+              target=\'_blank\'>FASTA</a> format. The user can either submit paste
+            one or more sequences in the text-area provided, or, alternatively,
+            upload a file for batch submission of sequences).
+            </p>
+
+            <i>Example input:</i> <br>
+            <span style="font-family: courier">
+              &gt;sp|P04201|MAS_HUMAN<br>
+              MDGSNVTSFVVEEPTNISTGRNASVGNAHRQIPIVHWVIMSISPVGFVENGILLWFLCFR<br>
+              MRRNPFTVYITHLSIADISLLFCIFILSIDYALDYELSSGHYYTIVTLSVTFLFGYNTGL<br>
+              YLLTAISVERCLSVLYPIWYRCHRPKYQSALVCALLWALSCLVTTMEYVMCIDREEESHS<br>
+              RNDCRAVIIFIAILSFLVFTPLMLVSSTILVVKIRKNTWASHSSKLYIVIMVTIIIFLIF<br>
+              AMPMRLLYLLYYEYWSTFGNLHHISLLFSTINSSANPFIYFFVGSSKKKRFKESLKVVLT<br>
+              RAFKDEMQPRRQKDNCNTVTVETVV<br>
+
+            </span>
+            <br>
+
+      </td></tr>
+    </table>
+
+    <br><br>
+
+      <a name="3"></a>
+
+      <h3>3. Output</h3><br>
+      <table cellspacing=0 cellpadding=0 border=0>
+        <tr>
+          <td><img src="{{STATIC_URL}}/images/0.gif" border=0 height=1 width=400></td>
+          <td><img src="{{STATIC_URL}}/images/0.gif" border=0 height=1 width=50></td></tr>
+        <tr><td>
+            <br><br>
+      </td></tr>
+    </table>
+    <br><br>
+
+    <a name="4"></a>
+
+    <h3>4. References</h3><br>
+    <table cellspacing=0 cellpadding=5 border=0>
+      <tr><td><img src="{{STATIC_URL}}/images/0.gif" border=0 height=1 width=400></td>
+        <td><img src="{{STATIC_URL}}/images/0.gif" border=0 height=1 width=50></td>
+      </tr>
+      <tr><td>
+      </td></tr>
+
+
+  </table>
+
+  <br><br>
+  <a name="5"></a>
+
+  <h3>5. Contact</h3><br>
+    <table cellspacing=0 cellpadding=0 border=0>
+      <tr>
+        <td><img src="{{STATIC_URL}}/images/0.gif" border=0 height=1 width=400></td>
+        <td><img src="{{STATIC_URL}}/images/0.gif" border=0 height=1 width=50></td>
+      </tr>
+      <tr><td>
+          <b>Arne Elofsson group</b><br><br>
+          <!--<a href="http://www.cbr.su.se/">Center for Biomembrane Research</a><br><br>-->
+          <a href="http://www.dbb.su.se/">Department for Biochemistry and Biophysics</a><br>
+          The Arrhenius Laboratories for Natural Sciences<br>
+          <a href="http://www.su.se/">Stockholm University</a><br>
+          SE-106 91 Stockholm, Sweden<br><br>
+
+          <a href="http://www.scilifelab.se">Science for Life Laboratory</a><br>
+            Box 1031, 17121 Solna, Sweden
+            <br><br>
+          <table cellspacing=0 cellpadding=0 border=0>
+            <tr><td>E-mail:</td><td>&nbsp;&nbsp;&nbsp;</td><td><a href="mailto:arne@bioinfo.se">arne@bioinfo.se</a></td></tr>
+            <tr><td>Phone:</td><td>&nbsp;&nbsp;&nbsp;</td><td>(+46)-8-16&nbsp;4672</td></tr>
+            <tr><td>Fax:</td><td>&nbsp;&nbsp;&nbsp;</td><td>(+46)-8-15 3679</td></tr>
+          </table>
+          <br><br><br>
+    </td></tr>
+  </table>
+
+  </table>
+
+{% endblock %}
+

@@ -1,0 +1,43 @@
+{% extends "pred/base_layout.html" %}
+
+{%block content_right_panel %}
+    <script src="{{STATIC_URL}}js/sorttable.js"></script>
+    {% if username %}
+      {% include "pred/user_header.html" %}
+    {% endif %}
+    {% if errmsg %}
+        <p><font color=red>{{errmsg}}</font></p>
+    {% elif not content %}
+        <p><h3>You don't have any jobs running in the server</h3></p>
+    {% else %}
+        <p>
+          <font size="3"><b>Running jobs</b></font>
+          </p>
+        <table class="sortable" align="left" cellpadding="2" id="jobtable">
+          <thead>
+            <tr>
+                {% for hd in header %}
+                    <th>{{hd}}</th>
+                {% endfor %}
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for job in content %}
+                <tr>
+                    {% for value in job %}
+                        {%if forloop.counter0 == 1 %}
+                            <td><a href="{{BASEURL}}result/{{value}}">{{value}}</a></td>
+                        {% else %}
+                            <td>{{value}}</td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+          </tbody>
+
+        </table>
+    {% endif %}
+
+{% endblock %}
+

@@ -1,0 +1,27 @@
+{% extends "pred/base_layout.html" %}
+
+
+{%block content_right_panel %}
+    {% if username %}
+      {% include "pred/user_header.html" %}
+    {% endif %}
+    {% if not isResultFolderExist %}
+        <p></p>
+    {% else %}
+        {%if resultfile %}
+            <p>
+                Prediction in text file can be found in 
+                <a href="{{STATIC_URL}}result/{{jobid}}/{{jobid}}/{{subdirname}}/{{resultfile}}">{{resultfile}}</a>
+            </p>
+        {%endif%}
+
+        <p>
+            The sequence file in FASTA format can be found in
+            <a href="{{STATIC_URL}}result/{{jobid}}/{{jobid}}/{{subdirname}}/seq.fa">seq.fa</a>
+        </p>
+
+        {% include "pred/show_topoinfo.html"%}
+
+    {%endif%}
+
+{% endblock %}

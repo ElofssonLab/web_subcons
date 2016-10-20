@@ -1,0 +1,129 @@
+{% extends "pred/base_layout.html" %}
+
+{%block html_head_meta %}
+{% if not isFinished and not isFailed %}
+    <meta HTTP-EQUIV="REFRESH" content="{{refresh_interval}}; url={{url_result}}">
+{%endif%}
+{% endblock %}
+
+
+
+{%block javascript_function %}
+function readfile() {
+    document.getElementById('iframe').contentDocument.body.firstChild.innerHTML;
+}
+{% if not isFinished  and not isFailed %}
+setInterval(function(){$("#content_right_panel").load("{{url_result}}")},1000);
+{%endif%}
+{% endblock %}
+
+{# url: '{% url "pred.views.get_results"  jobid %}',#}
+
+{#    setInterval(function(){                                         #}
+{#          $.ajax({                                                  #}
+{#                url: '{% url "pred.views.get_results"  jobid %}',   #}
+{#                success: function(data) {                           #}
+{#                  alert('test');                                    #}
+{#                  $('#content_right_panel').html(data);             #}
+{#                }                                                   #}
+{#          });                                                       #}
+{#    }, 200)                                                         #}
+
+{%block content_right_panel %}
+{#    <p> <script language="JavaScript"> print_todays_date(); </script> </p>#}
+
+    {% if not isResultFolderExist %}
+        <p><font color="red">Error! The job with jobid {{jobid}} does not exist.</font></p>
+    {% else %}
+        {% if seqwarninfo %}
+            <p>
+                <font color="red">Warning! some letters in your query have been
+                    modified by system.</font>
+                click <a
+                    href="{{STATIC_URL}}result/{{jobid}}/{{file_seq_warning}}"
+                target="_blank"  >this link</a> to see details
+            </p>
+        {% endif %}
+
+
+        {% if isFailed %}
+            <font color="grey">
+                <ul>
+                {%if queuetime %}
+                <li>Waiting time: {{queuetime}}</li>
+                {%endif%}
+                {%if runtime %}
+                <li>Running Time: {{runtime}}</li>
+                {%endif%}
+                </ul>
+            </font>
+            <p>Your job with jobid {{jobid}} is unfortunately failed</p>
+            <h4>Error message of the job</h4>
+            <pre>
+{{errinfo}}
+            </pre>
+
+        {% elif isFinished %}
+            <font color="grey">
+                <ul>
+                <li>Submitted: {{submit_date}}</li>
+                {%if queuetime %}
+                <li>Waiting time: {{queuetime}}</li>
+                {%endif%}
+                {%if runtime %}
+                <li>Running Time: {{runtime}}</li>
+                {%endif%}
+                </ul>
+            </font>
+            results of your prediction for jobid: {{jobid}}
+            <p>Result file:  <a
+                href="{{STATIC_URL}}result/{{jobid}}/{{outpathname}}/{{result_file}}">{{result_file}}</a>
+            </p>
+            <p>Part of the content of the result file</p>
+            <pre>
+    {{result_content}}
+            </pre>
+            <p>
+            {# <img src="{{STATIC_URL}}result/{{jobid}}/PconsC2.s400.jpg" alt="Mountain View" style="width:600px;height:200"> #}
+            </p>
+        {% else %}
+            Result for {{ jobid }} is not ready yet
+            <font color="black">
+                <ul>
+                    <li>Submitted: {{submit_date}}</li>
+                    <li>Status: {{status}}</li>
+                    {%if queuetime %}
+                    <li>Waiting time: {{queuetime}}</li>
+                    {%endif%}
+                    {%if runtime %}
+                    <li>Running Time: {{runtime}}</li>
+                    {%endif%}
+                </ul>
+            </font>
+            <p>
+                Your result will be available at 
+                <a href="{{BASEURL}}result/{{jobid}}" >{{url_result}}</a>
+            </p>
+            <p>
+                {% if email %}
+                Your result will also be send to <u><font color=blue>{{email}}</font> </u>when it is ready.
+                {% endif %}
+            </p>
+
+        {% endif %}
+
+        {% if errinfo %}
+            <p>
+            <font color="red"><b>Error messages:</b></font>
+            </p>
+            <textarea rows="5" cols="80" readonly>
+{{errinfo}}
+            </textarea> 
+            </pre>
+            </p>
+        {% endif %}
+
+    {% endif %}
+
+
+{% endblock %}

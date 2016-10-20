@@ -1,0 +1,178 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>TOPCONS2: Consensus prediction of membrane protein topology</title>
+  <meta name="description" content="TOPCONS" />
+  <meta name="keywords" content="membrane protein, bioinformatics, prediction, topology" />
+  <meta name="robots" content="index, follow" />
+  <link rel="stylesheet" href="{{STATIC_URL}}template_css.css" type="text/css" />
+<script language="javascript">
+<!--
+    if (document.images) {
+    arrow = new Image(); arrow.src = "{{STATIC_URL}}images/arrow.png";
+    arrow90 = new Image(); arrow90.src = "{{STATIC_URL}}images/arrow90.png";
+    }
+
+    function print_todays_date( ) {
+        var d = new Date( );                  // Get today's date and time
+        document.write(d.toLocaleString( ));  // Insert it into the document
+    }
+
+    function hideShow(element){
+        if((document.getElementById(element).style.display == 'none') || (document.getElementById(element).style.display == '')) {
+        document.getElementById(element).style.display = 'block';
+        if (document.images) {
+            document.getElementById("arrow").src=arrow.src;
+            }
+        } else if(document.getElementById(element).style.display == 'block') {
+        document.getElementById(element).style.display = 'none';
+        if (document.images) {
+            document.getElementById("arrow").src=arrow90.src;
+            }
+        }
+    }
+
+    function example_fill(){
+        document.seq_form.your_seq.value='>sp|O93740|BACR_HALS4 Bacteriorhodopsin Halobacterium sp.\nMCCAALAPPMAATVGPESIWLWIGTIGMTLGTLYFVGRGRGVRDRKMQEFYIITIFITTI\nAAAMYFAMATGFGVTEVMVGDEALTIYWARYADWLFTTPLLLLDLSLLAGANRNTIATLI\nGLDVFMIGTGAIAALSSTPGTRIAWWAISTGALLALLYVLVGTLSENARNRAPEVASLFG\nRLRNLVIALWFLYPVVWILGTEGTFGILPLYWETAAFMVLDLSAKVGFGVILLQSRSVLE\nRVATPTAAPT\n';
+    }
+
+//-->
+</script>
+
+</head>
+
+<body>
+  <table width="800" border="0" cellspacing="0" cellpadding="0" align="center">
+    <tr>
+      <td align="left" class="title">TOPCONS2</td>
+      <td></td>
+      <td align="right" class="headerdate">
+        <script language="JavaScript"> print_todays_date(); </script>
+      </td>
+    </tr>
+
+    <tr>
+      <td width="800" height="124" colspan="7" align="right" valign="bottom" background="{{STATIC_URL}}images/header2.png">
+        <table width="800" height="100" border="0" cellspacing="0" cellpadding="0" align="right" valign="bottom">
+          <tr valign="bottom">
+            <td align="right">
+              <div align="right">
+                <table cellpadding="0" cellspacing="0" class="moduletableheader">
+                  <tr>
+                    <td></td>
+                  </tr>
+                </table>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+  <table width="800" height="199" border="0" align="center" cellpadding="5" cellspacing="0" bgcolor="#FFFFFF">
+    <tr>
+      <td width="160" valign="top" style="background-repeat: repeat-y; background-position: top left;" background="{{STATIC_URL}}images/cbr_graymeny160_shadow.png">
+        <table cellpadding="0" cellspacing="0" class="moduletable">
+          <tr>
+            <th valign="top">Main Menu</th>
+          </tr>
+
+          <tr>
+            <td>
+              <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                <tr align="left"> <td><a href="index.php" class="mainlevel" id="active_menu">New query</a></td> </tr>
+                <tr align="left"> <td><a href="index.php?about=scampi" class="mainlevel">SCAMPI</a></td> </tr>
+                <tr align="left"> <td><a href="index.php?about=octopus" class="mainlevel">OCTOPUS</a></td> </tr>
+                <tr align="left"> <td><a href="index.php?about=deltag" class="mainlevel">&Delta;G-scale</a></td> </tr>
+                <tr align="left"> <td><a href="index.php?about=zpred" class="mainlevel">ZPRED</a></td> </tr>
+                <tr align="left"> <td><a href="index.php?about=proprodiv" class="mainlevel">PRO/PRODIV</a></td> </tr>
+                <tr align="left"> <td><a href="index.php?about=download" class="mainlevel">Download</a></td> </tr>
+                <tr align="left"> <td><a href="index.php?about=help" class="mainlevel">Help</a></td> </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+
+      <td width="650" valign="top" style="background-repeat: repeat-y; background-position: top right;" background="{{STATIC_URL}}images/cbr_right_shadow.png">
+        <table class="blog" cellpadding="0" cellspacing="0">
+          <tr>
+            <td valign="top">
+              <table width="100%" height=500 cellpadding="0" cellspacing="0">
+                <tr><td valign="top" width="50%">
+                    <table class="contentpaneopen">
+
+                      <p>Paste your sequences in <a href='http://www.ncbi.nlm.nih.gov/BLAST/fasta.html' target=\'_blank\'>FASTA</a> format:</p>
+                      <form name="seq_form" action="/pred1/" enctype="multipart/form-data" method="post">
+                          {% csrf_token %}
+                          {{form.as_p}}
+                        <a href="#" onClick="javascript:hideShow('options');return false;" style="text-decoration:none; color:#333333"><b>Restrainment options</b><img id="arrow" src='{{STATIC_URL}}images/arrow90.png' border=0>
+                        </a>
+
+                        <br>
+                        <table cellspacing=0 cellpadding=0 border=0 id="options">
+                          <tr><td colspan=2><img src='{{STATIC_URL}}images/0.gif' width=1 height=10></td></tr>
+                          <tr><td colspan=2>Restrain parts of the sequence to a known Inside/Outside/Membrane location</td></tr>
+                          <tr><td colspan=2><img src='{{STATIC_URL}}images/0.gif' width=1 height=5></td></tr>
+                          <tr><td>N-term&nbsp;</td><td>
+                              <select name="Nfix">
+                                <option value=""></option>
+                                <option value="i">inside (cytoplasmic)</option>
+                                <option value="o">outside (non-cytoplasmic)</option>
+                              </select> (optional)
+                          </td></tr>
+
+                          <tr><td colspan=2><img src='{{STATIC_URL}}images/0.gif' width=1 height=5></td></tr>
+                          <tr><td>C-term&nbsp;</td><td>
+                              <select name="Cfix">
+                                <option value=""></option>
+                                <option value="i">Inside (cytoplasmic)</OPTION>
+                                <option value="o">Outside (non-cytoplasmic)</OPTION>
+                              </select> (Optional)
+                          </td></tr>
+                          <tr><td colspan=2><img src='{{STATIC_URL}}images/0.gif' width=1 height=5></td></tr>
+                          <tr><td>Other&nbsp;</td><td><input type="text" name="fix_str" size=41 maxlength=2048 title="fix_str"></input> (Optional)</td></tr>
+                          <tr><td>&nbsp;</td><td><small>String of one or more entries with format [first]-[last]-[label]; where [first] is first residue and [last] is last residue in restrained range, and [label] is i (Inside), o (Outside) or M (Membrane). Example: 1-1-o;20-25-M;
+                            </td></tr>
+                          </table>
+<script language="javascript">
+<!--
+document.getElementById('options').style.display = 'none';
+//-->
+</script>
+                <p> <input type="submit" name=do value="Submit" /> <INPUT type="reset" value="Clear" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="Generate example input" onclick="example_fill();"></p>
+
+                </form>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+
+        <table cellpadding="0" cellspacing="0" class="moduletable">
+          <tr>
+            <td>&nbsp;</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+  
+  <table width="800" height="30" border="0" align="center" cellpadding="0" cellspacing="0">
+    <tr>
+      <td width="23"><img src="{{STATIC_URL}}images/cbr_lower_left_gray.png" alt="" width="23" height="30" border="0" /></td>
+
+      <td height="30" align="center" bgcolor="#FFFFFF" style="background-repeat: repeat-y; background-position: top left;" background="{{STATIC_URL}}images/cbr_graymenu_bg137.png">
+        <div align="center"> &#169; 2015 Science for Life Laboratory, Stockholm </div>
+        <div align="center"> <br /> </div>
+      </td>
+
+      <td width="23"><img src="{{STATIC_URL}}images/cbr_lower_right.png" alt="" width="23" height="30" border="0" /></td>
+    </tr>
+  </table>
+</body>
+</html>
+
+

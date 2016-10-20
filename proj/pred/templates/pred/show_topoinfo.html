@@ -1,0 +1,89 @@
+<p>
+    <br>
+    Predicted topologies and predicted &Delta;G values:
+</p>
+<table cellpadding="2">
+    <tr><td>
+            <img src="{{STATIC_URL}}result/{{jobid}}/{{jobid}}/{{subdirname}}/Topcons/total_image.png" alt="Topology" style="width:580px">
+    </td><tr>
+    <tr><td align="right">
+            <a
+                href="{{STATIC_URL}}result/{{jobid}}/{{jobid}}/{{subdirname}}/Topcons/total_image.large.png"
+                >High-resolution image </a>
+    </td></tr>
+</table>
+
+
+<p>
+    <br>
+    Consensus prediction (TOPCONS):
+</p>
+
+<table cellpadding="2">
+    <tr><td>
+            <img src="{{STATIC_URL}}result/{{jobid}}/{{jobid}}/{{subdirname}}/Topcons/topcons.png" alt="Consensus" style="width:580px">
+    </td><tr>
+    <tr><td align="right">
+            <a
+                href="{{STATIC_URL}}result/{{jobid}}/{{jobid}}/{{subdirname}}/Topcons/topcons.large.png"
+                >High-resolution image </a>
+    </td></tr>
+</table>
+
+<br>
+<p>Predicted signal peptide and TM-helix positions (position starting from 1):</p>
+<div id="tm_list_table" style="width:600;overflow:auto">
+<table cellpadding=2 cellspacing=0 border=0 style="table-layout:fixed; overflow:scroll;">
+    {% for method, color, posSP_str, posTM in TMlist %}
+        {% if posTM.0 == "***No signal peptide nor TM-regions predicted***" or posTM.0 == "***No homologous TM proteins detected***" %}
+            <tr>
+                {% if method == "Homology" %}
+                  {% if pdbcode_homo %}
+                  <td style="font-family: Courier; Color:{{color}};"><a href="http://www.rcsb.org/pdb/explore/explore.do?structureId={{pdbcode_homo}}">{{showtext_homo}}</a>&nbsp;</td>
+                  {% else %}
+                    <td style="font-family: Courier; Color:{{color}};">{{showtext_homo}}&nbsp;</td>
+                  {% endif %}
+                {% else %}
+                  <td style="font-family: Courier; Color:{{color}};">{{method}}&nbsp;</td>
+                {% endif %}
+                <td colspan="10" style="font-family: Courier; Color:{{color}};">{{posTM.0}}</td>
+            </tr>
+        {% else %}
+            <tr>
+                {% if method == "Homology" %}
+                  {% if pdbcode_homo %}
+                  <td style="font-family: Courier; Color:{{color}};"><a href="http://www.rcsb.org/pdb/explore/explore.do?structureId={{pdbcode_homo}}">{{showtext_homo}}</a>&nbsp;</td>
+                  {% else %}
+                    <td style="font-family: Courier; Color:{{color}};">{{showtext_homo}}&nbsp;</td>
+                  {% endif %}
+                {% else %}
+                  <td style="font-family: Courier; Color:{{color}};">{{method}}&nbsp;</td>
+                {% endif %}
+                    {% if posSP_str %}
+                        {%if posTM %}
+                            <td style="font-family: Courier; Color:{{color}};"><b>SP: </b>{{posSP_str}},</td>
+                        {%else %}
+                            <td style="font-family: Courier; Color:{{color}};"><b>SP: </b>{{posSP_str}}</td>
+                        {% endif%}
+                    {% endif %}
+
+                    {% for pos in posTM %}
+                        {% if forloop.last %}
+                            <td style="font-family: Courier; Color:{{color}};"><b>TM{{forloop.counter}}: </b>{{pos}}</td>
+                        {% else %}
+                            <td style="font-family: Courier; Color:{{color}};"><b>TM{{forloop.counter}}: </b>{{pos}},</td>
+                        {%endif%}
+
+                    {%endfor %}
+            </tr>
+        {%endif%}
+    {% endfor%}
+</table>
+</div>
+
+{%if nicetopfile  and not isAllNonTM %}
+    <br>
+    <p>Sequence and predicted topologies:
+    (i: inside the membrane, o: outside of the membrane, M: membrane region, u: non-membrane region but location unkown)</p>
+    {% include nicetopfile %}
+{%endif%}

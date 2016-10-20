@@ -1,0 +1,40 @@
+{% extends "pred/base_layout.html" %}
+
+{%block content_right_panel %}
+    {% if username %}
+      {% include "pred/user_header.html" %}
+    {% endif %}
+{% if warninfo %}
+<p>
+<font color="red">Warning! Part of your query has been modified by system.</font>
+click <a href="{{STATIC_URL}}result/{{jobid}}/{{file_seq_warning}}" target="_blank"  >this link</a> to see details
+</p>
+{% endif %}
+
+<p>Thanks very much for using TOPCONS</p>
+<p>
+<ul>
+    <li>Your jobid: <b>{{jobid}}</b></li>
+    {%if jobname %}
+        <li>Your jobname: <b>{{jobname}}</b></li>
+    {%endif %}
+    {%if email %}
+        <li>Your email: <b>{{email}}</b></li>
+    {% endif %}
+</ul>
+{#<p>Host: {{client_ip}}</p>#}
+</p>
+
+<p>Number of submitted sequences: {{numseq}}</p>
+<p>
+    The sequence(s) you submitted can be found in 
+    <a href="{{STATIC_URL}}result/{{jobid}}/{{raw_query_seqfile}}">{{raw_query_seqfile}}</a>
+</p>
+<p>Your result will be available at <a href="{{BASEURL}}result/{{jobid}}" >this link</a> </p>
+<p>
+{% if email %}
+Your result will also be send to <u><font color=blue>{{email}}</font> </u>when it is ready.
+{% endif %}
+</p>
+{% endblock %}
+

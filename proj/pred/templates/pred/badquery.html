@@ -1,0 +1,18 @@
+{% extends "pred/base_layout.html" %}
+
+{%block content_right_panel %}
+
+    {% if username %}
+      {% include "pred/user_header.html" %}
+    {% endif %}
+
+    {% if errinfo_br %}
+    <p><font color=red>{{errinfo_br}}</font></p>
+    {% endif %}
+    <p>
+    <pre>
+{{errinfo_content}}
+    </pre>
+    </p>
+
+{% endblock %}

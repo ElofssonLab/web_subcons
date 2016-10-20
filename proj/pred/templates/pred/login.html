@@ -1,0 +1,64 @@
+{% extends "pred/base_layout.html" %}
+
+{# <!-- content of this template --> #}
+
+{%block content_right_panel %}
+    {% if username %}
+      {% include "pred/user_header.html" %}
+    {% endif %}
+
+    <p>logged in as <b>{{username}}</b></p>
+    {% if isSuperUser %}
+    <p>As a superuser, you can view all jobs.</p>
+    {% endif %}
+
+    <p>jobid list for </p>
+    {% if jobcounter.queued %}
+    <p>
+    <h4>Queued ({{jobcounter.queued}})</h4>
+        {% for jobid in jobcounter.queued_idlist %}
+            {{jobid}}&nbsp;
+        {% endfor %}
+    </p>
+    {% endif %}
+
+    {% if jobcounter.running %}
+    <p>
+    <h4>Running ({{jobcounter.running}})</h4>
+        {% for jobid in jobcounter.running_idlist %}
+            {{jobid}}&nbsp;
+        {% endfor %}
+    </p>
+    {% endif %}
+
+
+    {% if jobcounter.finished %}
+    <p>
+    <h4>Finished ({{jobcounter.finished}})</h4>
+        {% for jobid in jobcounter.finished_idlist %}
+            {{jobid}}&nbsp;
+        {% endfor %}
+    </p>
+    {% endif %}
+
+
+    {% if jobcounter.failed %}
+    <p>
+    <h4>Failed ({{jobcounter.failed}})</h4>
+        {% for jobid in jobcounter.failed_idlist %}
+            {{jobid}}&nbsp;
+        {% endfor %}
+    </p>
+    {% endif %}
+
+
+    {% if jobcounter.nojobfolder %}
+    <p>
+    <h4>No job folder ({{jobcounter.nojobfolder}})</h4>
+        {% for jobid in jobcounter.nojobfolder_idlist %}
+            {{jobid}}&nbsp;
+        {% endfor %}
+    </p>
+    {% endif %}
+{% endblock %}
+

@@ -1,0 +1,320 @@
+{% extends "pred/base_layout.html" %}
+
+
+{%block html_head_meta %}
+{% if not isFinished and not isFailed %}
+    <meta HTTP-EQUIV="REFRESH" content="{{refresh_interval}}; url={{url_result}}">
+{%endif%}
+{% endblock %}
+
+
+{%block javascript_function %}
+function readfile() {
+    document.getElementById('iframe').contentDocument.body.firstChild.innerHTML;
+}
+{#
+{% if not isFinished  and not isFailed %}
+    setInterval(function(){$("#content_right_panel").load("{{url_result}}")},1000);
+{%endif%}
+{% endblock %}
+#}
+
+{# url: '{% url "pred.views.get_results"  jobid %}',#}
+
+{#    setInterval(function(){                                         #}
+{#          $.ajax({                                                  #}
+{#                url: '{% url "pred.views.get_results"  jobid %}',   #}
+{#                success: function(data) {                           #}
+{#                  alert('test');                                    #}
+{#                  $('#content_right_panel').html(data);             #}
+{#                }                                                   #}
+{#          });                                                       #}
+{#    }, 200)                                                         #}
+
+{%block content_right_panel %}
+    {% if username %}
+      {% include "pred/user_header.html" %}
+    {% endif %}
+
+    {% if not isResultFolderExist %}
+        <p><font color="red">Error! The job with jobid {{jobid}} does not exist.</font></p>
+    {% else %}
+        {% if seqwarninfo %}
+            <p>
+                <font color="red">Warning! Part of your query has been
+                    modified by system.</font>
+                click <a
+                    href="{{STATIC_URL}}result/{{jobid}}/{{file_seq_warning}}"
+                target="_blank"  >this link</a> to see details
+            </p>
+        {% endif %}
+
+
+        {% if isFailed %}
+            <font color="grey">
+                <ul>
+                <li>Submitted: {{submit_date}}</li>
+                <li>Status: <font color="{{color_status}}">{{status}}</font></li>
+                {%if queuetime %}
+                <li>Waiting time: {{queuetime}}</li>
+                {%endif%}
+                {%if runtime %}
+                <li>Running Time: {{runtime}}</li>
+                {%endif%}
+                </ul>
+            </font>
+            <p><font color="red">Your job with jobid {{jobid}} is
+                unfortunately failed. Please try again!</font></p>
+            <p>
+                The sequence(s) you submitted can be found in 
+                <a href="{{STATIC_URL}}result/{{jobid}}/{{raw_query_seqfile}}">{{raw_query_seqfile}}</a>
+            </p>
+            <h4>Error message of the job</h4>
+            <pre>
+{{errinfo}}
+            </pre>
+            {% if indexfiletype == "finishedfile" and numseq > 1%}
+                <p>Part of the sequences of your job that have been predicted</p>
+                <p>
+                    <b>Processed {{num_finished}} / {{numseq}} ({{percent_finished}} %) </b>
+                </p>
+
+                <p>List of finished sequences. Please click the link of each sequence below to see the
+                result of individual sequence</p>
+                <table class="sortable" id="jobtable" align="left">
+                  <thead>
+                    <tr>
+                        {% for hd in index_table_header %}
+                            <th>{{hd}}</th>
+                        {% endfor %}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for record in index_table_content_list %}
+                        {% if indexfiletype == "indexmap"  %}
+                            <tr>
+                                <td>{{record.0}}</td>
+                                <td>{{record.1}}</td>
+                                <td><a href="{{BASEURL}}result/{{jobid}}/{{record.3}}">{{record.2}}</a></td>
+                            </tr>
+                        {% elif indexfiletype == "finishedfile" %}
+                            <tr>
+                                <td>{{record.0}}</td>
+                                <td>{{record.1}}</td>
+                                <td>{{record.2}}</td>
+                                <td>{{record.3}}</td>
+                                <td>{{record.4}}</td>
+                                <td><a href="{{BASEURL}}result/{{jobid}}/{{record.6}}">{{record.5}}</a></td>
+                                <td>{{record.7}}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+
+            {%endif%}
+
+        {% elif isFinished %}
+            <h3>Results</h3>
+            <font color="grey">
+                <ul>
+                <li>Submitted: {{submit_date}}</li>
+                <li>Status: <font color="{{color_status}}">{{status}}</font></li>
+                {%if queuetime %}
+                    <li>Waiting time: {{queuetime}}</li>
+                {%endif%}
+                {%if runtime %}
+                    <li>Running Time: {{runtime}}</li>
+                {%endif%}
+                </ul>
+            </font>
+            Results of your prediction with jobid: <b>{{jobid}}</b>
+            {% if jobname %}
+                (jobname: <b>{{jobname}}</b>)
+            {% endif %}
+            <p>
+                Zipped folder of your result can be found in 
+                <a href="{{STATIC_URL}}result/{{jobid}}/{{zipfile}}">{{zipfile}}</a>
+            </p>
+            <p>
+                Dumped prediction in one text file can be found in 
+                <a href="{{STATIC_URL}}result/{{jobid}}/{{jobid}}/{{resultfile}}">{{resultfile}}</a>
+            </p>
+            <p>
+                The sequence(s) you submitted can be found in 
+                <a href="{{STATIC_URL}}result/{{jobid}}/{{raw_query_seqfile}}">{{raw_query_seqfile}}</a>
+            </p>
+            <hr>
+            {% if numseq > 1 %}
+                <table  align="left" cellspacing="1" cellpadding="1">
+                    <tr>
+                        <td>Total number of protein sequences:</td>
+                        <td>{{numseq}}</td>
+                    </tr>
+                    {% if num_TMPro_cons %}
+                    <tr>
+                        <td>TM proteins predicted by the consensus:</td> 
+                        <td>{{num_TMPro_cons}} / {{numseq}} ({{per_TMPro_cons}} %)</td>
+                    </tr>
+                    {% endif %}
+
+                    {% if num_TMPro_any %}
+                    <tr>
+                        <td>TM proteins predicted by any of the sub-predictors:</td> 
+                        <td>{{num_TMPro_any}} / {{numseq}} ({{per_TMPro_any}} %)</td>
+                    </tr>
+                    {% endif %}
+
+                    {% if num_nonTMPro_cons %}
+                    <tr>
+                        <td>Non-TM proteins predicted by the consensus:</td> 
+                        <td>{{num_nonTMPro_cons}} / {{numseq}} ({{per_nonTMPro_cons}} %)</td>
+                    </tr>
+                    {% endif %}
+                    {% if num_nonTMPro_any %}
+                    <tr>
+                        <td>Non-TM proteins not predicted as TM by any of the sub-predictors:</td> 
+                        <td>{{num_nonTMPro_any}} / {{numseq}} ({{per_nonTMPro_any}} %)</td>
+                    </tr>
+                    {% endif %}
+
+                    {% if num_SPPro_cons %}
+                    <tr>
+                        <td>Proteins with signal peptide predicted by the consensus:</td> 
+                        <td>{{num_SPPro_cons}} / {{numseq}} ({{per_SPPro_cons}} %)</td>
+                    </tr>
+                    {% endif %}
+
+                    {% if num_SPPro_any %}
+                    <tr>
+                        <td>Proteins with signal peptide predicted by any of the sub-predictors:</td> 
+                        <td>{{num_SPPro_any}} / {{numseq}} ({{per_SPPro_any}} %)</td>
+                    </tr>
+                    {% endif %}
+                    <tr></tr>
+                    <tr height=40px>
+                        <td colspan="2">
+                            <font color="#000099">
+                        Please click the link of each sequence below to see the
+                        result of individual sequence<br>
+                        Note that the table below is sortable by clicking the table header
+                            </font>
+                        </td>
+                    </tr>
+                </table>
+                <br>
+
+                <table class="sortable" align="left" id="jobtable" cellpadding="2">
+                  <thead>
+                    <tr>
+                        {% for hd in index_table_header %}
+                            <th>{{hd}}</th>
+                        {% endfor %}
+                  </thead>
+                  <tbody>
+                    {% for record in index_table_content_list %}
+                        {% if indexfiletype == "indexmap"  %}
+                            <tr>
+                                <td>{{record.0}}</td>
+                                <td>{{record.1}}</td>
+                                <td><a href="{{BASEURL}}result/{{jobid}}/{{record.3}}">{{record.2}}</a></td>
+                            </tr>
+                        {% elif indexfiletype == "finishedfile" %}
+                            <tr>
+                                <td>{{record.0}}</td>
+                                <td>{{record.1}}</td>
+                                <td>{{record.2}}</td>
+                                <td>{{record.3}}</td>
+                                <td>{{record.4}}</td>
+                                <td><a href="{{BASEURL}}result/{{jobid}}/{{record.6}}">{{record.5}}</a></td>
+                                <td>{{record.7}}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+            {% else %}
+                {% include "pred/show_topoinfo.html"%}
+            {%endif%}
+        {% else %}
+            Result for {{ jobid }} is not finished yet
+            {% if email %}
+                <p> A notification will be sent to <u><font color=blue>{{email}}</font> </u>when it is ready. </p>
+            {% endif %}
+            <font color="black">
+                <ul>
+                    <li>Submitted: {{submit_date}}</li>
+                    <li>Status: <font color="{{color_status}}">{{status}}</font></li>
+                    {%if queuetime %}
+                    <li>Waiting time: {{queuetime}}</li>
+                    {%endif%}
+                    {%if runtime %}
+                    <li>Running Time: {{runtime}}</li>
+                    {%endif%}
+                </ul>
+            </font>
+            <p>Number of submitted sequences: {{numseq}}</p>
+            <p>
+                The sequence(s) you submitted can be found in 
+                <a href="{{STATIC_URL}}result/{{jobid}}/{{raw_query_seqfile}}">{{raw_query_seqfile}}</a>
+            </p>
+            Results of your prediction with jobid: <b>{{jobid}}</b>
+            {% if jobname %}
+                (jobname: <b>{{jobname}}</b>)
+            {% endif %}
+            <p>
+                Zipped folder of your result: not ready
+            </p>
+            <p>
+                Dumped prediction in one text file: not ready
+            </p>
+            <hr>
+            {% if status == "Running" and indexfiletype == "finishedfile" and numseq > 1%}
+                <p>
+                    <b>Progress: {{num_finished}} / {{numseq}} ({{percent_finished}} %)
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                        Estimated remaining time: {{time_remain}}</b>
+                </p>
+
+                <p>List of finished sequences. Please click the link of each sequence below to see the
+                result of individual sequence</p>
+                <table class="sortable" align="left" id="jobtable" cellpadding="2">
+                   <thead>
+                    <tr>
+                        {% for hd in index_table_header %}
+                            <th>{{hd}}</th>
+                        {% endfor %}
+                    </tr>
+                   </thead>
+                   <tbody>
+                    {% for record in index_table_content_list %}
+                        {% if indexfiletype == "indexmap"  %}
+                            <tr>
+                                <td>{{record.0}}</td>
+                                <td>{{record.1}}</td>
+                                <td><a href="{{BASEURL}}result/{{jobid}}/{{record.3}}">{{record.2}}</a></td>
+                            </tr>
+                        {% elif indexfiletype == "finishedfile" %}
+                            <tr>
+                                <td>{{record.0}}</td>
+                                <td>{{record.1}}</td>
+                                <td>{{record.2}}</td>
+                                <td>{{record.3}}</td>
+                                <td>{{record.4}}</td>
+                                <td><a href="{{BASEURL}}result/{{jobid}}/{{record.6}}">{{record.5}}</a></td>
+                                <td>{{record.7}}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                   </tbody>
+                </table>
+
+            {%endif%}
+
+        {% endif %}
+
+
+    {% endif %}
+
+
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "pred/base_layout.html" %}
+
+{%block content_right_panel %}
+    {% if username %}
+      {% include "pred/user_header.html" %}
+    {% endif %}
+  <h2>News</h2>
+  {% if not newsList %}
+    <b>There are no news at the moment</b>
+  {%else %}
+    <ul>
+        {% for news in newsList %}
+            <li>
+            <b>{{news.1}}</b> (published {{news.0}})<br>
+            <p>{{news.2}}</p>
+            <br>
+            </li>
+        {%endfor%}
+    </ul>
+  {%endif%}
+{% endblock %}
+

@@ -1,0 +1,151 @@
+{% extends "pred/base_layout.html" %}
+
+
+{%block content_right_panel %}
+    {% if username %}
+    {% include "pred/user_header.html" %}
+    {% endif %}
+    <h2>Server status</h2>
+    <table cellspacing=0 cellpadding=5 border=0>
+        <tr>
+            <td> Total number of sequences in local queue: </td>
+            <td><b>{{num_seq_in_local_queue}}</b></td>
+        </tr>
+        <tr>
+            <td> Total number of sequences in remote queue: </td>
+            <td><b>{{num_seq_in_remote_queue}}</b></td>
+        </tr>
+    </table>
+
+
+    <p class="section">
+    <h2>Statistics (since {{startdate}})</h2>
+    <table cellspacing=0 cellpadding=5 border=0>
+        <tr>
+            <td>Number of finished sequences: </td>
+            <td><b>{{num_finished_seqs_str}}</b></td>
+        </tr>
+        <tr>
+            <td>Number of finished jobs: </td>
+            <td><b>{{num_finished_jobs_str}}</b> (of which {{num_finished_jobs_web_str}} via web and {{num_finished_jobs_wsdl_str}} via wsdl)</td>
+        </tr>
+      <tr>
+          <td>Number of unique users (by IP address): </td>
+          <td><b>{{num_unique_ip_str}}</b></td>
+      </tr>
+      <tr>
+          <td>Number of countries the jobs have been submitted from: </td>
+          <td><b>{{num_unique_country_str}}</b>&nbsp&nbsp(<a href="{{BASEURL}}/countjobcountry">details)</a></td>
+
+      </tr>
+    </table>
+    </p>
+
+    <p class="section">
+    </p>
+
+    <p class="section">
+        <h3>List of most active users:</h3>
+        <div class="floattable" style="float: left">
+            <p>Sorted by number of jobs</p>
+            <table class="liststyle1" align="left" cellspacing="2", cellpadding="2">
+                <thead>
+                    <tr>
+                        {% for hd in activeuserli_njob_header %}
+                        <th>{{hd}}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                {% for record in activeuserli_njob %}
+                <tr>
+                    <td> {{record.0}} </td>
+                    <td align="center"> {{record.1}} </td>
+                    <td align="right"> {{record.2}} </td>
+                    <td align="right"> {{record.3}} </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="floattable" style="float: left">
+        <p>Sorted by number of sequences</p>
+        <table class="liststyle1" align="left" cellspacing="2", cellpadding="2">
+            <thead>
+                <tr>
+                    {% for hd in activeuserli_nseq_header %}
+                    <th>{{hd}}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+            {% for record in activeuserli_nseq %}
+            <tr>
+                <td> {{record.0}} </td>
+                <td align="center"> {{record.1}} </td>
+                <td align="right"> {{record.2}} </td>
+                <td align="right"> {{record.3}} </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </p>
+
+    <p class="section">
+     <h3>Frequency of submission over time:</h3>
+
+       <form>
+           <font color="#6633CC"><b>By number of jobs</b></font>
+           <input type="radio" name="numjobsubmit" value="0" onclick="ChangeImgSubmitNumJob(this.value)">day
+           <input type="radio" name="numjobsubmit" value="1" onclick="ChangeImgSubmitNumJob(this.value)">week
+           <input type="radio" name="numjobsubmit" value="2" checked="checked" onclick="ChangeImgSubmitNumJob(this.value)">month
+       </form>
+        <p>
+            <img id="imgNumJobSubmit"
+            src="{{STATIC_URL}}log/stat/submit_month.stat.txt.numjob.png"
+            alt="" height="400">
+        </p>
+       <form>
+           <font color="#6633CC"><b>By number of sequences</b></font>
+           <input type="radio" name="numseqsubmit" value="0" onclick="ChangeImgSubmitNumSeq(this.value)">day
+           <input type="radio" name="numseqsubmit" value="1" onclick="ChangeImgSubmitNumSeq(this.value)">week
+           <input type="radio" name="numseqsubmit" value="2" checked="checked" onclick="ChangeImgSubmitNumSeq(this.value)">month
+       </form>
+        <p>
+            <img id="imgNumSeqSubmit"
+            src="{{STATIC_URL}}log/stat/submit_month.stat.txt.numseq.png"
+            alt="" height="400">
+        </p>
+    </p>
+
+    <p class="section">
+        <h3>Running time of query sequences:</h3>
+
+        <font color="#6633CC"><b>Average running time</b></font><br>
+        <img
+        src="{{STATIC_URL}}log/stat/avg_runtime.stat.txt.rot.png"
+        alt="Average running time" height="400">
+        <br> <br>
+
+        <font color="#6633CC"><b>Average running time versus length of 
+                query sequences</b></font><br>
+        <img
+        src="{{STATIC_URL}}log/stat/length_runtime.pfam.stat.txt.mtp.avgline.png"
+        alt="average running time versus sequence length" height="400">
+        <br> <br>
+
+        <font color="#6633CC"><b>Dot plot for running time versus length of 
+                query sequences</b></font><br>
+        <img
+        src="{{STATIC_URL}}log/stat/length_runtime.pfam.stat.txt.mtp.png"
+        alt="running time versus sequence length" height="400">
+        <br> <br>
+
+    </p>
+
+
+
+{% endblock %}
+

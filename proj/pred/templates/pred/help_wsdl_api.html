@@ -1,0 +1,29 @@
+{% extends "pred/base_layout.html" %}
+
+{%block content_right_panel %}
+    {% if username %}
+      {% include "pred/user_header.html" %}
+    {% endif %}
+<h2>WSDL API</h2>
+<p>You can submit your jobs and fetching results in command line by the WSDL API scripts below</p>
+
+{% for lang, basename, usage in api_script_info_list %}
+    <table  cellspacing=1 cellpadding=5 border=0>
+        <tr>
+            <td><b>{{forloop.counter}}. {{lang}} script</b></td>
+            <td><a href="{{STATIC_URL}}download/script/{{basename}}">{{basename}}</a></td>
+        </tr>
+    </table>
+    {%if usage %}
+        <table>
+            <tr>
+                    <pre style="margin-left:10">
+{{usage}}
+                    </pre>
+            </tr>
+        </table>
+    {%endif%}
+{% endfor %}
+
+{% endblock %}
+

@@ -1,0 +1,29 @@
+{% extends "pred/base_layout.html" %}
+
+{%block content_right_panel %}
+    {% if username %}
+      {% include "pred/user_header.html" %}
+    {% endif %}
+  <h2>Statistics of finished jobs by countries</h2>
+    <table class="liststyle1" align="left" cellspacing="5", cellpadding="5">
+        <thead>
+            <tr>
+                {% for hd in li_countjob_country_header %}
+                <th>{{hd}}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+        {% for record in li_countjob_country %}
+        <tr>
+            <td> {{record.0}} </td>
+            <td align="right"> {{record.1}} </td>
+            <td align="right"> {{record.2}} </td>
+            <td align="right"> {{record.3}} </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
+

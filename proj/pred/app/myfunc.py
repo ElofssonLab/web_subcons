@@ -454,23 +454,30 @@ def mpa2seq(mpa, char_gap="-"):#{{{
         print >> sys.stderr, "mpa empty"
         return ""
 #}}}
+
 class MySeq:#{{{
     def __init__(self, seqid="", description="", seq=""):
         self.seqid = seqid
         self.description = description
         self.seq = seq
 #}}}
+
 class MyMPASeq:#{{{
     def __init__(self, seqid="", description="", mpa={}):
         self.seqid = seqid
         self.description = description
         self.mpa = mpa
 #}}}
+
 class ReadFastaByBlock:#{{{
 # Description: Read fasta seq by BLOCK reading, 
 # Function: 
 #   readseq()
 #   close()
+#
+# ChangeLog 2016-11-08
+#   support reading gzipped file directly, the gzip file is identified if the
+#   file extension is gz
 #
 # Usage:
 # handel = ReadFastaByBlock(infile)
@@ -488,12 +495,30 @@ class ReadFastaByBlock:#{{{
         self.isEOFreached = False
         self.method_seqid = method_seqid
         self.method_seq = method_seq
-        try: 
-            self.fpin = open(infile, "rb")
-        except IOError:
-            print >> sys.stderr, "Failed to read file %s"%(self.filename)
+        if infile.endswith('.gz'):
+            self.filetype = 'gzip'
+        else:
+            self.filetype = 'text'
+
+        if self.filetype == 'text':
+            try: 
+                self.fpin = open(infile, "rb")
+            except IOError:
+                print >> sys.stderr, "Failed to read file %s"%(self.filename)
+                self.failure = True
+                return None
+        elif self.filetype == 'gzip':
+            try: 
+                self.fpin = gzip.open(infile, "rb")
+            except IOError:
+                print >> sys.stderr, "Failed to read file %s"%(self.filename)
+                self.failure = True
+                return None
+        else:
+            print >> sys.stderr, "Unrecognized filetype for the inputfile %s"%(self.filename)
             self.failure = True
             return None
+
         self.unprocessedBuff = ""
 #}}}
     def __del__(self):#{{{
@@ -530,6 +555,291 @@ class ReadFastaByBlock:#{{{
             return recordList
 #}}}
 #}}}
+
+class ReadUniprotDatByBlock:#{{{
+# Description: Read the uniprot dat file by block reading
+# Function: 
+#   readseq()
+#   close()
+#
+#   support reading gzipped file directly, the gzip file is identified if the
+#   file extension is gz
+#
+# Usage:
+# handel = ReadUniprotDatByBlock(infile)
+# if handel.failure:
+#   print "Failed to init ReadUniprotDatByBlock for file", infile
+#   return 1
+# recordList = handel.readseq()
+# while recordList != None:
+#       do_something
+#       recordList = handel.readseq()
+# every record includes 
+#       aclist
+#       seq
+#       ID
+#       length
+#       isRefPro
+#       genename
+#       organism
+#       pfamid
+    def __init__(self, infile, BLOCK_SIZE=100000):#{{{
+        self.failure = False
+        self.filename = infile
+        self.BLOCK_SIZE = BLOCK_SIZE
+        self.isEOFreached = False
+        if infile.endswith('.gz'):
+            self.filetype = 'gzip'
+        else:
+            self.filetype = 'text'
+
+        if infile.find("sprot") != -1:
+            self.datatype = "sp"
+        elif infile.find("trembl") != -1:
+            self.datatype = "tr"
+        else:
+            self.datatype = ""
+
+        if self.filetype == 'text':
+            try: 
+                self.fpin = open(infile, "rb")
+            except IOError:
+                print >> sys.stderr, "Failed to read file %s"%(self.filename)
+                self.failure = True
+                return None
+        elif self.filetype == 'gzip':
+            try: 
+                self.fpin = gzip.open(infile, "rb")
+            except IOError:
+                print >> sys.stderr, "Failed to read file %s"%(self.filename)
+                self.failure = True
+                return None
+        else:
+            print >> sys.stderr, "Unrecognized filetype for the inputfile %s"%(self.filename)
+            self.failure = True
+            return None
+
+        self.unprocessedBuff = ""
+#}}}
+    def __del__(self):#{{{
+        try:
+            self.fpin.close()
+        except IOError:
+            print >> sys.stderr, "Failed to close file %s"%(self.filename)
+            return 1
+#}}}
+    def close(self):#{{{
+        try:
+            self.fpin.close()
+        except IOError:
+            print >> sys.stderr, "Failed to close file %s"%(self.filename)
+            return 1
+#}}}
+
+    def ExtractFromUniprotDat(self, recordContent):#{{{
+        record = {}
+        lines = recordContent.split("\n")
+        numLine = len(lines)
+        i = 0
+        # AC can be multiple lines
+        str_accession = ""     # AC
+        str_genename = ""      # GN
+        str_organism = ""      # OS
+        str_definition = ""    # DE
+        protein_existence = "" # PE protein existence
+        sequence_version = ""  #SV
+        seqid = ""
+        sequence_name = ""
+        seq = ""
+        pfamidList = [] # 
+        str_keyword = ""
+        length = 0        # from ID record
+        str_taxonomic_class = "" # OC, e.g. Archaes, Becteria
+        isSeqRecord = False
+        for line in lines:
+            if len(line) > 2:
+                tag = line[0:2]
+                if tag == "ID":
+                    strs = line[5:].split()
+                    nstrs = len(strs)
+                    length = int (strs[nstrs-2])
+                    seqid = strs[0]
+                elif tag == "AC":
+                    str_accession += line[5:]
+                elif tag == "GN":
+                    str_genename += line[5:]
+                elif tag == "DE":
+                    if line[5:].find("RecName: Full=") == 0:
+                        sequence_name = line[5:].split("Full=")[1].strip().rstrip(";").split("{")[0].strip() 
+                    elif line[5:].find("Flags") == 0:
+                        if line[5:].find("Fragments") != -1:
+                            sequence_name += " (Fragments)"
+                        elif line[5:].find("Fragment") != -1:
+                            sequence_name += " (Fragment)"
+                elif tag == "DT":
+                    if line.find("sequence version") != -1:
+                        sequence_version = line.split()[-1].rstrip('.')
+                elif tag == "PE":
+                    protein_existence = line[5:].split(':')[0].strip()
+                elif tag == "OS":
+                    str_organism += line[5:]+" "
+                elif tag == "OC":
+                    str_taxonomic_class += line[5:]
+                elif tag == "KW":
+                    str_keyword += line[5:]
+                elif tag == "DR":
+                    if line[5:].find("Pfam") == 0:
+                        strs = line[5:].split(";")
+                        pfamidList.append(strs[1].strip())
+                elif tag == "SQ":
+                    isSeqRecord = True
+                elif tag == "  " and isSeqRecord:
+                    seq += line[5:].replace(" ", "")
+
+        #accession
+        accessionList = str_accession.split(";")
+        accessionList = filter(None, accessionList)
+        accessionList = [x.strip() for x in accessionList]
+
+        # genename:
+        strs = str_genename.split(";")
+        strs = filter(None, strs)
+        li = []
+        for ss in strs:
+            sp1 = ss.split("=")
+            if len(sp1) == 1:
+                ac = sp1[0].strip()
+            else:
+                ac = sp1[1].strip()
+            li.append(ac)
+        genename = ";".join(li)
+
+        # organism
+        organism = str_organism.strip()
+        if not organism.endswith("sp."):
+            organism = organism.rstrip(".")
+
+        # taxonomic_class
+        taxonomic_class = str_taxonomic_class.split(";")[0]
+        taxonomic_class = taxonomic_class.strip(".") # added 2014-08-29, this solved Bacteria. for P07472. 
+        isRefPro = False
+        if str_keyword.find("Reference proteome") != -1:
+            isRefPro = True
+        else:
+            isRefPro = False
+
+        if len(seq) != length:
+            print >> sys.stderr, "Warning! sequence %s len(seq) (%d) != length (%d) "%(";".join(accessionList), len(seq), length)
+
+
+        if len(accessionList) > 0:
+            # the sequence definition used in *.fasta file e.g. uniprot_sprot.fasta
+            idd = ""
+            if self.datatype != "":
+                idd = "%s|%s|%s"%(self.datatype, accessionList[0], seqid)
+            else:
+                idd = "%s|%s"%(accessionList[0], seqid)
+
+            tmp_seqname = sequence_name.split("{")[0].strip()
+#             if tmp_seqname.find("(Fragment") == -1:
+#                 tmp_seqname = tmp_seqname.split("(")[0].strip()
+
+            tmp_genename = genename.split(";")[0]
+            tmp_genename = tmp_genename.split(",")[0]
+            tmp_genename = tmp_genename.split("{")[0]
+            tmp_genename = tmp_genename.strip()
+
+            p1 =  organism.find("(isolate")
+            p2 =  organism.find("(strain")
+            if p1 == -1 and p2 == -1:
+                tmp_organism = organism.split("(")[0].strip()
+            else:
+                p3 = -1
+                startp = max(p1,p2)
+                p3 = organism[startp+1:].find("(")
+                if p3 != -1:
+                    tmp_organism = organism[:startp+p3]
+                else:
+                    tmp_organism = organism
+            tmp_organism = tmp_organism.strip()
+
+            sequence_definition = "%s %s"%(idd, tmp_seqname)
+            if tmp_organism:
+                sequence_definition += " OS=%s"%(tmp_organism)
+            if tmp_genename:
+                sequence_definition += " GN=%s"%(tmp_genename)
+            if protein_existence:
+                sequence_definition += " PE=%s"%(protein_existence)
+            if sequence_version:
+                sequence_definition += " SV=%s"%(sequence_version)
+
+            record['aclist'] = accessionList
+            record['ID'] = seqid
+            record['length'] = length
+            record['genename'] = genename
+            record['sequence_version'] = sequence_version
+            record['protein_existence'] = protein_existence
+            record['organism'] = organism
+            record['taxonomic_class'] = taxonomic_class
+            record['isRefPro'] = isRefPro
+            record['pfamidList'] = pfamidList
+            record['seq'] = seq
+            record['sequence_name'] = sequence_name
+            record['sequence_definition'] = sequence_definition
+            return record
+        else:
+            return {}
+#}}}
+    def ReadUniprotDatFromBuffer(self, buff, recordList, isEOFreached):#{{{
+        if not buff:
+            return ""
+        unprocessedBuffer = ""
+        beg = 0
+        end = 0
+        while 1:
+            beg=buff.find("ID ",beg)
+            if beg >= 0:
+                end=buff.find("\n//",beg+1)
+                if end >= 0:
+                    recordContent = buff[beg:end]
+                    record = self.ExtractFromUniprotDat(recordContent)
+                    if record != {}:
+                        recordList.append(record)
+                    beg = end
+                else:
+                    unprocessedBuffer = buff[beg:]
+                    break
+            else:
+                unprocessedBuffer = buff[end:]
+                break
+        if isEOFreached and unprocessedBuffer:
+            recordContent = unprocessedBuffer
+            record = self.ExtractFromUniprotDat(recordContent)
+            if record != {}:
+                recordList.append(record)
+            unprocessedBuffer = ""
+        return unprocessedBuffer
+#}}}
+    def readseq(self):#{{{
+        if self.isEOFreached and not self.unprocessedBuff:
+            return None
+        else:
+            buff = self.fpin.read(self.BLOCK_SIZE)
+            if not buff:
+                self.isEOFreached = True
+            if self.unprocessedBuff:
+                buff = self.unprocessedBuff + buff
+
+            tmpRecordList = []
+            self.unprocessedBuff = self.ReadUniprotDatFromBuffer(buff,
+                    tmpRecordList, self.isEOFreached)
+            recordList = []
+            for rd in tmpRecordList:
+                recordList.append(rd)
+            return recordList
+#}}}
+#}}}
+
 class ReadMPAByBlock:#{{{
 # Description: Read MSA in MPA format by BLOCK reading, 
 # Function: 
@@ -918,6 +1228,19 @@ def GetRLTYFromAnnotation(line):#{{{
 def GetClusterNoFromAnnotation(line):#{{{
     if line:
         m=re.search('ClusterNo *=[^, ]*',line)
+        if m: 
+            rlty = m.group(0).split('=')[1]
+            try:
+                return int(rlty)
+            except (ValueError, TypeError):
+                return None
+        else: 
+            return None
+    return None
+#}}}
+def GetNumSeqInClusterFromAnnotation(line):#{{{
+    if line:
+        m=re.search('numSeqInCluster *=[^, ]*',line)
         if m: 
             rlty = m.group(0).split('=')[1]
             try:
@@ -1862,7 +2185,12 @@ def IsValidEmailAddress(email):#{{{
         return False
 #}}}
 
-
+def wrapseq(seq, size=60):#{{{
+    """
+    wrap the sequence in to a list of fixed length
+    """
+    return  [seq[i:i+size] for i in xrange(0, len(seq), size)]
+#}}}
 def date_diff(older, newer):#{{{
     """
     Returns a humanized string representing time difference
@@ -1908,40 +2236,41 @@ def second_to_human(time_in_sec):#{{{
     Returns a humanized string given the time in seconds
 
     The output rounds up to days, hours, minutes, or seconds.
-    4 days 5 hours returns '4 days'
-    0 days 4 hours 3 minutes returns '4 hours', etc...
+    4 days 5 hours returns '4 days 5 hours'
+    0 days 4 hours 3 minutes returns '4 hours 3 mins', etc...
     """
 
-    days = time_in_sec/3600/24
-    hours = time_in_sec/3600
-    minutes = time_in_sec%3600/60
+    days = int(time_in_sec)/3600/24
+    hours = int(time_in_sec - 3600*24*days)/3600
+    minutes = int(time_in_sec - 3600*24*days - 3600*hours)%3600/60
     seconds = time_in_sec%3600%60
 
-    str = ""
+    ss = ""
     tStr = ""
     if days > 0:
         if days == 1:   tStr = "day"
         else:           tStr = "days"
-        str = str + "%s %s" %(days, tStr)
-        return str
-    elif hours > 0:
+        ss += " %s %s" %(days, tStr)
+    if hours > 0:
         if hours == 1:  tStr = "hour"
         else:           tStr = "hours"
-        str = str + "%s %s" %(hours, tStr)
-        return str
-    elif minutes > 0:
+        ss += " %s %s" %(hours, tStr)
+    if minutes > 0:
         if minutes == 1:tStr = "min"
         else:           tStr = "mins"
-        str = str + "%s %s" %(minutes, tStr)
-        return str
-    elif seconds >= 0:
+        ss += " %s %s" %(minutes, tStr)
+    if seconds > 0 or (seconds == 0 and days == 0 and hours == 0 and minutes == 0):
         if seconds <= 1:tStr = "sec"
         else:           tStr = "secs"
-        str = str + "%s %s" %(seconds, tStr)
-        return str
+        ss += " %g %s" %(seconds, tStr)
+
+    ss = ss.strip()
+    if ss != "":
+        return ss
     else:
         return None
 #}}}
+
 
 def check_output(*popenargs, **kwargs):#{{{
     r"""Run command with arguments and return its output as a byte string.
@@ -2388,4 +2717,18 @@ def week_beg_end(day):#{{{
     to_end_of_week = datetime.timedelta(days=6 - day_of_week)
     end_of_week = day + to_end_of_week
     return (beginning_of_week, end_of_week)
+#}}}
+def disk_usage(path):#{{{
+    """Return disk usage statistics about the given path.
+    (total, used, free) in bytes
+    """
+    try:
+        st = os.statvfs(path)
+        free = st.f_bavail * st.f_frsize
+        total = st.f_blocks * st.f_frsize
+        used = (st.f_blocks - st.f_bfree) * st.f_frsize
+        return (total, used, free)
+    except OSError:
+        print sys.stderr, "os.statvfs(%s) failed"%(path)
+        return (-1,-1,-1)
 #}}}

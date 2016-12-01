@@ -103,7 +103,7 @@ elif os.path.exists("/tmp"):
 rundir = SITE_ROOT
 suq_exec = "/usr/bin/suq";
 
-qd_fe_scriptfile = "%s/qd_topcons2_fe.py"%(path_app)
+qd_fe_scriptfile = "%s/qd_fe.py"%(path_app)
 gen_errfile = "%s/static/log/%s.err"%(SITE_ROOT, progname)
 
 # Create your views here.
@@ -287,7 +287,7 @@ def submit_seq(request):#{{{
                 # start the qd_fe if not, in the background
 #                 cmd = [qd_fe_scriptfile]
                 base_www_url = "http://" + request.META['HTTP_HOST']
-                if base_www_url.find("topcons.net") != -1: #run the daemon only at the frontend
+                if base_www_url.find("bioinfo.se") != -1: #run the daemon only at the frontend
                     cmd = "nohup python %s &"%(qd_fe_scriptfile)
                     os.system(cmd)
 #                 try:

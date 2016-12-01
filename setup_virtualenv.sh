@@ -25,6 +25,10 @@ pip install biopython
 pip install django-eztables
 #pip install matplotlib
 
+# subcons specific
+pip install mechanize
+pip install pandas
+
 # install python packages for dealing with IP and country names
 pip install python-geoip
 pip install python-geoip-geolite2

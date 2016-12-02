@@ -12,12 +12,12 @@ my $python = abs_path("$rundir/../../env/bin/python");
 # at proj
 my $basedir = abs_path("$rundir/../pred");
 my $auth_ip_file = "$basedir/auth_iplist.txt";#ip address which allows to run cgi script
-my $target_progname = "$basedir/app/qd_topcons2_fe.py";
+my $target_progname = "$basedir/app/qd_fe.py";
 $target_progname = abs_path($target_progname);
 my $progname = basename(__FILE__);
 
 print header();
-print start_html(-title => "restart qd_topcons2_fe.py",
+print start_html(-title => "restart qd_fe.py",
     -author => "nanjiang.shu\@scilifelab.se",
     -meta   => {'keywords'=>''});
 

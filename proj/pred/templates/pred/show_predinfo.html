@@ -1,10 +1,10 @@
 <p>
     <br>
-    Predicted topologies and predicted &Delta;G values:
+    Predicted subcellular location:
 </p>
 <table cellpadding="2">
     <tr><td>
-            <img src="{{STATIC_URL}}result/{{jobid}}/{{jobid}}/{{subdirname}}/Topcons/total_image.png" alt="Topology" style="width:580px">
+            <img src="{{STATIC_URL}}result/{{jobid}}/{{jobid}}/{{subdirname}}/Topcons/total_image.png" alt="SubCons" style="width:580px">
     </td><tr>
     <tr><td align="right">
             <a
@@ -16,7 +16,7 @@
 
 <p>
     <br>
-    Consensus prediction (TOPCONS):
+    Consensus prediction:
 </p>
 
 <table cellpadding="2">
@@ -31,8 +31,9 @@
 </table>
 
 <br>
-<p>Predicted signal peptide and TM-helix positions (position starting from 1):</p>
+<p>Predicted subcellular locations of each methods:</p>
 <div id="tm_list_table" style="width:600;overflow:auto">
+{%comment%}
 <table cellpadding=2 cellspacing=0 border=0 style="table-layout:fixed; overflow:scroll;">
     {% for method, color, posSP_str, posTM in TMlist %}
         {% if posTM.0 == "***No signal peptide nor TM-regions predicted***" or posTM.0 == "***No homologous TM proteins detected***" %}
@@ -79,11 +80,6 @@
         {%endif%}
     {% endfor%}
 </table>
+{%endcomment%}
 </div>
 
-{%if nicetopfile  and not isAllNonTM %}
-    <br>
-    <p>Sequence and predicted topologies:
-    (i: inside the membrane, o: outside of the membrane, M: membrane region, u: non-membrane region but location unkown)</p>
-    {% include nicetopfile %}
-{%endif%}

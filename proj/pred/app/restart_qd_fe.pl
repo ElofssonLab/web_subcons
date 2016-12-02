@@ -10,19 +10,25 @@ $ua->timeout(10);
 
 my $rundir = dirname(abs_path(__FILE__));
 my $basedir = "$rundir/../";
+my $urlfile = abs_path("$basedir/static/log/base_www_url.txt");
 
 my @to_email_list = (
     "nanjiang.shu\@gmail.com");
 
 my $date = localtime();
+
+my @urllist = ();
+open my $fpin, '<', $urlfile;
+chomp(@urllist = <$fpin>);
+close $fpin;
+
 print "Date: $date\n";
-my $url = "http://v2.topcons.net";
-my @urllist = ("http://v2.topcons.net");
-my $target_qd_script_name = "qd_topcons2_fe.py";
+
+my $target_qd_script_name = "qd_fe.py";
 
 foreach $url (@urllist){ 
 # first: check if $url is accessable
-    $output=`curl $url/cgi-bin/restart_qd_topcons2_fe.cgi 2>&1 | html2text`;
+    $output=`curl $url/cgi-bin/restart_qd_fe.cgi 2>&1 | html2text`;
     my $title = "$target_qd_script_name restarted for $url";
     (my $tmpfh, my $tmpmessagefile) = File::Temp::tempfile("/tmp/message.XXXXXXX", SUFFIX=>".txt");
     print $tmpfh  "$output"."\n";

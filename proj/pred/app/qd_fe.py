@@ -2,28 +2,6 @@
 # Description: daemon to submit jobs and retrieve results to/from remote
 #              servers
 # 
-# submit job, 
-# get finished jobids 
-# try to retrieve jobs with in finished jobids
-
-# ChangeLog 2015-08-17
-#   The number of jobs submitted to remote servers is calculated based on the
-#   queries in remotequeue_index.txt files instead of using get_suqlist.cgi
-# ChangeLog 2015-08-23 
-#   Fixed the bug for re-creating the torun_idx_file, the code should be before
-#   the return 1
-# ChangeLog 2015-09-07
-#   the torun_idx_file is re-created if remotequeue_idx_file is empty but the
-#   job is not finished
-# ChangeLog 2016-03-04 
-#   fix the bug in re-creation of the torun_idx_file, completed_idx_set is
-#   strings but range(numseq) is list of integer numbers
-# ChangeLog 2016-06-28
-#   move the storage location of results to cache
-#   the results located for each job is a link to cache
-# ChangeLog 2016-07-11
-#   1. do not add deleted jobfolder to finishedjoblogfile
-
 import os
 import sys
 import site
@@ -39,6 +17,7 @@ sys.path.append("%s/env/lib/python2.7/site-packages/"%(webserver_root))
 sys.path.append("/usr/local/lib/python2.7/dist-packages")
 
 import myfunc
+import webserver_common
 import time
 import datetime
 import requests
@@ -105,15 +84,8 @@ path_stat = "%s/stat"%(path_log)
 path_result = "%s/static/result"%(basedir)
 path_cache = "%s/static/result/cache"%(basedir)
 computenodefile = "%s/static/computenode.txt"%(basedir)
-MAX_SUBMIT_JOB_PER_NODE = 400
+MAX_SUBMIT_JOB_PER_NODE = 200
 MAX_KEEP_DAYS = 30
-blastdir = "%s/%s"%(rundir, "soft/topcons2_webserver/tools/blast-2.2.26")
-os.environ['SCAMPI_DIR'] = "/server/scampi"
-os.environ['MODHMM_BIN'] = "/server/modhmm/bin"
-os.environ['BLASTMAT'] = "%s/data"%(blastdir)
-os.environ['BLASTBIN'] = "%s/bin"%(blastdir)
-os.environ['BLASTDB'] = "%s/%s"%(rundir, "soft/topcons2_webserver/database/blast/")
-script_scampi = "%s/%s"%(rundir, "mySCAMPI_run.pl")
 gen_errfile = "%s/static/log/%s.err"%(basedir, progname)
 gen_logfile = "%s/static/log/%s.log"%(basedir, progname)
 black_iplist_file = "%s/black_iplist.txt"%(basedir)
@@ -398,22 +370,7 @@ def CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,#{{{
                             else:
                                 runtime = runtime1
 
-                            topfile = "%s/%s/topcons.top"%(
-                                    outpath_this_seq, "Topcons")
-# get origIndex and then read description the description list
-                            try:
-                                description = seqannolist[origIndex]
-                            except:
-                                description = "seq_%d"%(origIndex)
-                            top = myfunc.ReadFile(topfile).strip()
-                            numTM = myfunc.CountTM(top)
-                            posSP = myfunc.GetSPPosition(top)
-                            if len(posSP) > 0:
-                                isHasSP = True
-                            else:
-                                isHasSP = False
-                            info_finish = [ dd, str(len(top)), str(numTM),
-                                    str(isHasSP), "newrun", str(runtime), description]
+                            info_finish = [ dd, str(len(top)), "newrun", str(runtime), description]
                             finished_info_list.append("\t".join(info_finish))
                 except:
                     date_str = time.strftime("%Y-%m-%d %H:%M:%S")
@@ -568,18 +525,8 @@ def SubmitJob(jobid,cntSubmitJobDict, numseq_this_user):#{{{
                             myfunc.WriteFile(date_str, starttagfile, "w", True)
 
                         runtime = 0.0 #in seconds
-                        topfile = "%s/%s/topcons.top"%(
-                                outpath_this_seq, "Topcons")
-                        top = myfunc.ReadFile(topfile).strip()
-                        numTM = myfunc.CountTM(top)
-                        posSP = myfunc.GetSPPosition(top)
-                        if len(posSP) > 0:
-                            isHasSP = True
-                        else:
-                            isHasSP = False
                         info_finish = [ "seq_%d"%i,
-                                str(len(seqList[i])), str(numTM),
-                                str(isHasSP), "cached", str(runtime),
+                                str(len(seqList[i])), str(runtime),
                                 seqAnnoList[i]]
                         myfunc.WriteFile("\t".join(info_finish)+"\n",
                                 finished_seq_file, "a", isFlush=True)
@@ -1097,17 +1044,7 @@ def GetResult(jobid):#{{{
             else:
                 runtime = runtime1
 
-            topfile = "%s/%s/topcons.top"%(
-                    outpath_this_seq, "Topcons")
-            top = myfunc.ReadFile(topfile).strip()
-            numTM = myfunc.CountTM(top)
-            posSP = myfunc.GetSPPosition(top)
-            if len(posSP) > 0:
-                isHasSP = True
-            else:
-                isHasSP = False
-            info_finish = [ "seq_%d"%origIndex, str(len(seq)), str(numTM),
-                    str(isHasSP), "newrun", str(runtime), description]
+            info_finish = [ "seq_%d"%origIndex, str(len(seq)), "newrun", str(runtime), description]
             finished_info_list.append("\t".join(info_finish))
             finished_idx_list.append(str(origIndex))#}}}
 
@@ -1183,7 +1120,7 @@ def CheckIfJobFinished(jobid, numseq, email):#{{{
         if os.path.exists(base_www_url_file):
             base_www_url = myfunc.ReadFile(base_www_url_file).strip()
         if base_www_url == "":
-            base_www_url = "http://topcons.net"
+            base_www_url = "http://subcons.bioinfo.se"
 
         date_str = time.strftime("%Y-%m-%d %H:%M:%S")
         date_str_epoch = time.time()
@@ -1201,7 +1138,7 @@ def CheckIfJobFinished(jobid, numseq, email):#{{{
         start_date_epoch = datetime.datetime.strptime(start_date_str, "%Y-%m-%d %H:%M:%S").strftime('%s')
         all_runtime_in_sec = float(date_str_epoch) - float(start_date_epoch)
 
-        myfunc.WriteTOPCONSTextResultFile(resultfile_text, outpath_result, maplist,
+        webserver_common.WriteSubconsTextResultFile(resultfile_text, outpath_result, maplist,
                 all_runtime_in_sec, base_www_url, statfile=statfile)
 
         # now making zip instead (for windows users)
@@ -1228,14 +1165,14 @@ def CheckIfJobFinished(jobid, numseq, email):#{{{
             if os.path.exists(errfile):
                 err_msg = myfunc.ReadFile(errfile)
 
-            from_email = "info@topcons.net"
+            from_email = "info@subcons.bioinfo.se"
             to_email = email
-            subject = "Your result for TOPCONS2 JOBID=%s"%(jobid)
+            subject = "Your result for Subcons JOBID=%s"%(jobid)
             if finish_status == "success":
                 bodytext = """
     Your result is ready at %s/pred/result/%s
 
-    Thanks for using TOPCONS2
+    Thanks for using Subcons
 
             """%(base_www_url, jobid)
             elif finish_status == "failed":
@@ -1251,7 +1188,7 @@ def CheckIfJobFinished(jobid, numseq, email):#{{{
                 bodytext="""
     Your result is ready at %s/pred/result/%s
 
-    We are sorry that TOPCONS failed to predict some sequences of your job.
+    We are sorry that Subcons failed to predict some sequences of your job.
 
     Please re-submit the queries that have been failed.
 

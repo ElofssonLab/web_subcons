@@ -10,12 +10,12 @@ biopython
 django-eztables
 
 matplotlib
-scikit-learn==0.17.1
 mechanize
 pandas
 numpy
 scipy
 ZSI
+scikit-learn==0.17.1
 
 
 python-geoip

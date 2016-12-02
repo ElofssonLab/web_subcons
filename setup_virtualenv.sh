@@ -12,24 +12,7 @@ exec_virtualenv=virtualenv
 if [ -f "/usr/local/bin/virtualenv" ];then
     exec_virtualenv=/usr/local/bin/virtualenv
 fi
-eval "$exec_virtualenv env  --system-site-packages"
+eval "$exec_virtualenv env"
 source ./env/bin/activate
-pip install numpy
-pip install Django
-pip install pysqlite
-pip install lxml
-pip install suds
-pip install misc/spyne.github.tar.gz
-pip install --upgrade requests
-pip install biopython
-pip install django-eztables
-#pip install matplotlib
 
-# subcons specific
-pip install mechanize
-pip install pandas
-
-# install python packages for dealing with IP and country names
-pip install python-geoip
-pip install python-geoip-geolite2
-pip install pycountry-nopytest
+pip install -r requirements.txt

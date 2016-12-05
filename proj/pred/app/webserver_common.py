@@ -48,7 +48,7 @@ def WriteSubconsTextResultFile(outfile, outpath_result, maplist,#{{{
             resultfile = "%s/%s/query.result.txt"%(outpath_result, subfoldername)
             content = ""
             if os.path.exists(resultfile):
-                content = ReadFile(resultfile)
+                content = myfunc.ReadFile(resultfile)
                 print >> fpout, content
 
             cnt += 1

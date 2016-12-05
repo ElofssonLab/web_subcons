@@ -216,7 +216,7 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
                     pass
 
             seqfile_this_seq = "%s/%s"%(tmp_outpath_result, "query_%d.fa"%(origIndex))
-            seqcontent = ">%d\n%s\n"%(origIndex, seq)
+            seqcontent = ">query_%d\n%s\n"%(origIndex, seq)
             myfunc.WriteFile(seqcontent, seqfile_this_seq, "w")
 
             if not os.path.exists(seqfile_this_seq):

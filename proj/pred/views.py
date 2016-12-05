@@ -790,7 +790,7 @@ def RunQuery(request, query):#{{{
 
     # for single sequence job submitted via web interface, submit to local
     # queue
-    if query['numseq'] <= 1:
+    if query['numseq'] <= 0: #not jobs are submitted to the front-end server
 # Note 2015-06-05, suq ls failed randomly if called frequently, disable it
         #query['numseq_this_user'] = GetNumSameUserInQueue(rstdir, query['client_ip'], query['email'])
         query['numseq_this_user'] = 1

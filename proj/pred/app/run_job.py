@@ -18,8 +18,8 @@ webserver_root = os.path.realpath("%s/../../../"%(rundir))
 activate_env="%s/env/bin/activate_this.py"%(webserver_root)
 execfile(activate_env, dict(__file__=activate_env))
 
-#runscript = "%s/%s"%(rundir, "soft/subcons/run_subcons.sh")
-runscript = "%s/%s"%(rundir, "soft/subcons/dummyrun.sh")
+runscript = "%s/%s"%(rundir, "soft/subcons/master_subcons.sh")
+#runscript = "%s/%s"%(rundir, "soft/subcons/dummyrun.sh")
 
 basedir = os.path.realpath("%s/.."%(rundir)) # path of the application, i.e. pred/
 path_md5cache = "%s/static/md5"%(basedir)
@@ -89,7 +89,6 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
 
     outpath_result = "%s/%s"%(outpath, resultpathname)
     tmp_outpath_result = "%s/%s"%(tmpdir, resultpathname)
-    tmp_scratch = "%s/%s"%(tmpdir, "scratch")
 
     tarball = "%s.tar.gz"%(resultpathname)
     zipfile = "%s.zip"%(resultpathname)
@@ -100,7 +99,7 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
     finished_seq_file = "%s/finished_seqs.txt"%(outpath_result)
 
     isOK = True
-    for folder in [outpath_result, tmp_outpath_result, tmp_scratch]:
+    for folder in [outpath_result, tmp_outpath_result]:
         try:
             os.makedirs(folder)
         except OSError:
@@ -108,8 +107,6 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
             myfunc.WriteFile(msg+"\n", runjob_errfile, "a")
             isOK = False
             pass
-
-
 
     if isOK:
         try:
@@ -227,7 +224,7 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
                 continue
 
 
-            cmd = ["python", runscript, seqfile_this_seq,  tmp_outpath_result, tmp_scratch]
+            cmd = ["bash", runscript, seqfile_this_seq,  tmp_outpath_result]
             cmdline = " ".join(cmd)
             g_params['runjob_log'].append(" ".join(cmd))
             begin_time = time.time()

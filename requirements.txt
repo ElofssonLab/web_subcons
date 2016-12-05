@@ -1,7 +1,7 @@
 misc/spyne.github.tar.gz
 misc/PyXML-0.8.4.tar.gz
 
-Django
+Django==1.6.2
 pysqlite
 lxml
 suds

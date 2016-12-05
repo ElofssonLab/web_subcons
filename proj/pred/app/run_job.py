@@ -81,6 +81,7 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
     starttagfile   = "%s/runjob.start"%(outpath)
     runjob_errfile = "%s/runjob.err"%(outpath)
     runjob_logfile = "%s/runjob.log"%(outpath)
+    app_logfile = "%s/app.log"%(outpath)
     finishtagfile = "%s/runjob.finish"%(outpath)
     rmsg = ""
 
@@ -224,7 +225,7 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
                 continue
 
 
-            cmd = ["bash", runscript, seqfile_this_seq,  tmp_outpath_this_seq]
+            cmd = ["bash", runscript, seqfile_this_seq,  tmp_outpath_this_seq, ">>", app_logfile, "2>&1" ]
             cmdline = " ".join(cmd)
             g_params['runjob_log'].append(" ".join(cmd))
             begin_time = time.time()

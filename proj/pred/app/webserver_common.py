@@ -45,7 +45,7 @@ def WriteSubconsTextResultFile(outfile, outpath_result, maplist,#{{{
                 rstfile = ""
                 if method == "SubCons":
                     rstfile = "%s/%s/%s/query_0.subcons-final-pred.csv"%(outpath_result, subfoldername, "final-prediction")
-                elif: 
+                else:
                     rstfile = "%s/%s/%s/query_0.%s.csv"%(outpath_result, subfoldername, "for-dat", method.lower())
 
                 if os.path.exists(rstfile):

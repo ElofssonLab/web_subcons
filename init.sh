@@ -1,7 +1,7 @@
 #!/bin/bash
 # initialize the working folder
 exec_cmd(){
-#    echo "$*"
+    echo "$*"
     eval "$*"
 }
 rundir=`dirname $0`
@@ -41,26 +41,26 @@ esac
 
 for file in $filelist; do
     if [ -f "$file" ];then
-        sudo chown $user:$group $file
+        exec_cmd "sudo chown $user:$group $file"
     fi
 done
 
 for dir in  $dirlist; do
     if [ ! -d $dir ];then
-        sudo mkdir -p $dir
+        exec_cmd "sudo mkdir -p $dir"
     fi
-    sudo chmod 755 $dir
-    sudo chown -R $user:$group $dir
+    exec_cmd "sudo chmod 755 $dir"
+    exec_cmd "sudo chown -R $user:$group $dir"
 done
 
 logfile_submit=$rundir/proj/pred/static/log/submitted_seq.log
 if [ ! -f $logfile_submit ];then
-    sudo touch $logfile_submit
+    exec_cmd "sudo touch $logfile_submit"
 fi
-sudo chmod 644 $logfile_submit
-sudo chown $user:$group $logfile_submit
+exec_cmd "sudo chmod 644 $logfile_submit"
+exec_cmd "sudo chown $user:$group $logfile_submit"
 
 # fix the settings.py
-if [ ! -f $rundir/settings.py ];then
+if [ ! -f $rundir/settings.py -a ! -l $rundir/settting.py ];then
     pushd $rundir/proj; ln -s pro_settings.py settings.py; popd;
 fi

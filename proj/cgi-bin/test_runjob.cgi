@@ -16,6 +16,7 @@ my $errfile = "$logpath/$progname.err";
 my $auth_ip_file = "$basedir/auth_iplist.txt";#ip address which allows to run cgi script
 my $suq = "/usr/bin/suq";
 my $suqbase = "/scratch";
+my $suqworkdir = "/scratch";
 
 my $runjobscript = "$basedir/pred/app/run_job.py";
 
@@ -46,7 +47,7 @@ while(<IN>) {
 close IN;
 
 if (grep { $_ eq $remote_host } @auth_iplist) {
-    my $command =  "$suq -b $suqbase run $runjobscript >>$errfile";
+    my $command =  "$suq -b $suqbase run -d $suqworkdir $runjobscript >>$errfile";
     $output = `$command`;
     print "<pre>";
     print "Host IP: $remote_host\n\n";

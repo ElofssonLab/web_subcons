@@ -15,4 +15,4 @@ fi
 eval "$exec_virtualenv env"
 source ./env/bin/activate
 
-pip install -r requirements.txt
+pip install --ignore-installed -r requirements.txt

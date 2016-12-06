@@ -6,7 +6,7 @@ exec_cmd(){
 }
 rundir=`dirname $0`
 
-rundir=`realpath $rundir`
+rundir=`readlink -f $rundir`
 cd $rundir
 
 

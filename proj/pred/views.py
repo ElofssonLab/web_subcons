@@ -2343,7 +2343,7 @@ def get_results(request, jobid="1"):#{{{
 
     if numseq <= 1:
         if method_submission == "web":
-            resultdict['refresh_interval'] = 2
+            resultdict['refresh_interval'] = 5
         else:
             resultdict['refresh_interval'] = 5
     else:

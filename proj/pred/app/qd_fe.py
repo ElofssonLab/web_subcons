@@ -89,7 +89,7 @@ MAX_KEEP_DAYS = 30
 gen_errfile = "%s/static/log/%s.err"%(basedir, progname)
 gen_logfile = "%s/static/log/%s.log"%(basedir, progname)
 black_iplist_file = "%s/black_iplist.txt"%(basedir)
-SLEEP_INTERVAL = 20 # sleep interval in seconds
+SLEEP_INTERVAL = 2 # sleep interval in seconds
 
 def PrintHelp(fpout=sys.stdout):#{{{
     print >> fpout, usage_short

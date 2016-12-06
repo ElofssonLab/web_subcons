@@ -317,11 +317,6 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
             if rt_msg:
                 g_params['runjob_err'].append(rt_msg)
 
-        datetime = time.strftime("%Y-%m-%d %H:%M:%S")
-        if os.path.exists(finished_seq_file):
-            rt_msg = myfunc.WriteFile(datetime, finishtagfile)
-            if rt_msg:
-                g_params['runjob_err'].append(rt_msg)
 
 # now write the text output to a single file
         statfile = "%s/%s"%(outpath_result, "stat.txt")
@@ -339,6 +334,12 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
             g_params['runjob_err'].append(str(e))
             pass
 
+        # write finish tag file
+        datetime = time.strftime("%Y-%m-%d %H:%M:%S")
+        if os.path.exists(finished_seq_file):
+            rt_msg = myfunc.WriteFile(datetime, finishtagfile)
+            if rt_msg:
+                g_params['runjob_err'].append(rt_msg)
 
     isSuccess = False
     if (os.path.exists(finishtagfile) and os.path.exists(zipfile_fullpath)):

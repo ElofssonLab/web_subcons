@@ -3,7 +3,7 @@ misc/PyXML-0.8.4.tar.gz
 
 Django==1.6.2
 pysqlite
-lxml
+lxml=3.6.0
 suds
 requests
 biopython

@@ -21,4 +21,5 @@ scikit-learn==0.17.1
 python-geoip
 python-geoip-geolite2
 pycountry-nopytest
+pycountry
 

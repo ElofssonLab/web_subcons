@@ -10,6 +10,9 @@ rundir=`realpath $rundir`
 cd $rundir
 
 
+filelist="
+$rundir/db.sqlite3
+"
 dirlist="
 $rundir/proj/pred/static/tmp
 $rundir/proj/pred/static/result
@@ -36,13 +39,18 @@ case $platform in
 esac
 
 
+for file in $filelist; do
+    if [ -f "$file" ];then
+        sudo chown $user:$group $file
+    fi
+done
 
 for dir in  $dirlist; do
     if [ ! -d $dir ];then
         sudo mkdir -p $dir
     fi
     sudo chmod 755 $dir
-    sudo chown $user:$group $dir
+    sudo chown -R $user:$group $dir
 done
 
 logfile_submit=$rundir/proj/pred/static/log/submitted_seq.log

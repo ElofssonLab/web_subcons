@@ -546,40 +546,6 @@ def SubmitJob(jobid,cntSubmitJobDict, numseq_this_user):#{{{
         if len(init_finished_idx_list)>0:
             myfunc.WriteFile("\n".join(init_finished_idx_list)+"\n", finished_idx_file, "a", True)
 
-        # run scampi single to estimate the number of TM helices and then run
-        # the query sequences in the descending order of numTM
-        torun_all_seqfile = "%s/%s"%(tmpdir, "query.torun.fa")
-        dumplist = []
-        for key in toRunDict:
-            top = toRunDict[key][0]
-            dumplist.append(">%s\n%s"%(str(key), top))
-        if len(dumplist)>0:
-            myfunc.WriteFile("\n".join(dumplist)+"\n", torun_all_seqfile, "w", True)
-        else:
-            myfunc.WriteFile("", torun_all_seqfile, "w", True)
-        del dumplist
-
-        topfile_scampiseq = "%s/%s"%(tmpdir, "query.torun.fa.topo")
-        if os.path.exists(torun_all_seqfile):
-            # run scampi to estimate the number of TM helices
-            cmd = [script_scampi, torun_all_seqfile, "-outpath", tmpdir]
-            cmdline = " ".join(cmd)
-            try:
-                rmsg = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-            except subprocess.CalledProcessError, e:
-                date_str = time.strftime("%Y-%m-%d %H:%M:%S")
-                myfunc.WriteFile("[Date: %s]"%(date_str)+str(e)+"\n", gen_errfile, "a", True)
-                myfunc.WriteFile("[Date: %s] cmdline = %s\n"%(date_str,
-                    cmdline), gen_errfile, "a", True)
-                pass
-        if os.path.exists(topfile_scampiseq):
-            (idlist_scampi, annolist_scampi, toplist_scampi) = myfunc.ReadFasta(topfile_scampiseq)
-            for jj in xrange(len(idlist_scampi)):
-                numTM = myfunc.CountTM(toplist_scampi[jj])
-                try:
-                    toRunDict[int(idlist_scampi[jj])][1] = numTM
-                except (KeyError, ValueError, TypeError):
-                    pass
 
         sortedlist = sorted(toRunDict.items(), key=lambda x:x[1][1], reverse=True)
 

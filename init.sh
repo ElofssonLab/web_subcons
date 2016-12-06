@@ -61,6 +61,6 @@ exec_cmd "sudo chmod 644 $logfile_submit"
 exec_cmd "sudo chown $user:$group $logfile_submit"
 
 # fix the settings.py
-if [ ! -f $rundir/settings.py -a ! -l $rundir/settting.py ];then
+if [ ! -f $rundir/settings.py -a ! -L $rundir/settting.py ];then
     pushd $rundir/proj; ln -s pro_settings.py settings.py; popd;
 fi

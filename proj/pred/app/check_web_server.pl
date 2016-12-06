@@ -1,10 +1,10 @@
 #!/usr/bin/perl -w
-# Filename:  check_v2.topcons.net.pl
+# Filename:   check_web_server.pl
 
-# Description: check whether v2.topcons.net is accessable and also check the status
-#              of the qd_topcons_fe.pl
+# Description: check whether web-server is accessable and also check the status
+#              of the qd_fe.py
 
-# Created 2015-04-10, updated 2015-04-10, Nanjiang Shu
+# Created 2016-12-07, updated 2016-12-07, Nanjiang Shu
 
 use File::Temp;
 
@@ -24,8 +24,8 @@ my @to_email_list = (
 my $date = localtime();
 print "Date: $date\n";
 my $url = "http://subcons.bioinfo.se";
-my @urllist = ("http://v2.topcons.net");
-my $target_qd_script_name = "qd_topcons2_fe.py";
+my @urllist = ("http://subcons.bioinfo.se");
+my $target_qd_script_name = "qd_fe.py";
 my $computenodelistfile = "$basedir/static/computenode.txt";
 my $from_email = "nanjiang.shu\@scilifelab.se";
 my $title = "";
@@ -42,11 +42,11 @@ foreach $url (@urllist){
     }
 
 # second: check if qd_topcons2_fe.pl running at pcons1.scilifelab.se frontend
-    my $num_running=`curl $url/cgi-bin/check_qd_topcons2_fe.cgi 2> /dev/null | html2text | grep  "$target_qd_script_name" | wc -l`;
+    my $num_running=`curl $url/cgi-bin/check_qd_fe.cgi 2> /dev/null | html2text | grep  "$target_qd_script_name" | wc -l`;
     chomp($num_running);
 
     if ($num_running < 1){
-        $output=`curl $url/cgi-bin/restart_qd_topcons2_fe.cgi 2>&1 | html2text`;
+        $output=`curl $url/cgi-bin/restart_qd_fe.cgi 2>&1 | html2text`;
         $title = "$target_qd_script_name restarted for $url";
         foreach my $to_email(@to_email_list) {
             sendmail($to_email, $from_email, $title, $output);

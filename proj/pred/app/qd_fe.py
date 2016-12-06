@@ -1759,6 +1759,7 @@ def RunStatistics(path_result, path_log):#{{{
                     numseq = int(strs[3])
                 except:
                     pass
+                method_submission = strs[7]
                 isValidSubmitDate = True
                 try:
                     submit_date = datetime.datetime.strptime(submit_date_str, "%Y-%m-%d %H:%M:%S")

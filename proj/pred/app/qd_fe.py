@@ -1627,9 +1627,12 @@ def RunStatistics(path_result, path_log):#{{{
         hdl.close()
 
     li_content = []
-    for line in [line_mostTM, line_longestseq, line_longestruntime]:
-        li_content.append(line)
-    myfunc.WriteFile("\n".join(li_content)+"\n", extreme_runtimelogfile, "w", True)
+    try:
+        for line in [line_mostTM, line_longestseq, line_longestruntime]:
+            li_content.append(line)
+        myfunc.WriteFile("\n".join(li_content)+"\n", extreme_runtimelogfile, "w", True)
+    except:
+        pass
 
     # get lengthseq -vs- average_runtime
     dict_list = [dict_length_runtime, dict_length_runtime_pfam, dict_length_runtime_cdd, dict_length_runtime_uniref]

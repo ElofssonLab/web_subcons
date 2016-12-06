@@ -225,7 +225,7 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
                 continue
 
 
-            cmd = ["bash", runscript, seqfile_this_seq,  tmp_outpath_this_seq, ">>", app_logfile, "2>&1" ]
+            cmd = ["bash", runscript, seqfile_this_seq,  tmp_outpath_this_seq, "-verbose", ">>", app_logfile, "2>&1" ]
             cmdline = " ".join(cmd)
             g_params['runjob_log'].append(" ".join(cmd))
             begin_time = time.time()

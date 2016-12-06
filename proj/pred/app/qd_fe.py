@@ -39,9 +39,9 @@ vip_user_list = [
         "nanjiang.shu@scilifelab.se"
         ]
 
-DEBUG = False
+DEBUG = True
 DEBUG_NO_SUBMIT = False
-DEBUG_CACHE = False
+DEBUG_CACHE = True
 
 # make sure that only one instance of the script is running
 # this code is working 

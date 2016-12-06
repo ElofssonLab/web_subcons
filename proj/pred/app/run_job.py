@@ -18,6 +18,8 @@ webserver_root = os.path.realpath("%s/../../../"%(rundir))
 activate_env="%s/env/bin/activate_this.py"%(webserver_root)
 execfile(activate_env, dict(__file__=activate_env))
 
+site.addsitedir("%s/env/lib/python2.7/site-packages/"%(webserver_root))
+
 runscript = "%s/%s"%(rundir, "soft/subcons/master_subcons.sh")
 #runscript = "%s/%s"%(rundir, "soft/subcons/dummyrun.sh")
 

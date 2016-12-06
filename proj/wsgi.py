@@ -23,6 +23,8 @@ execfile(activate_env, dict(__file__=activate_env))
 
 #Add the site-packages of the virtualenv
 site.addsitedir("%s/env/lib/python2.7/site-packages/"%(basedir))
+sys.path.append("%s/env/lib/python2.7/site-packages/"%(basedir))
+sys.path.append("/usr/local/lib/python2.7/dist-packages")
 
 # Add the directory for the project
 sys.path.append(basedir)

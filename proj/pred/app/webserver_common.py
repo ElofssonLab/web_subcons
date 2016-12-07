@@ -51,11 +51,13 @@ def WriteSubconsTextResultFile(outfile, outpath_result, maplist,#{{{
                 if os.path.exists(rstfile):
                     content = myfunc.ReadFile(rstfile).strip()
                     lines = content.split("\n")
-                    if len(lines) == 2:
+                    if len(lines) >= 2:
                         strs1 = lines[0].split("\t")
                         strs2 = lines[1].split("\t")
                         if strs1[0].strip() == "":
                             strs1[0] = "id_protein"
+                        if len(strs1) < len(strs2):
+                            strs1.insert(0, "id_protein")
                         if strs2[0].strip() == "query_0":
                             strs2[0] = seqid
 

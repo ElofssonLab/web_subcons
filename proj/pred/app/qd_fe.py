@@ -1916,6 +1916,9 @@ def main(g_params):#{{{
         for node in avail_computenode_list:
             remotequeueDict[node] = []
         for jobid in runjobidlist:
+            lock_file = "%s/%s/%s.lock"%(path_result, jobid, "runjob.lock")
+            if os.path.exists(lock_file):
+                continue
             rstdir = "%s/%s"%(path_result, jobid)
             remotequeue_idx_file = "%s/remotequeue_seqindex.txt"%(rstdir)
             if os.path.exists(remotequeue_idx_file):
@@ -1974,6 +1977,10 @@ def main(g_params):#{{{
                         rstdir = "%s/%s"%(path_result, jobid)
                         finishtagfile = "%s/%s"%(rstdir, "runjob.finish")
                         status = strs[1]
+
+                        lock_file = "%s/%s/%s.lock"%(path_result, jobid, "runjob.lock")
+                        if os.path.exists(lock_file):
+                            continue
 
                         if IsHaveAvailNode(cntSubmitJobDict):
                             if not DEBUG_NO_SUBMIT:

@@ -11,6 +11,7 @@ import hashlib
 import shutil
 import datetime
 import site
+import fcntl
 progname =  os.path.basename(sys.argv[0])
 wspace = ''.join([" "]*len(progname))
 rundir = os.path.dirname(os.path.realpath(__file__))
@@ -27,6 +28,9 @@ runscript = "%s/%s"%(rundir, "soft/subcons/master_subcons.sh")
 basedir = os.path.realpath("%s/.."%(rundir)) # path of the application, i.e. pred/
 path_md5cache = "%s/static/md5"%(basedir)
 path_cache = "%s/static/result/cache"%(basedir)
+path_result = "%s/static/result/"%(basedir)
+gen_errfile = "%s/static/log/%s.err"%(basedir, progname)
+gen_logfile = "%s/static/log/%s.log"%(basedir, progname)
 
 contact_email = "nanjiang.shu@scilifelab.se"
 vip_user_list = [
@@ -35,11 +39,12 @@ vip_user_list = [
 
 # note that here the url should be without http://
 
+
 usage_short="""
 Usage: %s seqfile_in_fasta 
        %s -jobid JOBID -outpath DIR -tmpdir DIR
        %s -email EMAIL -baseurl BASE_WWW_URL
-       %s [-force]
+       %s -only-get-cache [-force]
 """%(progname, wspace, wspace, wspace)
 
 usage_ext="""\
@@ -47,10 +52,11 @@ Description:
     run job
 
 OPTIONS:
-  -force        Do not use cahced result
-  -h, --help    Print this help message and exit
+  -only-get-cache   Only get the cached results, this will be run on the front-end
+  -force            Do not use cahced result
+  -h, --help        Print this help message and exit
 
-Created 2016-12-01, updated 2016-12-01, Nanjiang Shu
+Created 2016-12-01, updated 2016-12-07, Nanjiang Shu
 """
 usage_exp="""
 Examples:
@@ -102,92 +108,90 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
     mapfile = "%s/seqid_index_map.txt"%(outpath_result)
     finished_seq_file = "%s/finished_seqs.txt"%(outpath_result)
 
-    isOK = True
     for folder in [outpath_result, tmp_outpath_result]:
         try:
             os.makedirs(folder)
         except OSError:
             msg = "Failed to create folder %s"%(folder)
-            myfunc.WriteFile(msg+"\n", runjob_errfile, "a")
-            isOK = False
-            pass
+            myfunc.WriteFile(msg+"\n", gen_errfile, "a")
+            return 1
 
-    if isOK:
-        try:
-            open(finished_seq_file, 'w').close()
-        except:
-            pass
+    try:
+        open(finished_seq_file, 'w').close()
+    except:
+        pass
 #first getting result from caches
 # ==================================
 
-        maplist = []
-        maplist_simple = []
-        toRunDict = {}
-        hdl = myfunc.ReadFastaByBlock(infile, method_seqid=0, method_seq=0)
-        if hdl.failure:
-            isOK = False
-        else:
-            datetime = time.strftime("%Y-%m-%d %H:%M:%S")
-            rt_msg = myfunc.WriteFile(datetime, starttagfile)
+    maplist = []
+    maplist_simple = []
+    toRunDict = {}
+    hdl = myfunc.ReadFastaByBlock(infile, method_seqid=0, method_seq=0)
+    if hdl.failure:
+        isOK = False
+    else:
+        datetime = time.strftime("%Y-%m-%d %H:%M:%S")
+        rt_msg = myfunc.WriteFile(datetime, starttagfile)
 
-            recordList = hdl.readseq()
-            cnt = 0
-            origpath = os.getcwd()
-            while recordList != None:
-                for rd in recordList:
-                    isSkip = False
-                    # temp outpath for the sequence is always seq_0, and I feed
-                    # only one seq a time to the workflow
-                    tmp_outpath_this_seq = "%s/%s"%(tmp_outpath_result, "seq_%d"%0)
-                    outpath_this_seq = "%s/%s"%(outpath_result, "seq_%d"%cnt)
-                    subfoldername_this_seq = "seq_%d"%(cnt)
-                    if os.path.exists(tmp_outpath_this_seq):
+        recordList = hdl.readseq()
+        cnt = 0
+        origpath = os.getcwd()
+        while recordList != None:
+            for rd in recordList:
+                isSkip = False
+                # temp outpath for the sequence is always seq_0, and I feed
+                # only one seq a time to the workflow
+                tmp_outpath_this_seq = "%s/%s"%(tmp_outpath_result, "seq_%d"%0)
+                outpath_this_seq = "%s/%s"%(outpath_result, "seq_%d"%cnt)
+                subfoldername_this_seq = "seq_%d"%(cnt)
+                if os.path.exists(tmp_outpath_this_seq):
+                    try:
+                        shutil.rmtree(tmp_outpath_this_seq)
+                    except OSError:
+                        pass
+
+                maplist.append("%s\t%d\t%s\t%s"%("seq_%d"%cnt, len(rd.seq),
+                    rd.description, rd.seq))
+                maplist_simple.append("%s\t%d\t%s"%("seq_%d"%cnt, len(rd.seq),
+                    rd.description))
+                if not g_params['isForceRun']:
+                    md5_key = hashlib.md5(rd.seq).hexdigest()
+                    subfoldername = md5_key[:2]
+                    cachedir = "%s/%s/%s"%(path_cache, subfoldername, md5_key)
+                    if os.path.exists(cachedir):
+                        # create a symlink to the cache
+                        rela_path = os.path.relpath(cachedir, outpath_result) #relative path
+                        os.chdir(outpath_result)
+                        os.symlink(rela_path, subfoldername_this_seq)
+
+                        if os.path.exists(outpath_this_seq):
+                            runtime = 0.0 #in seconds
+                            info_finish = [ "seq_%d"%cnt,
+                                    str(len(rd.seq)),
+                                    "cached", str(runtime),
+                                    rd.description]
+                            myfunc.WriteFile("\t".join(info_finish)+"\n",
+                                    finished_seq_file, "a", isFlush=True)
+                            isSkip = True
+
+                if not isSkip:
+                    # first try to delete the outfolder if exists
+                    if os.path.exists(outpath_this_seq):
                         try:
-                            shutil.rmtree(tmp_outpath_this_seq)
+                            shutil.rmtree(outpath_this_seq)
                         except OSError:
                             pass
+                    origIndex = cnt
+                    numTM = 0
+                    toRunDict[origIndex] = [rd.seq, numTM, rd.description] #init value for numTM is 0
 
-                    maplist.append("%s\t%d\t%s\t%s"%("seq_%d"%cnt, len(rd.seq),
-                        rd.description, rd.seq))
-                    maplist_simple.append("%s\t%d\t%s"%("seq_%d"%cnt, len(rd.seq),
-                        rd.description))
-                    if not g_params['isForceRun']:
-                        md5_key = hashlib.md5(rd.seq).hexdigest()
-                        subfoldername = md5_key[:2]
-                        cachedir = "%s/%s/%s"%(path_cache, subfoldername, md5_key)
-                        if os.path.exists(cachedir):
-                            # create a symlink to the cache
-                            rela_path = os.path.relpath(cachedir, outpath_result) #relative path
-                            os.chdir(outpath_result)
-                            os.symlink(rela_path, subfoldername_this_seq)
-
-                            if os.path.exists(outpath_this_seq):
-                                runtime = 0.0 #in seconds
-                                info_finish = [ "seq_%d"%cnt,
-                                        str(len(rd.seq)),
-                                        "cached", str(runtime),
-                                        rd.description]
-                                myfunc.WriteFile("\t".join(info_finish)+"\n",
-                                        finished_seq_file, "a", isFlush=True)
-                                isSkip = True
-
-                    if not isSkip:
-                        # first try to delete the outfolder if exists
-                        if os.path.exists(outpath_this_seq):
-                            try:
-                                shutil.rmtree(outpath_this_seq)
-                            except OSError:
-                                pass
-                        origIndex = cnt
-                        numTM = 0
-                        toRunDict[origIndex] = [rd.seq, numTM, rd.description] #init value for numTM is 0
-
-                    cnt += 1
-                recordList = hdl.readseq()
-            hdl.close()
-        myfunc.WriteFile("\n".join(maplist_simple)+"\n", mapfile)
+                cnt += 1
+            recordList = hdl.readseq()
+        hdl.close()
+    myfunc.WriteFile("\n".join(maplist_simple)+"\n", mapfile)
 
 
+    if not g_params['isOnlyGetCache']:
         torun_all_seqfile = "%s/%s"%(tmp_outpath_result, "query.torun.fa")
         dumplist = []
         for key in toRunDict:
@@ -312,16 +316,17 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
                             except:
                                 pass
 
-        all_end_time = time.time()
-        all_runtime_in_sec = all_end_time - all_begin_time
+    all_end_time = time.time()
+    all_runtime_in_sec = all_end_time - all_begin_time
 
-        if len(g_params['runjob_log']) > 0 :
-            rt_msg = myfunc.WriteFile("\n".join(g_params['runjob_log'])+"\n", runjob_logfile, "a")
-            if rt_msg:
-                g_params['runjob_err'].append(rt_msg)
+    if len(g_params['runjob_log']) > 0 :
+        rt_msg = myfunc.WriteFile("\n".join(g_params['runjob_log'])+"\n", runjob_logfile, "a")
+        if rt_msg:
+            g_params['runjob_err'].append(rt_msg)
 
 
-# now write the text output to a single file
+    if not g_params['isOnlyGetCache'] or len(toRunDict) == 0:
+        # now write the text output to a single file
         statfile = "%s/%s"%(outpath_result, "stat.txt")
         webserver_common.WriteSubconsTextResultFile(resultfile_text, outpath_result, maplist,
                 all_runtime_in_sec, g_params['base_www_url'], statfile=statfile)
@@ -344,47 +349,47 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
             if rt_msg:
                 g_params['runjob_err'].append(rt_msg)
 
-    isSuccess = False
-    if (os.path.exists(finishtagfile) and os.path.exists(zipfile_fullpath)):
-        isSuccess = True
-        # delete the tmpdir if succeeded
-        if g_params['runjob_err'] == "":
-            shutil.rmtree(tmpdir) #DEBUG, keep tmpdir
-    else:
         isSuccess = False
-        failtagfile = "%s/runjob.failed"%(outpath)
-        datetime = time.strftime("%Y-%m-%d %H:%M:%S")
-        rt_msg = myfunc.WriteFile(datetime, failtagfile)
-        if rt_msg:
-            g_params['runjob_err'].append(rt_msg)
+        if (os.path.exists(finishtagfile) and os.path.exists(zipfile_fullpath)):
+            isSuccess = True
+            # delete the tmpdir if succeeded
+            if g_params['runjob_err'] == "":
+                shutil.rmtree(tmpdir) #DEBUG, keep tmpdir
+        else:
+            isSuccess = False
+            failtagfile = "%s/runjob.failed"%(outpath)
+            datetime = time.strftime("%Y-%m-%d %H:%M:%S")
+            rt_msg = myfunc.WriteFile(datetime, failtagfile)
+            if rt_msg:
+                g_params['runjob_err'].append(rt_msg)
 
 # send the result to email
 # do not sendmail at the cloud VM
-    if (g_params['base_www_url'].find("bioinfo.se") != -1 and
-            myfunc.IsValidEmailAddress(email)):
-        from_email = "info@subcons.bioinfo.se"
-        to_email = email
-        subject = "Your result for SubCons JOBID=%s"%(jobid)
-        if isSuccess:
-            bodytext = """
-Your result is ready at %s/pred/result/%s
+        if (g_params['base_www_url'].find("bioinfo.se") != -1 and
+                myfunc.IsValidEmailAddress(email)):
+            from_email = "info@subcons.bioinfo.se"
+            to_email = email
+            subject = "Your result for SubCons JOBID=%s"%(jobid)
+            if isSuccess:
+                bodytext = """
+ Your result is ready at %s/pred/result/%s
 
-Thanks for using SubCons
+ Thanks for using SubCons
 
-        """%(g_params['base_www_url'], jobid)
-        else:
-            bodytext="""
+            """%(g_params['base_www_url'], jobid)
+            else:
+                bodytext="""
 We are sorry that your job with jobid %s is failed.
 
 Please contact %s if you have any questions.
 
 Attached below is the error message:
 %s
-            """%(jobid, contact_email, "\n".join(g_params['runjob_err']))
-        g_params['runjob_log'].append("Sendmail %s -> %s, %s"% (from_email, to_email, subject)) #debug
-        rtValue = myfunc.Sendmail(from_email, to_email, subject, bodytext)
-        if rtValue != 0:
-            g_params['runjob_err'].append("Sendmail to {} failed with status {}".format(to_email, rtValue))
+                """%(jobid, contact_email, "\n".join(g_params['runjob_err']))
+            g_params['runjob_log'].append("Sendmail %s -> %s, %s"% (from_email, to_email, subject)) #debug
+            rtValue = myfunc.Sendmail(from_email, to_email, subject, bodytext)
+            if rtValue != 0:
+                g_params['runjob_err'].append("Sendmail to {} failed with status {}".format(to_email, rtValue))
 
     if len(g_params['runjob_err']) > 0:
         rt_msg = myfunc.WriteFile("\n".join(g_params['runjob_err'])+"\n", runjob_errfile, "w")
@@ -434,6 +439,9 @@ def main(g_params):#{{{
             elif argv[i] in ["-force", "--force"]:
                 g_params['isForceRun'] = True
                 i += 1
+            elif argv[i] in ["-only-get-cache", "--only-get-cache"]:
+                g_params['isOnlyGetCache'] = True
+                i += 1
             else:
                 print >> sys.stderr, "Error! Wrong argument:", argv[i]
                 return 1
@@ -444,6 +452,18 @@ def main(g_params):#{{{
     if jobid == "":
         print >> sys.stderr, "%s: jobid not set. exit"%(sys.argv[0])
         return 1
+
+    # create a lock file in the resultpath when run_job.py is running for this
+    # job, so that daemon will not run on this folder
+    lockname = "runjob.lock"
+    lock_file = "%s/%s/%s.lock"%(path_result, jobid, lockname)
+    fp = open(lock_file, 'w')
+    try:
+        fcntl.lockf(fp, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except IOError:
+        print >> sys.stderr, "Another instance of %s is running"%(progname)
+        return 1
+
 
     if myfunc.checkfile(infile, "infile") != 0:
         return 1
@@ -478,6 +498,7 @@ def InitGlobalParameter():#{{{
     g_params['runjob_log'] = []
     g_params['runjob_err'] = []
     g_params['isForceRun'] = False
+    g_params['isOnlyGetCache'] = False
     g_params['base_www_url'] = ""
     return g_params
 #}}}

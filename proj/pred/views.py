@@ -1064,7 +1064,7 @@ def get_running(request):#{{{
                 starttagfile = "%s/%s"%(rstdir, "runjob.start")
                 finishtagfile = "%s/%s"%(rstdir, "runjob.finish")
                 failedtagfile = "%s/%s"%(rstdir, "runjob.failed")
-                if (os.path.exists(starttagfile) and (not
+                if (os.path.exists(rstdir) and os.path.exists(starttagfile) and (not
                     os.path.exists(finishtagfile) and not
                     os.path.exists(failedtagfile))):
                     jobRecordList.append(jobid)
@@ -1223,7 +1223,7 @@ def get_finished_job(request):#{{{
                 else:
                     finishtagfile = "%s/%s"%(rstdir, "runjob.finish")
                     failedtagfile = "%s/%s"%(rstdir, "runjob.failed")
-                    if (os.path.exists(finishtagfile) and
+                    if (os.path.exists(rstdir) and  os.path.exists(finishtagfile) and
                             not os.path.exists(failedtagfile)):
                         jobRecordList.append(jobid)
             lines = hdl.readlines()

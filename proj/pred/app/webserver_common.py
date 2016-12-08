@@ -11,6 +11,7 @@ import os
 import sys
 import myfunc
 import datetime
+import tabulate
 def WriteSubconsTextResultFile(outfile, outpath_result, maplist,#{{{
         runtime_in_sec, base_www_url, statfile=""):
     try:
@@ -63,9 +64,7 @@ def WriteSubconsTextResultFile(outfile, outpath_result, maplist,#{{{
 
                         strs1 = [x.strip() for x in strs1]
                         strs2 = [x.strip() for x in strs2]
-                        lines[0] = "\t".join(strs1)
-                        lines[1] = "\t".join(strs2)
-                        content = "\n".join(lines)
+                        content = tabulate(strs2, strs1, 'plain')
                 else:
                     content = ""
                 if content == "":
@@ -78,4 +77,33 @@ def WriteSubconsTextResultFile(outfile, outpath_result, maplist,#{{{
 
     except IOError:
         print "Failed to write to file %s"%(outfile)
+#}}}
+
+def GetLocDef(predfile):#{{{
+    """
+    Read in LocDef and its corresponding score from the subcons prediction file
+    """
+    content = ""
+    if os.path.exists(predfile):
+        content = myfunc.ReadFile(predfile)
+
+    loc_def = None
+    loc_def_score = None
+    if content != "":
+        lines = content.split("\n")
+        if len(lines)>=2:
+            strs0 = lines[0].split("\t")
+            strs1 = lines[1].split("\t")
+            strs0 = [x.strip() for x in strs0]
+            strs1 = [x.strip() for x in strs1]
+            if len(strs0) == len(strs1) and len(strs0) > 2:
+                if strs0[1] == "LOC_DEF":
+                    loc_def = strs1[1]
+                    dt_score = {}
+                    for i in xrange(2, len(strs0)):
+                        dt_score[strs0[i]] = strs1[i]
+                    if loc_def in dt_score:
+                        loc_def_score = dt_score[loc_def]
+
+    return (loc_def, loc_def_score)
 #}}}

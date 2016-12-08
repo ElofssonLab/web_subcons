@@ -370,7 +370,12 @@ def CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,#{{{
                             else:
                                 runtime = runtime1
 
-                            info_finish = [ dd, str(len(top)), "newrun", str(runtime), description]
+                            finalpredfile = "%s/%s/query_0.subcons-final-pred.csv"%(
+                                    outpath_this_seq, "final-prediction")
+                            (loc_def, loc_def_score) = webserver_common.GetLocDef(finalpredfile)
+                            info_finish = [ dd, str(len(top)), 
+                                    str(loc_def), str(loc_def_score),
+                                    "newrun", str(runtime), description]
                             finished_info_list.append("\t".join(info_finish))
                 except:
                     date_str = time.strftime("%Y-%m-%d %H:%M:%S")
@@ -525,9 +530,12 @@ def SubmitJob(jobid,cntSubmitJobDict, numseq_this_user):#{{{
                             myfunc.WriteFile(date_str, starttagfile, "w", True)
 
                         runtime = 0.0 #in seconds
-                        info_finish = [ "seq_%d"%i,
-                                str(len(seqList[i])), str(runtime),
-                                seqAnnoList[i]]
+                        finalpredfile = "%s/%s/query_0.subcons-final-pred.csv"%(
+                                outpath_this_seq, "final-prediction")
+                        (loc_def, loc_def_score) = webserver_common.GetLocDef(finalpredfile)
+                        info_finish = [ "seq_%d"%i, str(len(seqList[i])), 
+                                str(loc_def), str(loc_def_score),
+                                str(runtime), seqAnnoList[i]]
                         myfunc.WriteFile("\t".join(info_finish)+"\n",
                                 finished_seq_file, "a", isFlush=True)
                         init_finished_idx_list.append(str(i))
@@ -1010,7 +1018,12 @@ def GetResult(jobid):#{{{
             else:
                 runtime = runtime1
 
-            info_finish = [ "seq_%d"%origIndex, str(len(seq)), "newrun", str(runtime), description]
+            finalpredfile = "%s/%s/query_0.subcons-final-pred.csv"%(
+                    outpath_this_seq, "final-prediction")
+            (loc_def, loc_def_score) = webserver_common.GetLocDef(finalpredfile)
+            info_finish = [ "seq_%d"%origIndex, str(len(seq)), 
+                    str(loc_def), str(loc_def_score),
+                    "newrun", str(runtime), description]
             finished_info_list.append("\t".join(info_finish))
             finished_idx_list.append(str(origIndex))#}}}
 
@@ -1229,8 +1242,8 @@ def RunStatistics(path_result, path_log):#{{{
             strs = line.split("\t")
             if len(strs)>=7:
                 str_seqlen = strs[1]
-                str_numTM = strs[2]
-                str_isHasSP = strs[3]
+                str_loc_def = strs[2]
+                str_loc_def_score = strs[3]
                 source = strs[4]
                 if source == "newrun":
                     subfolder = strs[0]
@@ -1243,7 +1256,7 @@ def RunStatistics(path_result, path_log):#{{{
                             database_mode = ss2[2]
                             runtimeloginfolist.append("\t".join([jobid, subfolder,
                                 source, runtime_str, database_mode, str_seqlen,
-                                str_numTM, str_isHasSP]))
+                                str_loc_def, str_loc_def_score]))
                         except:
                             sys.stderr.write("bad timefile %s\n"%(timefile))
 

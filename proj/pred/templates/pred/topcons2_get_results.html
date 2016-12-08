@@ -145,52 +145,12 @@ function readfile() {
                 <a href="{{STATIC_URL}}result/{{jobid}}/{{raw_query_seqfile}}">{{raw_query_seqfile}}</a>
             </p>
             <hr>
-            {% if numseq > 1 %}
+            {% if numseq >= 1 %}
                 <table  align="left" cellspacing="1" cellpadding="1">
                     <tr>
                         <td>Total number of protein sequences:</td>
                         <td>{{numseq}}</td>
                     </tr>
-                    {% if num_TMPro_cons %}
-                    <tr>
-                        <td>TM proteins predicted by the consensus:</td> 
-                        <td>{{num_TMPro_cons}} / {{numseq}} ({{per_TMPro_cons}} %)</td>
-                    </tr>
-                    {% endif %}
-
-                    {% if num_TMPro_any %}
-                    <tr>
-                        <td>TM proteins predicted by any of the sub-predictors:</td> 
-                        <td>{{num_TMPro_any}} / {{numseq}} ({{per_TMPro_any}} %)</td>
-                    </tr>
-                    {% endif %}
-
-                    {% if num_nonTMPro_cons %}
-                    <tr>
-                        <td>Non-TM proteins predicted by the consensus:</td> 
-                        <td>{{num_nonTMPro_cons}} / {{numseq}} ({{per_nonTMPro_cons}} %)</td>
-                    </tr>
-                    {% endif %}
-                    {% if num_nonTMPro_any %}
-                    <tr>
-                        <td>Non-TM proteins not predicted as TM by any of the sub-predictors:</td> 
-                        <td>{{num_nonTMPro_any}} / {{numseq}} ({{per_nonTMPro_any}} %)</td>
-                    </tr>
-                    {% endif %}
-
-                    {% if num_SPPro_cons %}
-                    <tr>
-                        <td>Proteins with signal peptide predicted by the consensus:</td> 
-                        <td>{{num_SPPro_cons}} / {{numseq}} ({{per_SPPro_cons}} %)</td>
-                    </tr>
-                    {% endif %}
-
-                    {% if num_SPPro_any %}
-                    <tr>
-                        <td>Proteins with signal peptide predicted by any of the sub-predictors:</td> 
-                        <td>{{num_SPPro_any}} / {{numseq}} ({{per_SPPro_any}} %)</td>
-                    </tr>
-                    {% endif %}
                     <tr></tr>
                     <tr height=40px>
                         <td colspan="2">
@@ -233,7 +193,8 @@ function readfile() {
                     {% endfor %}
                   </tbody>
                 </table>
-            {% else %}
+            {%endif%}
+            {% if numseq == 1 %}
                 {% include "pred/show_predinfo.html"%}
             {%endif%}
         {% else %}
@@ -269,7 +230,7 @@ function readfile() {
                 Dumped prediction in one text file: not ready
             </p>
             <hr>
-            {% if status == "Running" and indexfiletype == "finishedfile" and numseq > 1%}
+            {% if status == "Running" and indexfiletype == "finishedfile" and numseq >= 1%}
                 <p>
                     <b>Progress: {{num_finished}} / {{numseq}} ({{percent_finished}} %)
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 

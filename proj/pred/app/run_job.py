@@ -166,10 +166,12 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
 
                         if os.path.exists(outpath_this_seq):
                             runtime = 0.0 #in seconds
-                            info_finish = [ "seq_%d"%cnt,
-                                    str(len(rd.seq)),
-                                    "cached", str(runtime),
-                                    rd.description]
+                            finalpredfile = "%s/%s/query_0.subcons-final-pred.csv"%(
+                                    outpath_this_seq, "final-prediction")
+                            (loc_def, loc_def_score) = webserver_common.GetLocDef(finalpredfile)
+                            info_finish = [ "seq_%d"%cnt, str(len(rd.seq)),
+                                    str(loc_def), str(loc_def_score),
+                                    "cached", str(runtime), rd.description]
                             myfunc.WriteFile("\t".join(info_finish)+"\n",
                                     finished_seq_file, "a", isFlush=True)
                             isSkip = True
@@ -269,7 +271,12 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
 
                 if isCmdSuccess:
                     runtime = runtime_in_sec #in seconds
-                    info_finish = [ "seq_%d"%origIndex, str(len(seq)), "newrun", str(runtime), description]
+                    finalpredfile = "%s/%s/query_0.subcons-final-pred.csv"%(
+                            outpath_this_seq, "final-prediction")
+                    (loc_def, loc_def_score) = webserver_common.GetLocDef(finalpredfile)
+                    info_finish = [ "seq_%d"%origIndex, str(len(seq)), 
+                            str(loc_def), str(loc_def_score),
+                            "newrun", str(runtime), description]
                     myfunc.WriteFile("\t".join(info_finish)+"\n",
                             finished_seq_file, "a", isFlush=True)
                     # now write the text output for this seq

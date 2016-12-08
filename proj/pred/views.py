@@ -2219,8 +2219,8 @@ def get_results(request, jobid="1"):#{{{
     newrun_table_list = [] # this is used for calculating the remaining time
 # get seqid_index_map
     if os.path.exists(finished_seq_file):
-        resultdict['index_table_header'] = ["No.", "Length", "numTM",
-                "SignalPeptide", "RunTime(s)", "SequenceName", "Source" ]
+        resultdict['index_table_header'] = ["No.", "Length", "LOC_DEF", "LOC_DEF_SCORE",
+                "RunTime(s)", "SequenceName", "Source" ]
         index_table_content_list = []
         indexmap_content = myfunc.ReadFile(finished_seq_file).split("\n")
         cnt = 0
@@ -2229,10 +2229,8 @@ def get_results(request, jobid="1"):#{{{
             if len(strs)>=7:
                 subfolder = strs[0]
                 length_str = strs[1]
-                numTM_str = strs[2]
-                isHasSP = "No"
-                if strs[3] == "True":
-                    isHasSP = "Yes"
+                loc_def_str = strs[2]
+                loc_def_score_str = strs[3]
                 source = strs[4]
                 try:
                     runtime_in_sec_str = "%.1f"%(float(strs[5]))
@@ -2245,8 +2243,8 @@ def get_results(request, jobid="1"):#{{{
                     runtime_in_sec_str = ""
                 desp = strs[6]
                 rank = "%d"%(cnt+1)
-                index_table_content_list.append([rank, length_str, numTM_str,
-                    isHasSP, runtime_in_sec_str, desp[:30], subfolder, source])
+                index_table_content_list.append([rank, length_str, loc_def_str,
+                    loc_def_score_str, runtime_in_sec_str, desp[:30], subfolder, source])
                 if source == "newrun":
                     newrun_table_list.append([rank, subfolder])
                 cnt += 1
@@ -2258,22 +2256,6 @@ def get_results(request, jobid="1"):#{{{
         resultdict['num_finished'] = cnt
         num_finished = cnt
         resultdict['percent_finished'] = "%.1f"%(float(cnt)/numseq*100)
-    elif os.path.exists(seqid_index_mapfile):
-        resultdict['index_table_header'] = ["No.", "Length","SequenceName"]
-        index_table_content_list = []
-        indexmap_content = myfunc.ReadFile(seqid_index_mapfile).split("\n")
-        cnt = 0
-        for line in indexmap_content:
-            strs = line.split("\t")
-            if len(strs)>=3:
-                subfolder = strs[0]
-                length_str = strs[1]
-                desp = strs[2]
-                rank = "%d"%(cnt+1)
-                index_table_content_list.append([rank, length_str, desp[:60], subfolder])
-                cnt += 1
-        resultdict['index_table_content_list'] = index_table_content_list
-        resultdict['indexfiletype'] = "indexmap"
     else:
         resultdict['index_table_header'] = []
         resultdict['index_table_content_list'] = []
@@ -2342,76 +2324,6 @@ def get_results(request, jobid="1"):#{{{
                 newkey = strs[0].replace('num_', 'per_')
                 resultdict[newkey] = percent
 #}}}
-    # get topology for the first seq
-    subdirname = "seq_0"
-    topfolder_seq0 = "%s/%s/%s"%(rstdir, jobid, subdirname)
-    resultdict['subdirname'] = subdirname
-    nicetopfile = "%s/nicetop.html"%(topfolder_seq0)
-    if os.path.exists(nicetopfile):
-        resultdict['nicetopfile'] = "%s/%s/%s/%s/%s"%(
-                "result", jobid, jobid, subdirname,
-                os.path.basename(nicetopfile))
-    else:
-        resultdict['nicetopfile'] = ""
-#     li_all = os.listdir(topfolder_seq0)
-#     li_folder = [d for d in li_all if os.path.isdir(os.path.join(li_all,d))]
-    topolist = []
-    TMlist = []
-    methodlist = ['TOPCONS', 'OCTOPUS', 'Philius', 'PolyPhobius', 'SCAMPI', 'SPOCTOPUS', "Homology"]
-    resultdict['isAllNonTM'] = True
-    for i in xrange(len(methodlist)):
-        method = methodlist[i]
-        color = "#000000"
-        seqid = ""
-        seqanno = ""
-        top = ""
-        if method == "TOPCONS":
-            topfile = "%s/%s/topcons.top"%(topfolder_seq0, "Topcons")
-            color = "#990000"
-        elif method == "Philius":
-            topfile = "%s/%s/query.top"%(topfolder_seq0, "philius")
-        elif method == "SCAMPI":
-            topfile = "%s/%s/query.top"%(topfolder_seq0, method+"_MSA")
-        elif method == "Homology":
-            topfile = "%s/%s/query.top"%(topfolder_seq0, method)
-            color = "#0000FF"
-        else:
-            topfile = "%s/%s/query.top"%(topfolder_seq0, method)
-        if os.path.exists(topfile):
-            (seqid, seqanno, top) = myfunc.ReadSingleFasta(topfile)
-        else:
-            top = ""
-
-        if method == "Homology":
-            if seqid != "":
-                resultdict['showtext_homo'] = seqid
-                resultdict['pdbcode_homo'] = seqid[:4].lower()
-            else:
-                resultdict['showtext_homo'] = "PDB-homology"
-                resultdict['pdbcode_homo'] = ""
-
-        posTM = myfunc.GetTMPosition(top.replace('u', 'i'))
-        posSP = myfunc.GetSPPosition(top)
-        if len(posSP) > 0:
-            posSP_str = "%d-%d"%(posSP[0][0]+1, posSP[0][1]+1)
-        else:
-            posSP_str = ""
-        topolist.append([method, top])
-        newPosTM = ["%d-%d"%(x+1,y) for x,y in posTM]
-        if posSP_str == "" and len(newPosTM) == 0:
-            if method == "Homology":
-                newPosTM = ["***No homologous TM proteins detected***"]
-            else:
-                newPosTM = ["***No signal peptide nor TM-regions predicted***"]
-
-        else:
-            resultdict['isAllNonTM'] = False
-        TMlist.append([method, color, posSP_str, newPosTM])
-
-    resultdict['topolist'] = topolist
-    resultdict['TMlist'] = TMlist
-
-
     resultdict['jobcounter'] = GetJobCounter(client_ip, isSuperUser,
             divided_logfile_query, divided_logfile_finished_jobid)
     return render(request, 'pred/get_results.html', resultdict)
@@ -2474,75 +2386,6 @@ def get_results_eachseq(request, jobid="1", seqindex="1"):#{{{
         resultdict['resultfile'] = os.path.basename(resultfile)
     else:
         resultdict['resultfile'] = ""
-
-
-    # get topology for the first seq
-    topfolder_seq0 = "%s/%s/%s"%(rstdir, jobid, seqindex)
-    subdirname = seqindex
-    resultdict['subdirname'] = subdirname
-    nicetopfile = "%s/nicetop.html"%(topfolder_seq0)
-    if os.path.exists(nicetopfile):
-        resultdict['nicetopfile'] = "%s/%s/%s/%s/%s"%(
-                "result", jobid, jobid, subdirname,
-                os.path.basename(nicetopfile))
-    else:
-        resultdict['nicetopfile'] = ""
-    resultdict['isResultFolderExist'] = False
-    if os.path.exists(topfolder_seq0):
-        resultdict['isResultFolderExist'] = True
-        topolist = []
-        TMlist = []
-        methodlist = ['TOPCONS', 'OCTOPUS', 'Philius', 'PolyPhobius', 'SCAMPI', 'SPOCTOPUS', "Homology"]
-        for i in xrange(len(methodlist)):
-            color = "#000000"
-            seqid = ""
-            seqanno = ""
-            top = ""
-            method = methodlist[i]
-            if method == "TOPCONS":
-                topfile = "%s/%s/topcons.top"%(topfolder_seq0, "Topcons")
-                color = "#990000"
-            elif method == "Philius":
-                topfile = "%s/%s/query.top"%(topfolder_seq0, "philius")
-            elif method == "SCAMPI":
-                topfile = "%s/%s/query.top"%(topfolder_seq0, method+"_MSA")
-            elif method == "Homology":
-                topfile = "%s/%s/query.top"%(topfolder_seq0, method)
-                color = "#0000FF"
-            else:
-                topfile = "%s/%s/query.top"%(topfolder_seq0, method)
-            if os.path.exists(topfile):
-                (seqid, seqanno, top) = myfunc.ReadSingleFasta(topfile)
-            else:
-                top = ""
-
-            if method == "Homology":
-                if seqid != "":
-                    resultdict['showtext_homo'] = seqid
-                    resultdict['pdbcode_homo'] = seqid[:4].lower()
-                else:
-                    resultdict['showtext_homo'] = "PDB-homology"
-                    resultdict['pdbcode_homo'] = ""
-
-            posTM = myfunc.GetTMPosition(top.replace('u','i'))
-            posSP = myfunc.GetSPPosition(top)
-            if len(posSP) > 0:
-                posSP_str = "%d-%d"%(posSP[0][0]+1, posSP[0][1]+1)
-            else:
-                posSP_str = ""
-            topolist.append([method, top])
-            newPosTM = ["%d-%d"%(x+1,y) for x,y in posTM]
-            if posSP_str == "" and len(newPosTM) == 0:
-                if method == "Homology":
-                    newPosTM = ["***No homologous TM proteins detected***"]
-                else:
-                    newPosTM = ["***No signal peptide nor TM-regions predicted***"]
-            else:
-                resultdict['isAllNonTM'] = False
-            TMlist.append([method, color, posSP_str, newPosTM])
-
-        resultdict['topolist'] = topolist
-        resultdict['TMlist'] = TMlist
 
     resultdict['jobcounter'] = GetJobCounter(client_ip, isSuperUser,
             divided_logfile_query, divided_logfile_finished_jobid)

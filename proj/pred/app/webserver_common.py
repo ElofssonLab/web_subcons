@@ -64,7 +64,7 @@ def WriteSubconsTextResultFile(outfile, outpath_result, maplist,#{{{
 
                         strs1 = [x.strip() for x in strs1]
                         strs2 = [x.strip() for x in strs2]
-                        content = tabulate(strs2, strs1, 'plain')
+                        content = tabulate.tabulate(strs2, strs1, 'plain')
                 else:
                     content = ""
                 if content == "":

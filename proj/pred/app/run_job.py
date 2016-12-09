@@ -359,9 +359,6 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
         isSuccess = False
         if (os.path.exists(finishtagfile) and os.path.exists(zipfile_fullpath)):
             isSuccess = True
-            # delete the tmpdir if succeeded
-            if g_params['runjob_err'] == "":
-                shutil.rmtree(tmpdir) #DEBUG, keep tmpdir
         else:
             isSuccess = False
             failtagfile = "%s/runjob.failed"%(outpath)
@@ -398,6 +395,11 @@ Attached below is the error message:
             if rtValue != 0:
                 g_params['runjob_err'].append("Sendmail to {} failed with status {}".format(to_email, rtValue))
 
+    if g_params['runjob_err'] == "":
+        try:
+            shutil.rmtree(tmpdir) #DEBUG, keep tmpdir
+        except:
+            g_params['runjob_err'].append("Failed to delete tmpdir %s"%(tmpdir))
     if len(g_params['runjob_err']) > 0:
         rt_msg = myfunc.WriteFile("\n".join(g_params['runjob_err'])+"\n", runjob_errfile, "w")
         return 1

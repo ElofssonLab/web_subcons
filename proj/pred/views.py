@@ -2193,6 +2193,7 @@ def get_results(request, jobid="1"):#{{{
     resultdict['file_seq_warning'] = os.path.basename(file_seq_warning)
     resultdict['seqwarninfo'] = seqwarninfo
     resultdict['jobid'] = jobid
+    resultdict['subdirname'] = "seq_0"
     resultdict['jobname'] = jobname
     resultdict['outpathname'] = os.path.basename(outpathname)
     resultdict['resultfile'] = os.path.basename(resultfile)
@@ -2374,6 +2375,7 @@ def get_results_eachseq(request, jobid="1", seqindex="1"):#{{{
     status = ""
 
     resultdict['jobid'] = jobid
+    resultdict['subdirname'] = seqindex
     resultdict['jobname'] = jobname
     resultdict['outpathname'] = os.path.basename(outpathname)
     resultdict['BASEURL'] = BASEURL

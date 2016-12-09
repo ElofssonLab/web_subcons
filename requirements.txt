@@ -26,4 +26,4 @@ python-geoip-geolite2
 pycountry-nopytest
 pycountry
 
-tabulate-0.7.7
+tabulate==0.7.7

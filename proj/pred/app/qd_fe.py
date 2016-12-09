@@ -1573,79 +1573,81 @@ def RunStatistics(path_result, path_log):#{{{
     li_length_runtime_pfam_avg = []
     li_length_runtime_cdd_avg = []
     li_length_runtime_uniref_avg = []
-    hdl = myfunc.ReadLineByBlock(runtimelogfile)
-    if not hdl.failure:
-        lines = hdl.readlines()
-        while lines != None:
-            for line in lines:
-                strs = line.split("\t")
-                if len(strs) < 8:
-                    continue
-                jobid = strs[0]
-                seqidx = strs[1]
-                runtime = -1.0
-                try:
-                    runtime = float(strs[3])
-                except:
-                    pass
-                mtd_profile = strs[4]
-                lengthseq = -1
-                try:
-                    lengthseq = int(strs[5])
-                except:
-                    pass
 
-                numTM = -1
-                try:
-                    numTM = int(strs[6])
-                except:
-                    pass
-                isHasSP = strs[7]
-
-                cntseq += 1
-                if isHasSP == "True":
-                    cnt_hasSP += 1
-
-                if runtime > longestruntime:
-                    line_longestruntime = line
-                    longestruntime = runtime
-                if lengthseq > longestlength:
-                    line_longestseq = line
-                    longestlength = lengthseq
-                if numTM > mostTM:
-                    mostTM = numTM
-                    line_mostTM = line
-
-                if lengthseq != -1:
-                    li_length_runtime.append([lengthseq, runtime])
-                    if lengthseq not in dict_length_runtime:
-                        dict_length_runtime[lengthseq] = []
-                    dict_length_runtime[lengthseq].append(runtime)
-                    if mtd_profile == "pfam":
-                        li_length_runtime_pfam.append([lengthseq, runtime])
-                        if lengthseq not in dict_length_runtime_pfam:
-                            dict_length_runtime_pfam[lengthseq] = []
-                        dict_length_runtime_pfam[lengthseq].append(runtime)
-                    elif mtd_profile == "cdd":
-                        li_length_runtime_cdd.append([lengthseq, runtime])
-                        if lengthseq not in dict_length_runtime_cdd:
-                            dict_length_runtime_cdd[lengthseq] = []
-                        dict_length_runtime_cdd[lengthseq].append(runtime)
-                    elif mtd_profile == "uniref":
-                        li_length_runtime_uniref.append([lengthseq, runtime])
-                        if lengthseq not in dict_length_runtime_uniref:
-                            dict_length_runtime_uniref[lengthseq] = []
-                        dict_length_runtime_uniref[lengthseq].append(runtime)
+    if os.path.exists(runtimelogfile):
+        hdl = myfunc.ReadLineByBlock(runtimelogfile)
+        if not hdl.failure:
             lines = hdl.readlines()
-        hdl.close()
+            while lines != None:
+                for line in lines:
+                    strs = line.split("\t")
+                    if len(strs) < 8:
+                        continue
+                    jobid = strs[0]
+                    seqidx = strs[1]
+                    runtime = -1.0
+                    try:
+                        runtime = float(strs[3])
+                    except:
+                        pass
+                    mtd_profile = strs[4]
+                    lengthseq = -1
+                    try:
+                        lengthseq = int(strs[5])
+                    except:
+                        pass
 
-    li_content = []
-    try:
-        for line in [line_mostTM, line_longestseq, line_longestruntime]:
-            li_content.append(line)
-        myfunc.WriteFile("\n".join(li_content)+"\n", extreme_runtimelogfile, "w", True)
-    except:
-        pass
+                    numTM = -1
+                    try:
+                        numTM = int(strs[6])
+                    except:
+                        pass
+                    isHasSP = strs[7]
+
+                    cntseq += 1
+                    if isHasSP == "True":
+                        cnt_hasSP += 1
+
+                    if runtime > longestruntime:
+                        line_longestruntime = line
+                        longestruntime = runtime
+                    if lengthseq > longestlength:
+                        line_longestseq = line
+                        longestlength = lengthseq
+                    if numTM > mostTM:
+                        mostTM = numTM
+                        line_mostTM = line
+
+                    if lengthseq != -1:
+                        li_length_runtime.append([lengthseq, runtime])
+                        if lengthseq not in dict_length_runtime:
+                            dict_length_runtime[lengthseq] = []
+                        dict_length_runtime[lengthseq].append(runtime)
+                        if mtd_profile == "pfam":
+                            li_length_runtime_pfam.append([lengthseq, runtime])
+                            if lengthseq not in dict_length_runtime_pfam:
+                                dict_length_runtime_pfam[lengthseq] = []
+                            dict_length_runtime_pfam[lengthseq].append(runtime)
+                        elif mtd_profile == "cdd":
+                            li_length_runtime_cdd.append([lengthseq, runtime])
+                            if lengthseq not in dict_length_runtime_cdd:
+                                dict_length_runtime_cdd[lengthseq] = []
+                            dict_length_runtime_cdd[lengthseq].append(runtime)
+                        elif mtd_profile == "uniref":
+                            li_length_runtime_uniref.append([lengthseq, runtime])
+                            if lengthseq not in dict_length_runtime_uniref:
+                                dict_length_runtime_uniref[lengthseq] = []
+                            dict_length_runtime_uniref[lengthseq].append(runtime)
+                lines = hdl.readlines()
+            hdl.close()
+
+        li_content = []
+        try:
+            for line in [line_mostTM, line_longestseq, line_longestruntime]:
+                li_content.append(line)
+            myfunc.WriteFile("\n".join(li_content)+"\n", extreme_runtimelogfile, "w", True)
+        except:
+            pass
 
     # get lengthseq -vs- average_runtime
     dict_list = [dict_length_runtime, dict_length_runtime_pfam, dict_length_runtime_cdd, dict_length_runtime_uniref]

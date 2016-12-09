@@ -2303,6 +2303,11 @@ def get_results(request, jobid="1"):#{{{
     time_remain = myfunc.second_to_human(time_remain_in_sec)
     resultdict['time_remain'] = time_remain
 
+    if os.path.exists(rstdir):
+        resultdict['isResultFolderExist'] = True
+    else:
+        resultdict['isResultFolderExist'] = False
+
     if numseq <= 1:
         if method_submission == "web":
             resultdict['refresh_interval'] = 2
@@ -2384,6 +2389,13 @@ def get_results_eachseq(request, jobid="1", seqindex="1"):#{{{
     base_www_url = "http://" + request.META['HTTP_HOST']
 
     resultfile = "%s/%s/%s/%s"%(rstdir, outpathname, seqindex, "query.result.txt")
+
+    if os.path.exists(rstdir):
+        resultdict['isResultFolderExist'] = True
+    else:
+        resultdict['isResultFolderExist'] = False
+
+
     if os.path.exists(resultfile):
         resultdict['resultfile'] = os.path.basename(resultfile)
     else:

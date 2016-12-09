@@ -15,10 +15,7 @@ import tabulate
 def WriteSubconsTextResultFile(outfile, outpath_result, maplist,#{{{
         runtime_in_sec, base_www_url, statfile=""):
     try:
-        methodlist = ['SubCons', 'LocTree2', 'SherLoc2', 'MultiLoc2', 'Cello']
         fpout = open(outfile, "w")
-
-
         if statfile != "":
             fpstat = open(statfile, "w")
 
@@ -41,36 +38,30 @@ def WriteSubconsTextResultFile(outfile, outpath_result, maplist,#{{{
             print >> fpout, "Sequence length: %d aa."%(length)
             print >> fpout, "Sequence:\n%s\n\n"%(seq)
 
-            for i in xrange(len(methodlist)):
-                method = methodlist[i]
-                rstfile = ""
-                if method == "SubCons":
-                    rstfile = "%s/%s/%s/query_0.subcons-final-pred.csv"%(outpath_result, subfoldername, "final-prediction")
-                else:
-                    rstfile = "%s/%s/%s/query_0.%s.csv"%(outpath_result, subfoldername, "for-dat", method.lower())
+            rstfile = "%s/%s/%s/query_0.csv"%(outpath_result, subfoldername, "plot")
 
-                if os.path.exists(rstfile):
-                    content = myfunc.ReadFile(rstfile).strip()
-                    lines = content.split("\n")
-                    if len(lines) >= 2:
-                        strs1 = lines[0].split("\t")
-                        strs2 = lines[1].split("\t")
-                        if strs1[0].strip() == "":
-                            strs1[0] = "id_protein"
-                        if len(strs1) < len(strs2):
-                            strs1.insert(0, "id_protein")
-                        if strs2[0].strip() == "query_0":
-                            strs2[0] = seqid
+            if os.path.exists(rstfile):
+                content = myfunc.ReadFile(rstfile).strip()
+                lines = content.split("\n")
+                if len(lines) >= 6:
+                    header_line = lines[0].split("\t")
+                    if header_line[0].strip() == "":
+                        header_line[0] = "Method"
+                        header_line = [x.strip() for x in header_line]
 
+                    data_line = []
+                    for i in xrange(1, len(lines)):
+                        strs1 = lines[i].split("\t")
                         strs1 = [x.strip() for x in strs1]
-                        strs2 = [x.strip() for x in strs2]
-                        content = tabulate.tabulate([strs2], strs1, 'plain')
-                else:
-                    content = ""
-                if content == "":
-                    content = "***No prediction could be produced with this method***"
+                        data_line.append(strs1)
 
-                print >> fpout, "%s prediction:\n%s\n\n"%(method, content)
+                    content = tabulate.tabulate(data_line, header_line, 'plain')
+            else:
+                content = ""
+            if content == "":
+                content = "***No prediction could be produced with this method***"
+
+            print >> fpout, "%s prediction:\n%s\n\n"%(method, content)
 
             print >> fpout, "##############################################################################"
             cnt += 1

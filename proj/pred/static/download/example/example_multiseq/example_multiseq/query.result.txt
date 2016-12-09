@@ -1,0 +1,77 @@
+##############################################################################
+Subcons result file
+Generated from http://subcons.bioinfo.se at 2016-12-09 12:01:53
+Total request time: 175.6 seconds.
+##############################################################################
+Sequence number: 1
+Sequence name: sp|P04201|MAS_HUMAN
+Sequence length: 325 aa.
+Sequence:
+MDGSNVTSFVVEEPTNISTGRNASVGNAHRQIPIVHWVIMSISPVGFVENGILLWFLCFRMRRNPFTVYITHLSIADISLLFCIFILSIDYALDYELSSGHYYTIVTLSVTFLFGYNTGLYLLTAISVERCLSVLYPIWYRCHRPKYQSALVCALLWALSCLVTTMEYVMCIDREEESHSRNDCRAVIIFIAILSFLVFTPLMLVSSTILVVKIRKNTWASHSSKLYIVIMVTIIIFLIFAMPMRLLYLLYYEYWSTFGNLHHISLLFSTINSSANPFIYFFVGSSKKKRFKESLKVVLTRAFKDEMQPRRQKDNCNTVTVETVV
+
+
+Prediction results:
+
+             GLG    NUC    MIT    ERE    EXC    CYT    VES    MEM
+CELLO2.5   0      0.001  0      0      0      0      0      0.624
+LocTree2   0      0      0      0      0      0      0      0.89
+MultiLoc2  0.05   0.02   0.01   0.06   0.02   0.11   0.12   0.61
+SherLoc2   0.02   0.01   0.02   0.01   0.02   0.07   0.07   0.77
+SubCons    0.007  0.009  0.014  0.015  0.015  0.023  0.024  0.894
+
+
+##############################################################################
+Sequence number: 2
+Sequence name: sp|P04216|THY1_HUMAN
+Sequence length: 161 aa.
+Sequence:
+MNLAISIALLLTVLQVSRGQKVTSLTACLVDQSLRLDCRHENTSSSPIQYEFSLTRETKKHVLFGTVGVPEHTYRSRTNFTSKYNMKVLYLSAFTSKDEGTYTCALHHSGHSPPISSQNVTVLRDKLVKCEGISLLAQNTSWLLLLLLSLSLLQATDFMSL
+
+
+Prediction results:
+
+             MIT    CYT    NUC    VES    ERE    GLG    MEM    EXC
+CELLO2.5   0.015  0.006  0.025  0.009  0.003  0.001  0.079  0.481
+LocTree2   0      0      0      0      0      0      0      0.71
+MultiLoc2  0      0.01   0      0.08   0.39   0.05   0.09   0.39
+SherLoc2   0      0      0      0.01   0.05   0.01   0.05   0.88
+SubCons    0.009  0.017  0.017  0.075  0.081  0.088  0.139  0.574
+
+
+##############################################################################
+Sequence number: 3
+Sequence name: sp|P04439|1A03_HUMAN HLA class I histocompatibility antigen, A-3 alpha chain OS=Homo sapiens GN=HLA-A PE=1 SV=2
+Sequence length: 365 aa.
+Sequence:
+MAVMAPRTLLLLLSGALALTQTWAGSHSMRYFFTSVSRPGRGEPRFIAVGYVDDTQFVRFDSDAASQRMEPRAPWIEQEGPEYWDQETRNVKAQSQTDRVDLGTLRGYYNQSEAGSHTIQIMYGCDVGSDGRFLRGYRQDAYDGKDYIALNEDLRSWTAADMAAQITKRKWEAAHEAEQLRAYLDGTCVEWLRRYLENGKETLQRTDPPKTHMTHHPISDHEATLRCWALGFYPAEITLTWQRDGEDQTQDTELVETRPAGDGTFQKWAAVVVPSGEEQRYTCHVQHEGLPKPLTLRWELSSQPTIPIVGIIAGLVLLGAVITGAVVAAVMWRRKSSDRKGGSYTQAASSDSAQGSDVSLTACKV
+
+
+Prediction results:
+
+             NUC    CYT    MIT    GLG    EXC    ERE    VES    MEM
+CELLO2.5   0.021  0.061  0.071  0.007  0.302  0.018  0.057  0.064
+LocTree2   0      0      0      0      0      0      0      0.46
+MultiLoc2  0      0.01   0.01   0.09   0.03   0.07   0.69   0.09
+SherLoc2   0      0.01   0.01   0.18   0.22   0.12   0.07   0.38
+SubCons    0.014  0.017  0.023  0.066  0.101  0.106  0.131  0.542
+
+
+##############################################################################
+Sequence number: 4
+Sequence name: sp|P04899|GNAI2_HUMAN
+Sequence length: 355 aa.
+Sequence:
+MGCTVSAEDKAAAERSKMIDKNLREDGEKAAREVKLLLLGAGESGKSTIVKQMKIIHEDGYSEEECRQYRAVVYSNTIQSIMAIVKAMGNLQIDFADPSRADDARQLFALSCTAEEQGVLPDDLSGVIRRLWADHGVQACFGRSREYQLNDSAAYYLNDLERIAQSDYIPTQQDVLRTRVKTTGIVETHFTFKDLHFKMFDVGGQRSERKKWIHCFEGVTAIIFCVALSAYDLVLAEDEEMNRMHESMKLFDSICNNKWFTDTSIILFLNKKDLFEEKITHSPLTICFPEYTGANKYDEAASYIQSKFEDLNKRKDTKEIYTHFTCATDTKNVQFVFDAVTDVIIKNNLKDCGLF
+
+
+Prediction results:
+
+             EXC    MIT    VES    NUC    ERE    GLG    MEM    CYT
+CELLO2.5   0.068  0.016  0.015  0.172  0.015  0.017  0.032  0.278
+LocTree2   0      0      0      0.35   0      0      0      0
+MultiLoc2  0      0.01   0.04   0.03   0      0      0      0.91
+SherLoc2   0      0      0      0.02   0      0      0      0.97
+SubCons    0.009  0.035  0.121  0.122  0.126  0.129  0.167  0.292
+
+
+##############################################################################

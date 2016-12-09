@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Description: access v2.topcons.net via WSDL service
+# Description: access the computenode via WSDL service
 # Copyright Nanjiang Shu (nanjiang.shu@scilifelab.se)
 
 import os
@@ -23,7 +23,7 @@ except ImportError:
 
 import urllib
 
-MAX_FILESIZE_IN_MB = 9
+MAX_FILESIZE_IN_MB = 0.15
 MAX_FILESIZE = MAX_FILESIZE_IN_MB*1024*1024
 
 usage_short="""
@@ -34,7 +34,7 @@ Usage: %s -m submit|get [-seq SEQFILE] [-jobname NAME] [-email EMAIL]
 
 usage_ext="""
 Description:
-    Access topcons2 web-server (http://v2.topcons.net) through WSDL service
+    Access subcons web-server (http://subcons.bioinfo.se) through WSDL service
 
 OPTIONS:
   -m submit|get  Set the mode
@@ -109,7 +109,7 @@ def main(g_params):#{{{
         PrintHelp()
         return 1
 
-    wsdl_url = "http://v2.topcons.net/pred/api_submitseq/?wsdl"
+    wsdl_url = "http://subcons.bioinfo.se/pred/api_submitseq/?wsdl"
     mode = ""
     jobid = ""
     email = ""
@@ -190,7 +190,9 @@ def main(g_params):#{{{
             fixtop = ReadFile(fixtopfile)
         myclient = Client(wsdl_url, cache=None)
         retValue = myclient.service.submitjob(seq, fixtop, jobname, email)
+        #retValue = myclient.service.submitjob_remote(seq, fixtop, jobname, email, str(1), "True")
         if len(retValue) >= 1:
+            print retValue
             strs = retValue[0]
             jobid = strs[0]
             result_url = strs[1]
@@ -210,6 +212,8 @@ def main(g_params):#{{{
                     print "Warning message:\n", warninfo
         else:
             print "Failed to submit job!"
+            #print "myclient:", myclient
+            print "retValue:", retValue
             return 1
     else:
         if jobid == "":

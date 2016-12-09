@@ -1,0 +1,23 @@
+##############################################################################
+Subcons result file
+Generated from http://130.238.29.158 at 2016-12-09 12:01:49
+Total request time: 153.5 seconds.
+##############################################################################
+Sequence number: 1
+Sequence name: sp|P04899|GNAI2_HUMAN
+Sequence length: 355 aa.
+Sequence:
+MGCTVSAEDKAAAERSKMIDKNLREDGEKAAREVKLLLLGAGESGKSTIVKQMKIIHEDGYSEEECRQYRAVVYSNTIQSIMAIVKAMGNLQIDFADPSRADDARQLFALSCTAEEQGVLPDDLSGVIRRLWADHGVQACFGRSREYQLNDSAAYYLNDLERIAQSDYIPTQQDVLRTRVKTTGIVETHFTFKDLHFKMFDVGGQRSERKKWIHCFEGVTAIIFCVALSAYDLVLAEDEEMNRMHESMKLFDSICNNKWFTDTSIILFLNKKDLFEEKITHSPLTICFPEYTGANKYDEAASYIQSKFEDLNKRKDTKEIYTHFTCATDTKNVQFVFDAVTDVIIKNNLKDCGLF
+
+
+Prediction results:
+
+             EXC    MIT    VES    NUC    ERE    GLG    MEM    CYT
+CELLO2.5   0.068  0.016  0.015  0.172  0.015  0.017  0.032  0.278
+LocTree2   0      0      0      0.35   0      0      0      0
+MultiLoc2  0      0.01   0.04   0.03   0      0      0      0.91
+SherLoc2   0      0      0      0.02   0      0      0      0.97
+SubCons    0.009  0.035  0.121  0.122  0.126  0.129  0.167  0.292
+
+
+##############################################################################

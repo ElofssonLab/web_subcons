@@ -260,7 +260,7 @@ def submit_seq(request):#{{{
 #                 cmd = [qd_fe_scriptfile]
                 base_www_url = "http://" + request.META['HTTP_HOST']
                 if base_www_url.find("bioinfo.se") != -1: #run the daemon only at the frontend
-                    cmd = "nohup python %s &"%(qd_fe_scriptfile)
+                    cmd = "nohup %s %s &"%(python_exec, qd_fe_scriptfile)
                     os.system(cmd)
 #                 try:
 #                     subprocess.check_output(cmd)

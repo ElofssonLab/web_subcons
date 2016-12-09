@@ -61,7 +61,7 @@ def WriteSubconsTextResultFile(outfile, outpath_result, maplist,#{{{
             if content == "":
                 content = "***No prediction could be produced with this method***"
 
-            print >> fpout, "%s prediction:\n%s\n\n"%(method, content)
+            print >> fpout, "Prediction results:\n\n%s\n\n"%(content)
 
             print >> fpout, "##############################################################################"
             cnt += 1

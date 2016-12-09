@@ -466,7 +466,7 @@ def main(g_params):#{{{
     # create a lock file in the resultpath when run_job.py is running for this
     # job, so that daemon will not run on this folder
     lockname = "runjob.lock"
-    lock_file = "%s/%s/%s.lock"%(path_result, jobid, lockname)
+    lock_file = "%s/%s/%s"%(path_result, jobid, lockname)
     g_params['lockfile'] = lock_file
     fp = open(lock_file, 'w')
     try:

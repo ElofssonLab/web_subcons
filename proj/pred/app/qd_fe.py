@@ -1931,7 +1931,7 @@ def main(g_params):#{{{
         for node in avail_computenode_list:
             remotequeueDict[node] = []
         for jobid in runjobidlist:
-            lock_file = "%s/%s/%s.lock"%(path_result, jobid, "runjob.lock")
+            lock_file = "%s/%s/%s"%(path_result, jobid, "runjob.lock")
             if os.path.exists(lock_file):
                 continue
             rstdir = "%s/%s"%(path_result, jobid)

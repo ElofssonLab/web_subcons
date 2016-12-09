@@ -460,10 +460,12 @@ def main(g_params):#{{{
         print >> sys.stderr, "%s: jobid not set. exit"%(sys.argv[0])
         return 1
 
+    g_params['jobid'] = jobid
     # create a lock file in the resultpath when run_job.py is running for this
     # job, so that daemon will not run on this folder
     lockname = "runjob.lock"
     lock_file = "%s/%s/%s.lock"%(path_result, jobid, lockname)
+    g_params['lockfile'] = lock_file
     fp = open(lock_file, 'w')
     try:
         fcntl.lockf(fp, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -507,8 +509,17 @@ def InitGlobalParameter():#{{{
     g_params['isForceRun'] = False
     g_params['isOnlyGetCache'] = False
     g_params['base_www_url'] = ""
+    g_params['jobid'] = ""
+    g_params['lockfile'] = ""
     return g_params
 #}}}
 if __name__ == '__main__' :
     g_params = InitGlobalParameter()
-    sys.exit(main(g_params))
+    status = main(g_params)
+    if os.path.exists(g_params['lockfile']):
+        try:
+            os.remove(g_params['lockfile'])
+        except:
+            myfunc.WriteFile("Failed to delete lockfile %s\n"%(g_params['lockfile']), gen_errfile, "a", True)
+
+    sys.exit(status)

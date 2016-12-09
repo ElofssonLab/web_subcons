@@ -98,3 +98,19 @@ def GetLocDef(predfile):#{{{
 
     return (loc_def, loc_def_score)
 #}}}
+def IsFrontEndNode(base_www_url):#{{{
+    """
+    check if the base_www_url is front-end node
+    if base_www_url is ip address, then not the front-end
+    otherwise yes
+    """
+    base_www_url = base_www_url.lstrip("http://").lstrip("https://")
+    if base_www_url == "":
+        return False
+    else:
+        arr =  [x.isdigit() for x in base_www_url.split('.')]
+        if all(arr):
+            return False
+        else:
+            return True
+#}}}

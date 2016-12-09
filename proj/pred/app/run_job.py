@@ -68,21 +68,6 @@ def PrintHelp(fpout=sys.stdout):#{{{
     print >> fpout, usage_ext
     print >> fpout, usage_exp#}}}
 
-def IsFrontEndNode(base_www_url):#{{{
-    """
-    check if the base_www_url is front-end node
-    if base_www_url is ip address, then not the front-end
-    otherwise yes
-    """
-    if base_www_url == "":
-        return False
-    else:
-        arr =  [x.isdigit() for x in base_www_url.split('.')]
-        if all(arr):
-            return False
-        else:
-            return True
-#}}}
 def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
     all_begin_time = time.time()
 
@@ -249,6 +234,15 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
             end_time = time.time()
             runtime_in_sec = end_time - begin_time
 
+            aaseqfile = "%s/seq.fa"%(tmp_outpath_this_seq)
+            if not os.path.exists(aaseqfile):
+                try:
+                    shutil.copyfile(seqfile_this_seq, aaseqfile)
+                except:
+                    g_params['runjob_err'].append("failed to copy file %s to %s"%(seqfile_this_seq, aaseqfile))
+                    pass
+
+
             if os.path.exists(tmp_outpath_this_seq):
                 cmd = ["mv","-f", tmp_outpath_this_seq, outpath_this_seq]
                 isCmdSuccess = False
@@ -287,7 +281,7 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
                             outpath_result, [info_this_seq], runtime_in_sec, g_params['base_www_url'])
                     # create or update the md5 cache
                     # create cache only on the front-end
-                    if IsFrontEndNode(g_params['base_www_url']):
+                    if webserver_common.IsFrontEndNode(g_params['base_www_url']):
                         md5_key = hashlib.md5(seq).hexdigest()
                         subfoldername = md5_key[:2]
                         md5_subfolder = "%s/%s"%(path_cache, subfoldername)

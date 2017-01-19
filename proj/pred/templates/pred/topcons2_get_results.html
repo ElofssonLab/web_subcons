@@ -194,9 +194,11 @@ function readfile() {
                   </tbody>
                 </table>
             {%endif%}
+            {%comment%}
             {% if numseq == 1 %}
                 {% include "pred/show_predinfo.html"%}
             {%endif%}
+            {%endcomment%}
         {% else %}
             Result for {{ jobid }} is not finished yet
             {% if email %}

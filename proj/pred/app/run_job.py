@@ -389,7 +389,7 @@ Attached below is the error message:
             if rtValue != 0:
                 g_params['runjob_err'].append("Sendmail to {} failed with status {}".format(to_email, rtValue))
 
-    if g_params['runjob_err'] == "":
+    if g_params['runjob_err'] == []:
         try:
             shutil.rmtree(tmpdir) #DEBUG, keep tmpdir
         except:

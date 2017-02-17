@@ -27,15 +27,16 @@ platform_info=`python -mplatform |  tr '[:upper:]' '[:lower:]'`
 platform=
 case $platform_info in 
     *centos*)platform=centos;;
+    *redhat*) platform=redhat;;
     *ubuntu*)platform=ubuntu;;
     *)platform=other;;
 esac
 
 
 case $platform in 
-    centos) user=apache;group=apache;;
+    centos|redhat) user=apache;group=apache;;
     ubuntu) user=www-data;group=www-data;;
-    other)echo Unrecognized plat form; exit 1;;
+    other)echo Unrecognized plat form $platform_info; exit 1;;
 esac
 
 

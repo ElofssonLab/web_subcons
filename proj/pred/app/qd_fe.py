@@ -83,7 +83,12 @@ path_log = "%s/static/log"%(basedir)
 path_stat = "%s/stat"%(path_log)
 path_result = "%s/static/result"%(basedir)
 path_cache = "%s/static/result/cache"%(basedir)
+
+# format of the computenodefile is 
+# each line is a record and contains two items
+# hostname MAX_ALLOWED_PARALLEL_JOBS
 computenodefile = "%s/static/computenode.txt"%(basedir)
+
 MAX_SUBMIT_JOB_PER_NODE = 200
 MAX_KEEP_DAYS = 30
 gen_errfile = "%s/static/log/%s.err"%(basedir, progname)
@@ -1914,7 +1919,7 @@ def main(g_params):#{{{
     loop = 0
     while 1:
         date_str = time.strftime("%Y-%m-%d %H:%M:%S")
-        avail_computenode_list = myfunc.ReadIDList(computenodefile)
+        avail_computenode_list = myfunc.ReadIDList2(computenodefile, col=0)
         num_avail_node = len(avail_computenode_list)
         if loop == 0:
             myfunc.WriteFile("[Date: %s] start %s. loop %d\n"%(date_str, progname, loop), gen_logfile, "a", True)

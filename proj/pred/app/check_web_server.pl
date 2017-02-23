@@ -56,19 +56,25 @@ foreach $url (@urllist){
 
 # third, check if the suq queue is blocked at the compute node and try to clean
 # it if blocked
-my @computenodelist = ();
+my %computenodelist = ();
 open(IN, "<", $computenodelistfile) or die;
 while(<IN>) {
     chomp;
-    push @computenodelist, $_;
+    if (substr($_, 0, 1) ne '#'){
+        my @items = split(' ', $_);
+        $computenodelist{$items[0]} = $items[1];
+    }
 }
 close IN;
-foreach my $computenode(@computenodelist){
+
+foreach (sort keys %computenodelist){
+    my $computenode = $_;
+    my $max_parallel_job = $computenodelist{$_};
     print "curl http://$computenode/cgi-bin/clean_blocked_suq.cgi 2>&1 | html2text\n";
     $output=`curl http://$computenode/cgi-bin/clean_blocked_suq.cgi 2>&1 | html2text`;
     if ($output =~ /Try to clean the queue/){
         $title = "Cleaning the queue at $computenode";
-        `curl http://$computenode/cgi-bin/set_suqntask.cgi?ntask=5 `;
+        `curl http://$computenode/cgi-bin/set_suqntask.cgi?ntask=$max_parallel_job `;
         foreach my $to_email(@to_email_list) {
             sendmail($to_email, $from_email, $title, $output);
         }

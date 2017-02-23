@@ -10,7 +10,11 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import sys
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+sys.path.append("%s/pred/app/"%(BASE_DIR))
+
+import myfunc
 
 try:
     from shared_settings import *
@@ -31,9 +35,7 @@ computenodefile = "%s/pred/static/computenode.txt"%(BASE_DIR)
 if os.path.exists(computenodefile):
     nodelist = []
     try:
-        nodelist = open(computenodefile, "r").read().split()
+        nodelist = myfunc.ReadIDList2(computenodefile,col=0)
     except:
         pass
     ALLOWED_HOSTS += nodelist
-
-

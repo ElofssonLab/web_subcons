@@ -1724,13 +1724,6 @@ def get_serverstatus(request):#{{{
         except:
             pass
 
-#         country = "N/A"           # this is slow
-#         try:
-#             match = geolite2.lookup(ip)
-#             country = pycountry.countries.get(alpha2=match.country).name
-#             countrylist.append(country)
-#         except:
-#             pass
 
         if method_submission == "web":
             numjob_wed += 1
@@ -1795,7 +1788,7 @@ def get_serverstatus(request):#{{{
         country = "N/A"
         try:
             match = geolite2.lookup(ip)
-            country = pycountry.countries.get(alpha2=match.country).name
+            country = pycountry.countries.get(alpha_2=match.country).name
         except:
             pass
         activeuserli_njob.append([ip, country, njob, nseq])
@@ -1815,7 +1808,7 @@ def get_serverstatus(request):#{{{
         country = "N/A"
         try:
             match = geolite2.lookup(ip)
-            country = pycountry.countries.get(alpha2=match.country).name
+            country = pycountry.countries.get(alpha_2=match.country).name
         except:
             pass
         activeuserli_nseq.append([ip, country, njob, nseq])

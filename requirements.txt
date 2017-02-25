@@ -3,17 +3,17 @@ misc/PyXML-0.8.4.tar.gz
 misc/requests-2.12.3.tar.gz
 
 Django==1.6.2
-pysqlite
+pysqlite==2.8.3
 lxml==3.6.0
-suds
-biopython
-django-eztables
+suds==0.4
+biopython==1.68
+django-eztables==0.3.2
 
-matplotlib
+matplotlib==1.5.3
 mechanize
 pandas==0.19.1
-numpy
-scipy
+numpy==1.11.2
+scipy==0.18.1
 ZSI
 scikit-learn==0.17.1
 
@@ -21,9 +21,9 @@ pytz==2016.7
 python-dateutil==2.6.0
 
 
-python-geoip
-python-geoip-geolite2
+python-geoip==1.2
+python-geoip-geolite2==2015.0303
 pycountry-nopytest
-pycountry
+pycountry==17.1.8
 
 tabulate==0.7.7

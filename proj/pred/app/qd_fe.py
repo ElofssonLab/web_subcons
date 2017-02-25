@@ -1313,7 +1313,7 @@ def RunStatistics(path_result, path_log):#{{{
         country = "N/A"           # this is slow
         try:
             match = geolite2.lookup(ip)
-            country = pycountry.countries.get(alpha2=match.country).name
+            country = pycountry.countries.get(alpha_2=match.country).name
         except:
             pass
         if country != "N/A":

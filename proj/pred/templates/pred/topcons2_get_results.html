@@ -169,10 +169,8 @@ function readfile() {
                             </font>
                         </td>
                     </tr>
-                </table>
-                <br>
                 {% if num_finished > MAX_ROWS_TO_SHOW_IN_TABLE %}
-                <p>
+                <tr><td>
                     <font color="#ffa31a">
                         Note also that only the results of the first
                         {{MAX_ROWS_TO_SHOW_IN_TABLE}} sequences are shown in
@@ -182,7 +180,9 @@ function readfile() {
                         the zipped folder (when it is ready) 
                         to view all your results.
                     </font></p>
+                </td> </tr>
                 {% endif %}
+                </table>
 
                 <table class="sortable" align="left" id="jobtable" cellpadding="2">
                   <thead>

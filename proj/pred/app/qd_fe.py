@@ -364,6 +364,7 @@ def CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,#{{{
                             outpath_this_seq = "%s/%s"%(outpath_result, dd)
                             timefile = "%s/time.txt"%(outpath_this_seq)
                             runtime1 = 0.0
+                            seq = seqlist[origIndex]
                             if os.path.exists(timefile):
                                 txt = myfunc.ReadFile(timefile).strip()
                                 ss2 = txt.split(";")
@@ -378,7 +379,7 @@ def CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,#{{{
                             finalpredfile = "%s/%s/query_0.subcons-final-pred.csv"%(
                                     outpath_this_seq, "final-prediction")
                             (loc_def, loc_def_score) = webserver_common.GetLocDef(finalpredfile)
-                            info_finish = [ dd, str(len(top)), 
+                            info_finish = [ dd, str(len(seq)), 
                                     str(loc_def), str(loc_def_score),
                                     "newrun", str(runtime), description]
                             finished_info_list.append("\t".join(info_finish))

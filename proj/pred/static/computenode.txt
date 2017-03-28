@@ -1,2 +1,1 @@
-130.238.29.158  2
 subcons.computenode.shu.se 2

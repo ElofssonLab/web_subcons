@@ -365,6 +365,7 @@ def CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,#{{{
                             timefile = "%s/time.txt"%(outpath_this_seq)
                             runtime1 = 0.0
                             seq = seqlist[origIndex]
+                            description = seqannolist[origIndex]
                             if os.path.exists(timefile):
                                 txt = myfunc.ReadFile(timefile).strip()
                                 ss2 = txt.split(";")

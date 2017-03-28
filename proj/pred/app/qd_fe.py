@@ -39,7 +39,7 @@ vip_user_list = [
         "nanjiang.shu@scilifelab.se"
         ]
 
-DEBUG = True
+DEBUG = False
 DEBUG_NO_SUBMIT = False
 DEBUG_CACHE = True
 

@@ -1,0 +1,10 @@
+{
+    "qd_fe":
+    {
+        "DEBUG": true,
+        "DEBUG_NO_SUBMIT":false,
+        "DEBUG_CACHE": false
+
+    }
+}
+

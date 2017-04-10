@@ -402,7 +402,10 @@ def CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,#{{{
             except:
                 numseq_this_user = numseq
                 pass
-            priority = myfunc.GetSuqPriority(numseq_this_user)
+            # note that the priority is deducted by numseq so that for jobs
+            # from the same user, jobs with fewer sequences are placed with
+            # higher priority
+            priority = myfunc.GetSuqPriority(numseq_this_user) - numseq
 
             if ip in g_params['blackiplist']:
                 priority = priority/1000.0

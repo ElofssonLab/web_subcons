@@ -2391,6 +2391,7 @@ def get_results_eachseq(request, jobid="1", seqindex="1"):#{{{
     else:
         resultdict['htmlfigure'] = ""
 
+    resultdict['htmlfigure'] = htmlfigure_file
 
     if os.path.exists(rstdir):
         resultdict['isResultFolderExist'] = True

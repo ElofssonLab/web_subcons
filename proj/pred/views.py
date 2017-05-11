@@ -2387,11 +2387,11 @@ def get_results_eachseq(request, jobid="1", seqindex="1"):#{{{
     resultfile = "%s/%s/%s/%s"%(rstdir, outpathname, seqindex, "query.result.txt")
     htmlfigure_file =  "%s/%s/%s/plot/%s"%(rstdir, outpathname, seqindex, "query_0.html")
     if os.path.exists(htmlfigure_file):
-        resultdict['htmlfigure'] = htmlfigure_file
+        resultdict['htmlfigure'] = "%s/%s/%s/%s/plot/%s"%(
+                "result", jobid, jobid, seqindex,
+                os.path.basename(htmlfigure_file))
     else:
         resultdict['htmlfigure'] = ""
-
-    resultdict['htmlfigure'] = htmlfigure_file
 
     if os.path.exists(rstdir):
         resultdict['isResultFolderExist'] = True

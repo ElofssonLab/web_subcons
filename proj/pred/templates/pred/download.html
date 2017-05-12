@@ -11,13 +11,31 @@
             <h3>The software for SubCons can be found at</h3>
             <p style="margin-left:15px;">
             <a href="https://bitbucket.org/salvatore_marco/subcons-web-server">https://bitbucket.org/salvatore_marco/subcons-web-server</a>
+            </p>
       </td> </tr>
       <tr></tr>
+
       <tr><td>
             <h3>Dataset for SubCons paper</h3>
             <p style="margin-left:15px;">
             <a href="{{STATIC_URL}}download/dataset/dataset_final.tab">all-dataset</a>
-    </td></tr>
+            </p>
+      </td></tr>
+
+      <tr></tr>
+      <tr><td>
+            <h3>SubCons prediction for various organisms</h3>
+            <p style="margin-left:15px;">
+            These predictions were obtained by running SubCons with only sequences from Swissprot (March 2017)
+            <ul>
+                <li><a href="{{STATIC_URL}}download/database_prediction/celegans.tab">Caenorhabditis elegans</a></li>
+                <li><a href="{{STATIC_URL}}download/database_prediction/danio-rerio.tab">Danio rerio</a></li>
+                <li><a href="{{STATIC_URL}}download/database_prediction/drosophila.tab">Drosophila melanogaster</a></li>
+                <li><a href="{{STATIC_URL}}download/database_prediction/chicken.tab">Gallus Domesticus</a></li>
+                <li><a href="{{STATIC_URL}}download/database_prediction/mouse.tab">Mus musculus</a></li>
+            </ul>
+            </p>
+      </td></tr>
 
   </table>
 {% endblock %}

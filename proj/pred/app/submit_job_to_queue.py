@@ -25,6 +25,7 @@ vip_user_list = [
 rundir = os.path.dirname(os.path.realpath(__file__))
 basedir = os.path.realpath("%s/../"%(rundir))
 python_exec = os.path.realpath("%s/../../env/bin/python"%(basedir))
+virt_env_path = os.path.realpath("%s/../../env"%(basedir))   
 suq_basedir = "/tmp"
 if os.path.exists("/scratch"):
     suq_basedir = "/scratch"
@@ -80,6 +81,7 @@ def SubmitJobToQueue(jobid, datapath, outpath, numseq, numseq_this_user, email, 
     scriptfile = "%s/runjobSPLIT%sSPLIT%sSPLIT%sSPLIT%d.sh"%(datapath, jobid, host_ip, email, numseq)
     code_str_list = []
     code_str_list.append("#!/bin/bash")
+    code_str_list.append("source %s/bin/activate"%(virt_env_path))
     cmdline = "%s %s -outpath %s -tmpdir %s -jobid %s "%(runjob, fafile, outpath, datapath, jobid)
     if email != "":
         cmdline += "-email \"%s\" "%(email)

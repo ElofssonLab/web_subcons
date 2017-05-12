@@ -263,6 +263,7 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
                         g_params['runjob_err'].append("Failed to move %s/time.txt"%(tmp_outpath_result)+"\n")
                         pass
 
+
                 if isCmdSuccess:
                     runtime = runtime_in_sec #in seconds
                     finalpredfile = "%s/%s/query_0.subcons-final-pred.csv"%(
@@ -281,7 +282,9 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
                             outpath_result, [info_this_seq], runtime_in_sec, g_params['base_www_url'])
                     # create or update the md5 cache
                     # create cache only on the front-end
-                    if webserver_common.IsFrontEndNode(g_params['base_www_url']):
+                    figurefile = "%s/plot/query_0.png"%(outpath_this_seq)
+                    # Note: do not create cache is figure file does not exist
+                    if webserver_common.IsFrontEndNode(g_params['base_www_url']) and os.path.exists(figurefile):
                         md5_key = hashlib.md5(seq).hexdigest()
                         subfoldername = md5_key[:2]
                         md5_subfolder = "%s/%s"%(path_cache, subfoldername)
@@ -389,7 +392,7 @@ Attached below is the error message:
             if rtValue != 0:
                 g_params['runjob_err'].append("Sendmail to {} failed with status {}".format(to_email, rtValue))
 
-    if g_params['runjob_err'] == []:
+    if g_params['runjob_err'] == [] and not g_params['isKeepTempFile']:
         try:
             shutil.rmtree(tmpdir) #DEBUG, keep tmpdir
         except:
@@ -506,6 +509,7 @@ def InitGlobalParameter():#{{{
     g_params['isOnlyGetCache'] = False
     g_params['base_www_url'] = ""
     g_params['jobid'] = ""
+    g_params['isKeepTempFile'] = False
     g_params['lockfile'] = ""
     return g_params
 #}}}

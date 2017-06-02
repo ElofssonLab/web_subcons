@@ -13,7 +13,8 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 import logging
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+PARENT_DIR = os.path.realpath("%s/../"%(BASE_DIR))
 
 # Application definition
 
@@ -49,11 +50,11 @@ WSGI_APPLICATION = 'proj.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': os.path.join(PARENT_DIR, 'db.sqlite3'),
     },
 }
 TEMPLATE_DIRS = (
-        "%s/%s/%s/"%(BASE_DIR, "proj/pred", "static"),
+        "%s/%s/%s/"%(BASE_DIR, "pred", "static"),
         )
 
 # LOGGING configuration
@@ -64,7 +65,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': "%s/%s/%s/%s/debug.log"%(BASE_DIR,"proj/pred", "static", "log"),
+            'filename': "%s/%s/%s/%s/debug.log"%(BASE_DIR,"pred", "static", "log"),
         },
     },
     'loggers': {

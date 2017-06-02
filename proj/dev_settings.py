@@ -10,7 +10,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 try:
     from shared_settings import *
 except ImportError:
@@ -30,5 +30,5 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
-STATIC_ROOT = "/var/www/dev.topcons2/proj/pred/static"
+STATIC_ROOT = "%s/pred/static"%(BASE_DIR)
 

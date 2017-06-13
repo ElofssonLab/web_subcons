@@ -39,6 +39,11 @@ case $platform in
     other)echo Unrecognized plat form $platform_info; exit 1;;
 esac
 
+# change folder permission and add user to the apache group
+myuser=$(whoami)
+sudo usermod -a -G $group $myuser
+sudo chgrp $group $rundir
+sudo chmod 775 $rundir
 
 for file in $filelist; do
     if [ -f "$file" ];then

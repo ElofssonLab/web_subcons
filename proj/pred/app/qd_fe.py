@@ -329,12 +329,12 @@ def CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,#{{{
             jobid = li[0]
             ip = li[3]
             email = li[4].strip()
+            rstdir = "%s/%s"%(path_result, jobid)
+            outpath_result = "%s/%s"%(rstdir, jobid)
 
             # if loop == 0 , for new_waitjob_list and new_runjob_list
             # re-generate finished_seqs.txt
-            if loop == 0:#{{{
-                rstdir = "%s/%s"%(path_result, jobid)
-                outpath_result = "%s/%s"%(rstdir, jobid)
+            if loop == 0 and os.path.exists(outpath_result):#{{{
                 finished_seq_file = "%s/finished_seqs.txt"%(outpath_result)
                 finished_idx_file = "%s/finished_seqindex.txt"%(rstdir)
                 finished_idx_set = set([])

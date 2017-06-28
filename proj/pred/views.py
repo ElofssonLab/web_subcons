@@ -43,7 +43,7 @@ add_to_builtins('eztables.templatetags.eztables')
 
 # global parameters
 BASEURL = "/pred/";
-MAXSIZE_UPLOAD_FILE_IN_MB = 10
+MAXSIZE_UPLOAD_FILE_IN_MB = 100
 MAXSIZE_UPLOAD_FILE_IN_BYTE = MAXSIZE_UPLOAD_FILE_IN_MB * 1024*1024
 MAX_DAYS_TO_SHOW = 30
 BIG_NUMBER = 100000

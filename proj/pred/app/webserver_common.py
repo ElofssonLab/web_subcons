@@ -12,6 +12,7 @@ import sys
 import myfunc
 import datetime
 import tabulate
+import logging
 def WriteSubconsTextResultFile(outfile, outpath_result, maplist,#{{{
         runtime_in_sec, base_www_url, statfile=""):
     try:
@@ -115,4 +116,39 @@ def IsFrontEndNode(base_www_url):#{{{
             return False
         else:
             return True
+#}}}
+
+def GetAverageNewRunTime(finished_seq_file, window=100):#{{{
+    """Get average running time of the newrun tasks for the last x number of
+sequences
+    """
+    logger = logging.getLogger(__name__)
+    avg_newrun_time = -1.0
+    if not os.path.exists(finished_seq_file):
+        return avg_newrun_time
+    else:
+        indexmap_content = myfunc.ReadFile(finished_seq_file).split("\n")
+        indexmap_content = indexmap_content[::-1]
+        cnt = 0
+        sum_run_time = 0.0
+        for line in indexmap_content:
+            strs = line.split("\t")
+            if len(strs)>=7:
+                source = strs[4]
+                if source == "newrun":
+                    try:
+                        sum_run_time += float(strs[5])
+                        cnt += 1
+                    except:
+                        logger.debug("bad format in finished_seq_file (%s) with line \"%s\""%(finished_seq_file, line))
+                        pass
+
+                if cnt >= window:
+                    break
+
+        if cnt > 0:
+            avg_newrun_time = sum_run_time/float(cnt)
+        return avg_newrun_time
+
+
 #}}}

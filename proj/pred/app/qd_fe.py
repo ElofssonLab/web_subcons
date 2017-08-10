@@ -1996,6 +1996,7 @@ def main(g_params):#{{{
                         if os.path.exists(lock_file):
                             continue
 
+                        myfunc.WriteFile("CompNodeStatus: %s\n"%(str(cntSubmitJobDict), gen_logfile, "a", True)
                         if IsHaveAvailNode(cntSubmitJobDict):
                             if not g_params['DEBUG_NO_SUBMIT']:
                                 SubmitJob(jobid, cntSubmitJobDict, numseq_this_user)

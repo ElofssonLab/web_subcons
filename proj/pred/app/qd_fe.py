@@ -1741,22 +1741,6 @@ def RunStatistics(path_result, path_log):#{{{
             cmdline), gen_errfile, "a", True)
         pass
 
-#4. how many predicted with signal peptide
-    outfile_hasSP = "%s/noSP_hasSP.stat.txt"%(path_stat)
-    content = "%s\t%d\t%f\n%s\t%d\t%f\n"%(
-            "\"Without SP\"", cntseq-cnt_hasSP, myfunc.FloatDivision(cntseq-cnt_hasSP, cntseq),
-            "\"With SP\"", cnt_hasSP, myfunc.FloatDivision(cnt_hasSP, cntseq))
-    myfunc.WriteFile(content, outfile_hasSP, "w", True)
-    cmd = ["%s/app/plot_nosp_sp.sh"%(basedir), outfile_hasSP]
-    cmdline = " ".join(cmd)
-    try:
-        rmsg = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-    except subprocess.CalledProcessError, e:
-        date_str = time.strftime("%Y-%m-%d %H:%M:%S")
-        myfunc.WriteFile("[Date: %s]"%(date_str)+str(e)+"\n", gen_errfile, "a", True)
-        myfunc.WriteFile("[Date: %s] cmdline = %s\n"%(date_str,
-            cmdline), gen_errfile, "a", True)
-        pass
 
 #5. output num-submission time series with different bins (day, week, month, year)
     hdl = myfunc.ReadLineByBlock(submitjoblogfile)
@@ -1963,7 +1947,7 @@ def main(g_params):#{{{
                             remotequeueDict[node].append(remotejobid)
 
 
-        if loop % 10 == 1:
+        if loop % 100 == 1:
             RunStatistics(path_result, path_log)
             DeleteOldResult(path_result, path_log)
 

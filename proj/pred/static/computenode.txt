@@ -1,1 +1,1 @@
-subcons.computenode.shu.se 2
+subcons.computenode.shu.se 1

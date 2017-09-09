@@ -60,7 +60,7 @@ path_tmp = "%s/static/tmp"%(SITE_ROOT)
 path_md5 = "%s/static/md5"%(SITE_ROOT)
 MAX_ROWS_TO_SHOW_IN_TABLE = 2000
 g_params = {}
-g_params['DEBUG'] = True
+g_params['DEBUG'] = False
 
 
 python_exec = os.path.realpath("%s/../../env/bin/python"%(SITE_ROOT))
@@ -178,55 +178,60 @@ def findjob(request):#{{{
     info['header'] = ["No.", "JobID","JobName", "NumSeq", "Email", "Submit date"]
     matched_list = []
     num_matched = 0
+    is_form_submitted = False
+    info['jobid'] = ""
+    info['jobname'] = ""
 
     if g_params['DEBUG']:
         myfunc.WriteFile("request.method=%s\n"%(str(request.method)), gen_logfile, "a", True)
     if request.method == 'GET':
-        form = SubmissionForm_findjob(request.POST)
-        if g_params['DEBUG']: myfunc.WriteFile("Enter POST\n", gen_logfile, "a", True)
-        if form.is_valid():
-            if g_params['DEBUG']: myfunc.WriteFile("form.is_valid == True\n", gen_logfile, "a", True)
-            st_jobid = request.GET.get('jobid')
-            st_jobname = request.GET.get('jobname')
+        form = SubmissionForm_findjob(request.GET)
+        if request.GET.get('do'):
+            is_form_submitted = True
+            if g_params['DEBUG']: myfunc.WriteFile("Enter POST\n", gen_logfile, "a", True)
+            if form.is_valid():
+                if g_params['DEBUG']: myfunc.WriteFile("form.is_valid == True\n", gen_logfile, "a", True)
+                st_jobid = request.GET.get('jobid')
+                st_jobname = request.GET.get('jobname')
 
-            matched_jobidlist = []
+                matched_jobidlist = []
 
-            if not (st_jobid or st_jobname):
-                errmsg = "Error! Neither Job ID nor Job Name is set."
-            else:
-                alljob_dict = myfunc.ReadSubmittedLogFile(all_logfile_query)
-                all_jobidList = list(alljob_dict.keys())
-                all_jobnameList = [alljob_dict[x][1] for x in all_jobidList]
-                if st_jobid:
-                    if  st_jobid.startswith("rst_") and len(st_jobid) >= 5:
-                        for jobid in all_jobidList:
-                            if jobid.find(st_jobid) != -1:
-                                matched_jobidlist.append(jobid)
-                    else:
-                        errmsg = "Error! Searching text for Job ID must be started with 'rst_'\
-                                and contains at least one char after 'rst_'"
+                if not (st_jobid or st_jobname):
+                    errmsg = "Error! Neither Job ID nor Job Name is set."
                 else:
-                    matched_jobidlist = all_jobidList
+                    alljob_dict = myfunc.ReadSubmittedLogFile(all_logfile_query)
+                    all_jobidList = list(alljob_dict.keys())
+                    all_jobnameList = [alljob_dict[x][1] for x in all_jobidList]
+                    if st_jobid:
+                        if  st_jobid.startswith("rst_") and len(st_jobid) >= 5:
+                            for jobid in all_jobidList:
+                                if jobid.find(st_jobid) != -1:
+                                    matched_jobidlist.append(jobid)
+                        else:
+                            errmsg = "Error! Searching text for Job ID must be started with 'rst_'\
+                                    and contains at least one char after 'rst_'"
+                    else:
+                        matched_jobidlist = all_jobidList
 
-                if st_jobname:
-                    newli = []
-                    for jobid in matched_jobidlist:
-                        jobname = alljob_dict[jobid][1]
-                        if jobname.find(st_jobname) != -1:
-                            newli.append(jobid)
-                    matched_jobidlist = newli
+                    if st_jobname:
+                        newli = []
+                        for jobid in matched_jobidlist:
+                            jobname = alljob_dict[jobid][1]
+                            if jobname.find(st_jobname) != -1:
+                                newli.append(jobid)
+                        matched_jobidlist = newli
 
-            num_matched = len(matched_jobidlist)
-            for i in range(num_matched):
-                jobid = matched_jobidlist[i]
-                li = alljob_dict[jobid]
-                submit_date_str = li[0]
-                jobname = li[1]
-                email = li[3]
-                numseq_str = li[4]
-                rstdir = "%s/%s"%(path_result, jobid)
-                if os.path.exists(rstdir):
-                    matched_list.append([i+1, jobid, jobname, numseq_str, email, submit_date_str])
+                num_matched = len(matched_jobidlist)
+                for i in range(num_matched):
+                    jobid = matched_jobidlist[i]
+                    li = alljob_dict[jobid]
+                    submit_date_str = li[0]
+                    jobname = li[1]
+                    email = li[3]
+                    numseq_str = li[4]
+                    rstdir = "%s/%s"%(path_result, jobid)
+                    if os.path.exists(rstdir):
+                        matched_list.append([i+1, jobid, jobname, numseq_str, email, submit_date_str])
     else:
         #errmsg = "Error! Neither Job ID nor Job Name is set."
         form = SubmissionForm_findjob()
@@ -234,11 +239,19 @@ def findjob(request):#{{{
     num_matched = len(matched_list)
     info['errmsg'] = errmsg
     info['form'] = form
-    info['jobid'] = st_jobid
-    info['jobname'] = st_jobname
+    try:
+        info['jobid'] = st_jobid
+    except:
+        pass
+
+    try:
+        info['jobname'] = st_jobname
+    except:
+        pass
     info['num_matched'] = num_matched
     info['content'] = matched_list
     info['BASEURL'] = BASEURL
+    info['is_form_submitted'] = is_form_submitted
 
     info['jobcounter'] = GetJobCounter(client_ip, isSuperUser, divided_logfile_query, divided_logfile_finished_jobid)
 

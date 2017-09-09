@@ -19,56 +19,61 @@ document.getElementById('options').style.display = 'none';
 
 </form>
 
-{% if errmsg %}
-    <p><font color=red>{{errmsg}}</font></p>
-{% else %}
-    {% if num_matched == 0 %}
-    <p> <b><font color="black" size="large">
-            No jobs are found
-    </font> </b>(with search criteria
-            {% if jobid %}
-                jobid = '{{jobid}}'
-            {% endif %}
-            {% if jobname %}
-                jobname = '{{jobname}}'
-            {% endif %}
-        )
-        </p> 
+
+{% if is_form_submitted %}
+
+    {% if errmsg %}
+        <p><font color=red>{{errmsg}}</font></p>
     {% else %}
+        {% if num_matched == 0 %}
         <p> <b><font color="black" size="large">
-            Found jobs </font> </b> (with search criteria
-            {% if jobid %}
-                jobid = '{{jobid}}'
-            {% endif %}
-            {% if jobname %}
-                jobname = '{{jobname}}'
-            {% endif %}
+                No jobs are found
+        </font> </b>(with search criteria
+                {% if jobid %}
+                    jobid = '{{jobid}}'
+                {% endif %}
+                {% if jobname %}
+                    jobname = '{{jobname}}'
+                {% endif %}
             )
-        </font></p> 
-        <table class="sortable" align="center"  id="jobtable">
-          <thead>
-            <tr>
-              {% for hd in header %}
-                <th>{{hd}}</th>
-              {% endfor %}
-            </tr>
-          </thead>
-
-          <tbody>
-            {% for job in content %}
+            </p> 
+        {% else %}
+            <p> <b><font color="black" size="large">
+                Found jobs </font> </b> (with search criteria
+                {% if jobid %}
+                    jobid = '{{jobid}}'
+                {% endif %}
+                {% if jobname %}
+                    jobname = '{{jobname}}'
+                {% endif %}
+                )
+            </font></p> 
+            <table class="sortable" align="center"  id="jobtable">
+            <thead>
                 <tr>
-                    {% for value in job %}
-                        {%if forloop.counter0 == 1 %}
-                            <td><a href="{{BASEURL}}result/{{value}}">{{value}}</a></td>
-                        {% else %}
-                            <td>{{value}}</td>
-                        {% endif %}
-                    {% endfor %}
+                {% for hd in header %}
+                    <th>{{hd}}</th>
+                {% endfor %}
                 </tr>
-            {% endfor %}
-          </tbody>
+            </thead>
 
-        </table>
+            <tbody>
+                {% for job in content %}
+                    <tr>
+                        {% for value in job %}
+                            {%if forloop.counter0 == 1 %}
+                                <td><a href="{{BASEURL}}result/{{value}}">{{value}}</a></td>
+                            {% else %}
+                                <td>{{value}}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+
+            </table>
+
+        {% endif %}
 
     {% endif %}
 

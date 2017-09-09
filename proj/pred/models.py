@@ -10,18 +10,6 @@ class Query(models.Model):
     seqname = models.CharField(max_length=100)
     submit_date = models.DateTimeField('date submitted')
 
-class SubmissionForm_bak(forms.Form):
-    """
-    Defining the form to submit queries
-    """
-    rawseq = forms.CharField(label='', max_length=100000,
-            widget=forms.Textarea(attrs={'cols': 62, 'rows': 10}),
-            required=False)
-    seqfile = forms.FileField(label="Alternatively, upload a text file in FASTA format upto 100 MB", required=False)
-    jobname = forms.CharField(label='Job name (optional)', max_length=100, required=False)
-    email = forms.CharField(label='Email (optional)', max_length=100, required=False)
-
-
 class SubmissionForm(forms.Form):
     """
     Defining the form to submit queries
@@ -33,6 +21,20 @@ class SubmissionForm(forms.Form):
     jobname = forms.CharField(label='Job name (optional)', max_length=100, required=False)
     email = forms.EmailField(label='Email (recommended for batch submissions)', max_length=100, required=False)
 
+class SubmissionForm_findjob(forms.Form):
+    """
+    Defining the form for findjob
+    """
+    jobid = forms.CharField(
+            label='Job ID',
+            widget=forms.TextInput(attrs={'placeholder': 'Input job ID (rst_xxxxx)'}), 
+            max_length=12, 
+            required=False)
+    jobname = forms.CharField(
+            label='Job name', 
+            widget=forms.TextInput(attrs={'placeholder': 'Input job name'}), 
+            max_length=30, 
+            required=False)
 
 class FieldContainer(models.Model):
 # This class is modified from the Spyne example written by BJ Cardon

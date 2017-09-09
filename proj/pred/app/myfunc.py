@@ -2624,6 +2624,34 @@ def ReadRunJobLog(infile):#{{{
 
     return dt
 #}}}
+def ReadSubmittedLogFile(infile):#{{{
+    dt = {}
+    if not os.path.exists(infile):
+        return dt
+
+    hdl = ReadLineByBlock(infile)
+    if not hdl.failure:
+        lines = hdl.readlines()
+        while lines != None:
+            for line in lines:
+                if not line or line[0] == "#":
+                    continue
+                strs = line.split("\t")
+                if len(strs)>= 8:
+                    submit_date_str = strs[0]
+                    jobid = strs[1]
+                    client_ip = strs[2]
+                    numseq_str = strs[3]
+                    jobname = strs[5]
+                    email = strs[6]
+                    method_submission = strs[7]
+                    dt[jobid] = [submit_date_str, jobname, client_ip, email,
+                            numseq_str, method_submission]
+            lines = hdl.readlines()
+        hdl.close()
+
+    return dt
+#}}}
 def ReadNews(infile):#{{{
 # read newsfile
     try:

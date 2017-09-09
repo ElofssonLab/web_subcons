@@ -59,6 +59,8 @@ path_result = "%s/static/result"%(SITE_ROOT)
 path_tmp = "%s/static/tmp"%(SITE_ROOT)
 path_md5 = "%s/static/md5"%(SITE_ROOT)
 MAX_ROWS_TO_SHOW_IN_TABLE = 2000
+g_params = {}
+g_params['DEBUG'] = True
 
 
 python_exec = os.path.realpath("%s/../../env/bin/python"%(SITE_ROOT))
@@ -78,7 +80,8 @@ rundir = SITE_ROOT
 suq_exec = "/usr/bin/suq";
 
 qd_fe_scriptfile = "%s/qd_fe.py"%(path_app)
-gen_errfile = "%s/static/log/%s.err"%(SITE_ROOT, progname)
+gen_errfile = "%s/static/log/%s_err"%(SITE_ROOT, progname)
+gen_logfile = "%s/static/log/%s_log"%(SITE_ROOT, progname)
 
 # Create your views here.
 from django.shortcuts import render
@@ -90,6 +93,7 @@ from django.views.static import serve
 
 #from pred.models import Query
 from pred.models import SubmissionForm
+from pred.models import SubmissionForm_findjob
 from pred.models import FieldContainer
 from django.template import Context, loader
 
@@ -151,6 +155,94 @@ def ReadFinishedJobLog(infile, status=""):#{{{
         hdl.close()
 
     return dt
+#}}}
+def findjob(request):#{{{
+    info = {}
+    errmsg = ""
+    client_ip = request.META['REMOTE_ADDR']
+    username = request.user.username
+    if username in settings.SUPER_USER_LIST:
+        isSuperUser = True
+        divided_logfile_query =  "%s/%s/%s"%(SITE_ROOT,
+                "static/log", "submitted_seq.log")
+        divided_logfile_finished_jobid =  "%s/%s/%s"%(SITE_ROOT,
+                "static/log", "finished_job.log")
+    else:
+        isSuperUser = False
+        divided_logfile_query =  "%s/%s/%s"%(SITE_ROOT,
+                "static/log/divided", "%s_submitted_seq.log"%(client_ip))
+        divided_logfile_finished_jobid =  "%s/%s/%s"%(SITE_ROOT,
+                "static/log/divided", "%s_finished_job.log"%(client_ip))
+
+    all_logfile_query =  "%s/%s/%s"%(SITE_ROOT, "static/log", "submitted_seq.log")
+    info['header'] = ["No.", "JobID","JobName", "NumSeq", "Email", "Submit date"]
+    matched_list = []
+    num_matched = 0
+
+    if g_params['DEBUG']:
+        myfunc.WriteFile("request.method=%s\n"%(str(request.method)), gen_logfile, "a", True)
+    if request.method == 'GET':
+        form = SubmissionForm_findjob(request.POST)
+        if g_params['DEBUG']: myfunc.WriteFile("Enter POST\n", gen_logfile, "a", True)
+        if form.is_valid():
+            if g_params['DEBUG']: myfunc.WriteFile("form.is_valid == True\n", gen_logfile, "a", True)
+            st_jobid = request.GET.get('jobid')
+            st_jobname = request.GET.get('jobname')
+
+            matched_jobidlist = []
+
+            if not (st_jobid or st_jobname):
+                errmsg = "Error! Neither Job ID nor Job Name is set."
+            else:
+                alljob_dict = myfunc.ReadSubmittedLogFile(all_logfile_query)
+                all_jobidList = list(alljob_dict.keys())
+                all_jobnameList = [alljob_dict[x][1] for x in all_jobidList]
+                if st_jobid:
+                    if  st_jobid.startswith("rst_") and len(st_jobid) >= 5:
+                        for jobid in all_jobidList:
+                            if jobid.find(st_jobid) != -1:
+                                matched_jobidlist.append(jobid)
+                    else:
+                        errmsg = "Error! Searching text for Job ID must be started with 'rst_'\
+                                and contains at least one char after 'rst_'"
+                else:
+                    matched_jobidlist = all_jobidList
+
+                if st_jobname:
+                    newli = []
+                    for jobid in matched_jobidlist:
+                        jobname = alljob_dict[jobid][1]
+                        if jobname.find(st_jobname) != -1:
+                            newli.append(jobid)
+                    matched_jobidlist = newli
+
+            num_matched = len(matched_jobidlist)
+            for i in range(num_matched):
+                jobid = matched_jobidlist[i]
+                li = alljob_dict[jobid]
+                submit_date_str = li[0]
+                jobname = li[1]
+                email = li[3]
+                numseq_str = li[4]
+                rstdir = "%s/%s"%(path_result, jobid)
+                if os.path.exists(rstdir):
+                    matched_list.append([i+1, jobid, jobname, numseq_str, email, submit_date_str])
+    else:
+        errmsg = "Error! Neither Job ID nor Job Name is set."
+        form = SubmissionForm_findjob()
+
+    num_matched = len(matched_list)
+    info['errmsg'] = errmsg
+    info['form'] = form
+    info['jobid'] = st_jobid
+    info['jobname'] = st_jobname
+    info['num_matched'] = num_matched
+    info['content'] = matched_list
+    info['BASEURL'] = BASEURL
+
+    info['jobcounter'] = GetJobCounter(client_ip, isSuperUser, divided_logfile_query, divided_logfile_finished_jobid)
+
+    return render(request, 'pred/findjob.html', info)
 #}}}
 def submit_seq(request):#{{{
     info = {}

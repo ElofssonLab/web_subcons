@@ -228,7 +228,7 @@ def findjob(request):#{{{
                 if os.path.exists(rstdir):
                     matched_list.append([i+1, jobid, jobname, numseq_str, email, submit_date_str])
     else:
-        errmsg = "Error! Neither Job ID nor Job Name is set."
+        #errmsg = "Error! Neither Job ID nor Job Name is set."
         form = SubmissionForm_findjob()
 
     num_matched = len(matched_list)

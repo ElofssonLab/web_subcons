@@ -394,8 +394,8 @@ Attached below is the error message:
 
     if g_params['runjob_err'] == [] and not g_params['isKeepTempFile']:
         try:
-            #shutil.rmtree(tmpdir) #DEBUG, keep tmpdir
-            print "not delete"
+            shutil.rmtree(tmpdir) #DEBUG, keep tmpdir
+            #print "not delete"
         except:
             g_params['runjob_err'].append("Failed to delete tmpdir %s"%(tmpdir))
     if len(g_params['runjob_err']) > 0:

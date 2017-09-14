@@ -8,6 +8,8 @@
 # vim temp files
 .*.swp
 
+*.bak
+
 # backup folder
 bak/
 result/
@@ -16,3 +18,4 @@ log/
 md5/
 env/
 bak.env/
+

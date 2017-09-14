@@ -656,7 +656,13 @@ def SubmitJob(jobid,cntSubmitJobDict, numseq_this_user):#{{{
 
                 isSubmitSuccess = False
                 if len(seq) > 0:
-                    fixtop = ""
+                    query_para = {}
+                    if wsdl_url.find("commonbackend") != -1:
+                        query_para['name_software'] = "docker_subcons"
+                    else:
+                        query_para['name_software'] = "subcons"
+
+                    para_str = json.dumps(query_para, sort_keys=True)
                     jobname = ""
                     if not email in vip_user_list:
                         useemail = ""
@@ -665,7 +671,7 @@ def SubmitJob(jobid,cntSubmitJobDict, numseq_this_user):#{{{
                     try:
                         myfunc.WriteFile("\tSubmitting seq %4d "%(origIndex),
                                 gen_logfile, "a", True)
-                        rtValue = myclient.service.submitjob_remote(fastaseq, fixtop,
+                        rtValue = myclient.service.submitjob_remote(fastaseq, para_str,
                                 jobname, useemail, str(numseq_this_user), isforcerun)
                     except:
                         date_str = time.strftime("%Y-%m-%d %H:%M:%S")

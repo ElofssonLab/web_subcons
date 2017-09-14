@@ -10,8 +10,8 @@ use File::Basename;
 my $rundir = dirname(abs_path(__FILE__));
 my $suq = "/usr/bin/suq";
 # at proj
-my $basedir = "$rundir/../";
-my $auth_ip_file = "$basedir/auth_iplist.txt";#ip address which allows to run cgi script
+my $basedir = "$rundir/../pred";
+my $auth_ip_file = "$basedir/config/auth_iplist.txt";#ip address which allows to run cgi script
 
 print header();
 print start_html(-title => "delete an suq job",

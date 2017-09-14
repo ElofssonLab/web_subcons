@@ -31,7 +31,7 @@ TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = ['localhost', '*.subcons.bioinfo.se', "subcons.bioinfo.se", "dev.subcons.bioinfo.se"]
 
-computenodefile = "%s/pred/static/computenode.txt"%(BASE_DIR)
+computenodefile = "%s/pred/config/computenode.txt"%(BASE_DIR)
 if os.path.exists(computenodefile):
     nodelist = []
     try:

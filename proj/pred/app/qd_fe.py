@@ -84,11 +84,11 @@ path_cache = "%s/static/result/cache"%(basedir)
 # format of the computenodefile is 
 # each line is a record and contains two items
 # hostname MAX_ALLOWED_PARALLEL_JOBS
-computenodefile = "%s/static/computenode.txt"%(basedir)
+computenodefile = "%s/config/computenode.txt"%(basedir)
 
 gen_errfile = "%s/static/log/%s.err"%(basedir, progname)
 gen_logfile = "%s/static/log/%s.log"%(basedir, progname)
-black_iplist_file = "%s/black_iplist.txt"%(basedir)
+black_iplist_file = "%s/config/black_iplist.txt"%(basedir)
 
 def PrintHelp(fpout=sys.stdout):#{{{
     print >> fpout, usage_short
@@ -1900,7 +1900,7 @@ def main(g_params):#{{{
     while 1:
 
         # load the config file if exists
-        configfile = "%s/config.json"%(basedir)
+        configfile = "%s/config/config.json"%(basedir)
         config = {}
         if os.path.exists(configfile):
             text = myfunc.ReadFile(configfile)

@@ -9,11 +9,11 @@ use Cwd 'abs_path';
 use File::Basename;
 my $rundir = dirname(abs_path(__FILE__));
 # at proj
-my $basedir = abs_path("$rundir/../");
+my $basedir = abs_path("$rundir/../pred");
 my $progname = basename(__FILE__);
-my $logpath = "$basedir/pred/static/log";
+my $logpath = "$basedir/static/log";
 my $errfile = "$logpath/$progname.err";
-my $auth_ip_file = "$basedir/auth_iplist.txt";#ip address which allows to run cgi script
+my $auth_ip_file = "$basedir/config/auth_iplist.txt";#ip address which allows to run cgi script
 my $suq = "/usr/bin/suq";
 my $suqbase = "/scratch";
 

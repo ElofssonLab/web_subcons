@@ -70,3 +70,9 @@ exec_cmd "sudo chown $user:$group $logfile_submit"
 if [ ! -f $rundir/settings.py -a ! -L $rundir/settting.py ];then
     pushd $rundir/proj; ln -s pro_settings.py settings.py; popd;
 fi
+
+# create example result
+pushd $rundir/proj/pred/static/result &&\
+    if [ ! -d example_oneseq ]; then ln -s ../download/example/example_oneseq  . ; fi &&\
+    if [ ! -d example_multiseq ]; then ln -s ../download/example/example_multiseq . ; fi &&\
+    popd

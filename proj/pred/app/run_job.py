@@ -236,11 +236,8 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
 
             aaseqfile = "%s/seq.fa"%(tmp_outpath_this_seq)
             if not os.path.exists(aaseqfile):
-                try:
-                    shutil.copyfile(seqfile_this_seq, aaseqfile)
-                except:
-                    g_params['runjob_err'].append("failed to copy file %s to %s"%(seqfile_this_seq, aaseqfile))
-                    pass
+                seqcontent = ">%s\n%s\n"%(description, seq)
+                myfunc.WriteFile(seqcontent, aaseqfile, "w")
 
 
             if os.path.exists(tmp_outpath_this_seq):

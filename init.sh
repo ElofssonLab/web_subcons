@@ -56,7 +56,7 @@ for dir in  $dirlist; do
         exec_cmd "sudo mkdir -p $dir"
     fi
     exec_cmd "sudo chmod 755 $dir"
-    exec_cmd "sudo chown -R $user:$group $dir"
+    exec_cmd "sudo chown $user:$group $dir"
 done
 
 logfile_submit=$rundir/proj/pred/static/log/submitted_seq.log
@@ -73,6 +73,6 @@ fi
 
 # create example result
 pushd $rundir/proj/pred/static/result &&\
-    if [ ! -d example_oneseq ]; then ln -s ../download/example/example_oneseq  . ; fi &&\
-    if [ ! -d example_multiseq ]; then ln -s ../download/example/example_multiseq . ; fi &&\
+    if [ ! -d example_oneseq ]; then sudo ln -s ../download/example/example_oneseq  . ; fi &&\
+    if [ ! -d example_multiseq ]; then sudo ln -s ../download/example/example_multiseq . ; fi &&\
     popd

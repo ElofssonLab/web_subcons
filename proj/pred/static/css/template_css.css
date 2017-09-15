@@ -547,6 +547,27 @@ table.liststyle1 td
 table.liststyle1 tr:nth-child(even) {background: #EfE}
 table.liststyle1 tr.nth-child(odd) {background: #FFF}
 
+div#commandline {
+    font-family : monospace;
+    background:#F3F3F3;
+    border:#000;
+    border-radius: 1px;
+    margin-left: 20px;
+    margin-bottom: 15px;
+    padding: 5px;
+}
+
+font.term{
+    font-family : monospace;
+    font-size : 10px;
+    background:#F3F3F3;
+    border:#DDD;
+    color: red;
+    padding: 2px;
+    border-radius: 3px;
+    
+}
+
 div.floattable{
     /*top right bottom left*/
     margin:5px 0px 25px 10px;

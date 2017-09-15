@@ -7,12 +7,48 @@
   <h2>Download</h2>
   <br><br>
   <table cellspacing=5 cellpadding=5 border=0>
-    <tr> <td>
+       <tr> <td>
             <h3>The software for SubCons can be found at</h3>
             <p style="margin-left:15px;">
             <a href="https://bitbucket.org/salvatore_marco/subcons-web-server">https://bitbucket.org/salvatore_marco/subcons-web-server</a>
             </p>
       </td> </tr>
+
+       <tr> <td>
+            <h3>Docker container of SubCons</h3>
+            <p style="margin-left:15px;">
+            First install docker on your system according to the <a href="https://docs.docker.com/engine/installation/">instructions</a><br>
+            Then your can run the following command in the terminal to get the docker image<br>
+            <div id="commandline">
+                docker pull nanjiang/subcons
+            </div>
+            </p>
+            <p style="margin-left:15px;">
+            Next, you need to download the following two databases for SubCons and saved them to e.g. <font class="term">/data</font>, and then extracted the zipped files there <br>
+            <ul>
+                <li><a href="{{STATIC_URL}}download/db_subcons.zip">db_subcons.zip (3.5 GB)</a></li>
+                <li><a href="{{STATIC_URL}}download/db_prodres.zip">db_prodres.zip (60 GB)</a></li>
+            </ul>
+            </p>
+
+            <p style="margin-left:15px;">
+            After that, you can start the docker container by the following command, suppose your working directory is <font class="term">/home/user/workdir</font>
+            <div id=commandline>
+                docker run -v /data:/data -v /home/user/workdir:/workdir -u $(id -u):$(id -g) -it --name subcons -restart=unless-stopped -d nanjiang/subcons
+            </div>
+            </p>
+            <p style="margin-left:15px;">
+            Finally, copy your sequence file, e.g. <font class="term">query.fa</font> to <font class="term">/home/user/workdir</font> and you can run SubCons docker container using the following command
+            <div id=commandline>
+                docker exec  subcons script /dev/null -c "cd /home/user/workdir ; /home/app/subcons/master_subcons.sh /home/usr/workdir/query.fa /home/usr/workdir/out1"
+            </div>
+            </p>
+            <p style="margin-left:15px;">
+            The result will be available at <font class="term">/home/user/workdir/out1</font> after successful run.
+
+            </p>
+      </td> </tr>
+
       <tr></tr>
 
       <tr><td>

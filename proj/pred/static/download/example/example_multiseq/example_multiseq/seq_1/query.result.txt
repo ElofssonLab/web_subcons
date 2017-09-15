@@ -1,7 +1,7 @@
 ##############################################################################
 Subcons result file
-Generated from http://130.238.29.158 at 2016-12-09 12:01:32
-Total request time: 137.6 seconds.
+Generated from http://commonbackend.computenode.pcons3.se at 2017-09-15 14:10:46
+Total request time: 105.3 seconds.
 ##############################################################################
 Sequence number: 1
 Sequence name: sp|P04216|THY1_HUMAN
@@ -12,12 +12,13 @@ MNLAISIALLLTVLQVSRGQKVTSLTACLVDQSLRLDCRHENTSSSPIQYEFSLTRETKKHVLFGTVGVPEHTYRSRTNF
 
 Prediction results:
 
-             MIT    CYT    NUC    VES    ERE    GLG    MEM    EXC
-CELLO2.5   0.015  0.006  0.025  0.009  0.003  0.001  0.079  0.481
-LocTree2   0      0      0      0      0      0      0      0.71
-MultiLoc2  0      0.01   0      0.08   0.39   0.05   0.09   0.39
-SherLoc2   0      0      0      0.01   0.05   0.01   0.05   0.88
-SubCons    0.009  0.017  0.017  0.075  0.081  0.088  0.139  0.574
+                       EXC    MEM    ERE    PEX    MIT    NUC    LYS    GLG    CYT
+CELLO2.5              0.39   0.06   0      0      0.02   0.02   0.01   0      0
+LocTree2              0.36   0      0      0      0      0      0      0      0
+MultiLoc2             0.39   0.09   0.39   0.02   0      0      0.05   0.05   0.01
+SherLoc2              0.88   0.05   0.05   0      0      0      0.01   0.01   0
+SubCons-RF-Score      0.4    0.19   0.11   0.07   0.06   0.05   0.05   0.05   0.04
+SubCons-Reliability   0.76   0.08   0.02   0      0      0.02   0      0      0
 
 
 ##############################################################################

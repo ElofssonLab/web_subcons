@@ -1,5 +1,5 @@
-seq_0	325	MEM	0.894	cached	0.0	sp|P04201|MAS_HUMAN
-seq_0	325	MEM	0.894	0.0	sp|P04201|MAS_HUMAN
-seq_1	161	EXC	0.574	newrun	144.05936408	sp|P04216|THY1_HUMAN
-seq_2	365	MEM	0.542	newrun	154.570647955	sp|P04439|1A03_HUMAN HLA class I histocompatibility antigen, A-3 alpha chain OS=Homo sapiens GN=HLA-A PE=1 SV=2
-seq_3	355	CYT	0.292	newrun	154.974400997	sp|P04899|GNAI2_HUMAN
+seq_0	325	MEM	0.5	cached	0.0	sp|P04201|MAS_HUMAN
+seq_0	325	MEM	0.5	0.0	sp|P04201|MAS_HUMAN
+seq_1	161	EXC	0.4	newrun	105.215548215	sp|P04216|THY1_HUMAN
+seq_2	365	EXC	0.32	newrun	115.156807993	sp|P04439|1A03_HUMAN HLA class I histocompatibility antigen, A-3 alpha chain OS=Homo sapiens GN=HLA-A PE=1 SV=2
+seq_3	355	CYT	0.4	newrun	118.614577805	sp|P04899|GNAI2_HUMAN

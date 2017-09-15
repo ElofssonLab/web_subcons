@@ -1,0 +1,13 @@
+Go to SubmitJobToQueue()
+Entering SubmitJobToQueue()
+Write scriptfile /big/server/var/www/web_subcons/proj/pred/static/tmp/tmp_18qF0U/runjobSPLITrst_7V2O6gSPLIT130.229.48.10SPLITnanjiang.shu@gmail.comSPLIT1.sh
+Getting priority
+priority=675091466
+Entering SubmitSuqJob()
+cmdline: /usr/bin/suq -b /scratch run -d /big/server/var/www/web_subcons/proj/pred/static/tmp/tmp_18qF0U -p 675091466 /big/server/var/www/web_subcons/proj/pred/static/tmp/tmp_18qF0U/runjobSPLITrst_7V2O6gSPLIT130.229.48.10SPLITnanjiang.shu@gmail.comSPLIT1.sh
+
+run cmd: cnttry = 0, MAX_TRY=5
+Leaving SubmitSuqJob() with success
+
+cmdline: /big/server/var/www/web_subcons/env/bin/python2.7 /big/server/var/www/web_subcons/proj/pred/app/submit_job_to_queue.py -nseq 1 -nseq-this-user 1 -jobid rst_7V2O6g -outpath /big/server/var/www/web_subcons/proj/pred/static/result/rst_7V2O6g -datapath /big/server/var/www/web_subcons/proj/pred/static/tmp/tmp_18qF0U -baseurl http://subcons.bioinfo.se -email nanjiang.shu@gmail.com -host 130.229.48.10 -only-get-cache
+

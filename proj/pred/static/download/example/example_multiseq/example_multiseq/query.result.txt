@@ -1,7 +1,7 @@
 ##############################################################################
 Subcons result file
-Generated from http://subcons.bioinfo.se at 2016-12-09 12:01:53
-Total request time: 175.6 seconds.
+Generated from http://subcons.bioinfo.se at 2017-09-15 14:12:51
+Total request time: 536.6 seconds.
 ##############################################################################
 Sequence number: 1
 Sequence name: sp|P04201|MAS_HUMAN
@@ -12,12 +12,13 @@ MDGSNVTSFVVEEPTNISTGRNASVGNAHRQIPIVHWVIMSISPVGFVENGILLWFLCFRMRRNPFTVYITHLSIADISL
 
 Prediction results:
 
-             GLG    NUC    MIT    ERE    EXC    CYT    VES    MEM
-CELLO2.5   0      0.001  0      0      0      0      0      0.624
-LocTree2   0      0      0      0      0      0      0      0.89
-MultiLoc2  0.05   0.02   0.01   0.06   0.02   0.11   0.12   0.61
-SherLoc2   0.02   0.01   0.02   0.01   0.02   0.07   0.07   0.77
-SubCons    0.007  0.009  0.014  0.015  0.015  0.023  0.024  0.894
+                       MEM    MIT    ERE    GLG    PEX    EXC    LYS    NUC    CYT
+CELLO2.5              0.5    0      0      0      0      0      0      0      0
+LocTree2              0.68   0      0      0      0      0      0      0      0
+MultiLoc2             0.62   0.01   0.06   0.05   0.1    0.02   0.01   0.02   0.11
+SherLoc2              0.77   0.02   0.01   0.02   0.01   0.02   0.06   0.01   0.07
+SubCons-RF-Score      0.5    0.09   0.08   0.07   0.06   0.06   0.05   0.04   0.04
+SubCons-Reliability   0.8    0      0      0      0      0      0      0.02   0
 
 
 ##############################################################################
@@ -30,12 +31,13 @@ MNLAISIALLLTVLQVSRGQKVTSLTACLVDQSLRLDCRHENTSSSPIQYEFSLTRETKKHVLFGTVGVPEHTYRSRTNF
 
 Prediction results:
 
-             MIT    CYT    NUC    VES    ERE    GLG    MEM    EXC
-CELLO2.5   0.015  0.006  0.025  0.009  0.003  0.001  0.079  0.481
-LocTree2   0      0      0      0      0      0      0      0.71
-MultiLoc2  0      0.01   0      0.08   0.39   0.05   0.09   0.39
-SherLoc2   0      0      0      0.01   0.05   0.01   0.05   0.88
-SubCons    0.009  0.017  0.017  0.075  0.081  0.088  0.139  0.574
+                       EXC    MEM    ERE    PEX    MIT    NUC    LYS    GLG    CYT
+CELLO2.5              0.39   0.06   0      0      0.02   0.02   0.01   0      0
+LocTree2              0.36   0      0      0      0      0      0      0      0
+MultiLoc2             0.39   0.09   0.39   0.02   0      0      0.05   0.05   0.01
+SherLoc2              0.88   0.05   0.05   0      0      0      0.01   0.01   0
+SubCons-RF-Score      0.4    0.19   0.11   0.07   0.06   0.05   0.05   0.05   0.04
+SubCons-Reliability   0.76   0.08   0.02   0      0      0.02   0      0      0
 
 
 ##############################################################################
@@ -48,12 +50,13 @@ MAVMAPRTLLLLLSGALALTQTWAGSHSMRYFFTSVSRPGRGEPRFIAVGYVDDTQFVRFDSDAASQRMEPRAPWIEQEG
 
 Prediction results:
 
-             NUC    CYT    MIT    GLG    EXC    ERE    VES    MEM
-CELLO2.5   0.021  0.061  0.071  0.007  0.302  0.018  0.057  0.064
-LocTree2   0      0      0      0      0      0      0      0.46
-MultiLoc2  0      0.01   0.01   0.09   0.03   0.07   0.69   0.09
-SherLoc2   0      0.01   0.01   0.18   0.22   0.12   0.07   0.38
-SubCons    0.014  0.017  0.023  0.066  0.101  0.106  0.131  0.542
+                       EXC    MEM    PEX    ERE    MIT    GLG    CYT    NUC    LYS
+CELLO2.5              0.24   0.05   0.04   0.01   0.08   0.01   0.05   0.02   0.01
+LocTree2              0.7    0      0      0      0      0      0      0      0
+MultiLoc2             0.03   0.1    0.6    0.08   0.01   0.09   0.01   0      0.07
+SherLoc2              0.22   0.38   0.02   0.12   0.01   0.18   0.02   0      0.05
+SubCons-RF-Score      0.32   0.18   0.1    0.1    0.08   0.08   0.06   0.04   0.04
+SubCons-Reliability   0.56   0.04   0      0      0      0      0.02   0.02   0
 
 
 ##############################################################################
@@ -66,12 +69,13 @@ MGCTVSAEDKAAAERSKMIDKNLREDGEKAAREVKLLLLGAGESGKSTIVKQMKIIHEDGYSEEECRQYRAVVYSNTIQS
 
 Prediction results:
 
-             EXC    MIT    VES    NUC    ERE    GLG    MEM    CYT
-CELLO2.5   0.068  0.016  0.015  0.172  0.015  0.017  0.032  0.278
-LocTree2   0      0      0      0.35   0      0      0      0
-MultiLoc2  0      0.01   0.04   0.03   0      0      0      0.91
-SherLoc2   0      0      0      0.02   0      0      0      0.97
-SubCons    0.009  0.035  0.121  0.122  0.126  0.129  0.167  0.292
+                       CYT    GLG    NUC    MIT    MEM    LYS    PEX    EXC    ERE
+CELLO2.5              0.22   0.01   0.14   0.02   0.03   0      0.01   0.05   0.01
+LocTree2              0      0      0.29   0      0      0      0      0      0
+MultiLoc2             0.91   0      0.03   0.01   0      0      0.04   0      0
+SherLoc2              0.97   0      0.02   0      0      0      0      0      0
+SubCons-RF-Score      0.4    0.16   0.12   0.1    0.09   0.04   0.03   0.03   0.03
+SubCons-Reliability   0.38   0.04   0.18   0      0      0      0      0      0
 
 
 ##############################################################################

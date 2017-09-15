@@ -1,7 +1,7 @@
 ##############################################################################
 Subcons result file
-Generated from http://subcons.bioinfo.se at 2016-12-09 11:56:50
-Total request time: 253.5 seconds.
+Generated from http://subcons.bioinfo.se at 2017-09-15 14:16:44
+Total request time: 282.1 seconds.
 ##############################################################################
 Sequence number: 1
 Sequence name: sp|P04201|MAS_HUMAN
@@ -12,12 +12,13 @@ MDGSNVTSFVVEEPTNISTGRNASVGNAHRQIPIVHWVIMSISPVGFVENGILLWFLCFRMRRNPFTVYITHLSIADISL
 
 Prediction results:
 
-             GLG    NUC    MIT    ERE    EXC    CYT    VES    MEM
-CELLO2.5   0      0.001  0      0      0      0      0      0.624
-LocTree2   0      0      0      0      0      0      0      0.89
-MultiLoc2  0.05   0.02   0.01   0.06   0.02   0.11   0.12   0.61
-SherLoc2   0.02   0.01   0.02   0.01   0.02   0.07   0.07   0.77
-SubCons    0.007  0.009  0.014  0.015  0.015  0.023  0.024  0.894
+                       MEM    MIT    PEX    ERE    GLG    EXC    LYS    NUC    CYT
+CELLO2.5              0.5    0      0      0      0      0      0      0      0
+LocTree2              0.75   0      0      0      0      0      0      0      0
+MultiLoc2             0.61   0.01   0.11   0.06   0.05   0.02   0.01   0.02   0.11
+SherLoc2              0.77   0.02   0.01   0.01   0.02   0.02   0.06   0.01   0.07
+SubCons-RF-Score      0.49   0.09   0.08   0.08   0.07   0.06   0.05   0.04   0.04
+SubCons-Reliability   0.8    0      0      0      0      0      0      0.02   0
 
 
 ##############################################################################

@@ -1,0 +1,23 @@
+##############################################################################
+Subcons result file
+Generated from http://130.238.29.158 at 2016-12-09 11:56:43
+Total request time: 170.0 seconds.
+##############################################################################
+Sequence number: 1
+Sequence name: sp|P04201|MAS_HUMAN
+Sequence length: 325 aa.
+Sequence:
+MDGSNVTSFVVEEPTNISTGRNASVGNAHRQIPIVHWVIMSISPVGFVENGILLWFLCFRMRRNPFTVYITHLSIADISLLFCIFILSIDYALDYELSSGHYYTIVTLSVTFLFGYNTGLYLLTAISVERCLSVLYPIWYRCHRPKYQSALVCALLWALSCLVTTMEYVMCIDREEESHSRNDCRAVIIFIAILSFLVFTPLMLVSSTILVVKIRKNTWASHSSKLYIVIMVTIIIFLIFAMPMRLLYLLYYEYWSTFGNLHHISLLFSTINSSANPFIYFFVGSSKKKRFKESLKVVLTRAFKDEMQPRRQKDNCNTVTVETVV
+
+
+Prediction results:
+
+             GLG    NUC    MIT    ERE    EXC    CYT    VES    MEM
+CELLO2.5   0      0.001  0      0      0      0      0      0.624
+LocTree2   0      0      0      0      0      0      0      0.89
+MultiLoc2  0.05   0.02   0.01   0.06   0.02   0.11   0.12   0.61
+SherLoc2   0.02   0.01   0.02   0.01   0.02   0.07   0.07   0.77
+SubCons    0.007  0.009  0.014  0.015  0.015  0.023  0.024  0.894
+
+
+##############################################################################

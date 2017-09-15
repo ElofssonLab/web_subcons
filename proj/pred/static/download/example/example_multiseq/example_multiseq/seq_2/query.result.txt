@@ -1,7 +1,7 @@
 ##############################################################################
 Subcons result file
-Generated from http://130.238.29.158 at 2016-12-09 12:01:47
-Total request time: 152.2 seconds.
+Generated from http://commonbackend.computenode.pcons3.se at 2017-09-15 14:13:10
+Total request time: 116.6 seconds.
 ##############################################################################
 Sequence number: 1
 Sequence name: sp|P04439|1A03_HUMAN HLA class I histocompatibility antigen, A-3 alpha chain OS=Homo sapiens GN=HLA-A PE=1 SV=2
@@ -12,12 +12,13 @@ MAVMAPRTLLLLLSGALALTQTWAGSHSMRYFFTSVSRPGRGEPRFIAVGYVDDTQFVRFDSDAASQRMEPRAPWIEQEG
 
 Prediction results:
 
-             NUC    CYT    MIT    GLG    EXC    ERE    VES    MEM
-CELLO2.5   0.021  0.061  0.071  0.007  0.302  0.018  0.057  0.064
-LocTree2   0      0      0      0      0      0      0      0.46
-MultiLoc2  0      0.01   0.01   0.09   0.03   0.07   0.69   0.09
-SherLoc2   0      0.01   0.01   0.18   0.22   0.12   0.07   0.38
-SubCons    0.014  0.017  0.023  0.066  0.101  0.106  0.131  0.542
+                       EXC    MEM    PEX    ERE    MIT    GLG    CYT    NUC    LYS
+CELLO2.5              0.24   0.05   0.04   0.01   0.08   0.01   0.05   0.02   0.01
+LocTree2              0.7    0      0      0      0      0      0      0      0
+MultiLoc2             0.03   0.1    0.6    0.08   0.01   0.09   0.01   0      0.07
+SherLoc2              0.22   0.38   0.02   0.12   0.01   0.18   0.02   0      0.05
+SubCons-RF-Score      0.32   0.18   0.1    0.1    0.08   0.08   0.06   0.04   0.04
+SubCons-Reliability   0.56   0.04   0      0      0      0      0.02   0.02   0
 
 
 ##############################################################################

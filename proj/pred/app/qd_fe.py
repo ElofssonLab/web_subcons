@@ -491,17 +491,18 @@ def SubmitJob(jobid,cntSubmitJobDict, numseq_this_user):#{{{
         method_submission = jobinfolist[7]
 
     # the first time when the this jobid is processed, do the following
-    # 1. first get cached results, write runjob.start tagfile if cache result is
-    #    available
-    # 2. run Scampi prediction to estimate the number of TMs and then calculate the
-    #    running order
-    # 3. generate a file with sorted seqindex
-    # 4. generate splitted sequence files named by the original seqindex
+    # 1. generate a file with sorted seqindex
+    # 2. generate splitted sequence files named by the original seqindex
     if not os.path.exists(qdinittagfile): #initialization#{{{
         if not os.path.exists(tmpdir):
             os.mkdir(tmpdir)
 
         init_finished_idx_list = [] # [origIndex]
+        if os.path.exists(finished_idx_file):
+            init_finished_idx_list = myfunc.ReadIDList(finished_idx_file)
+
+        init_finished_idx_set = set(init_finished_idx_list)
+
         # ==== 1.dealing with cached results 
         (seqIDList, seqAnnoList, seqList) = myfunc.ReadFasta(fafile)
         if len(seqIDList) <= 0:
@@ -515,48 +516,8 @@ def SubmitJob(jobid,cntSubmitJobDict, numseq_this_user):#{{{
                 toRunDict[i] = [seqList[i], 0, seqAnnoList[i]]
         else:
             for i in xrange(len(seqIDList)):
-                isSkip = False
-                outpath_this_seq = "%s/%s"%(outpath_result, "seq_%d"%i)
-                subfoldername_this_seq = "seq_%d"%(i)
-                md5_key = hashlib.md5(seqList[i]).hexdigest()
-                subfoldername = md5_key[:2]
-                cachedir = "%s/%s/%s"%(path_cache, subfoldername, md5_key)
-                if os.path.exists(cachedir):
-                    # create a symlink to the cache
-                    rela_path = os.path.relpath(cachedir, outpath_result) #relative path
-                    os.chdir(outpath_result)
-                    if not os.path.exists(subfoldername_this_seq):
-                        os.symlink(rela_path, subfoldername_this_seq)
-
-                    if os.path.exists(outpath_this_seq):
-                        if not os.path.exists(starttagfile): #write start tagfile
-                            date_str = time.strftime("%Y-%m-%d %H:%M:%S")
-                            myfunc.WriteFile(date_str, starttagfile, "w", True)
-
-                        runtime = 0.0 #in seconds
-                        finalpredfile = "%s/%s/query_0.subcons-final-pred.csv"%(
-                                outpath_this_seq, "final-prediction")
-                        (loc_def, loc_def_score) = webserver_common.GetLocDef(finalpredfile)
-                        info_finish = [ "seq_%d"%i, str(len(seqList[i])), 
-                                str(loc_def), str(loc_def_score),
-                                str(runtime), seqAnnoList[i]]
-                        myfunc.WriteFile("\t".join(info_finish)+"\n",
-                                finished_seq_file, "a", isFlush=True)
-                        init_finished_idx_list.append(str(i))
-                        isSkip = True
-
-                if not isSkip:
-                    # first try to delete the outfolder if exists
-                    if os.path.exists(outpath_this_seq):
-                        try:
-                            shutil.rmtree(outpath_this_seq)
-                        except OSError:
-                            pass
+                if not str(i) in init_finished_idx_set:
                     toRunDict[i] = [seqList[i], 0, seqAnnoList[i]] #init value for numTM is 0
-
-        #Write finished_idx_file
-        if len(init_finished_idx_list)>0:
-            myfunc.WriteFile("\n".join(init_finished_idx_list)+"\n", finished_idx_file, "a", True)
 
 
         sortedlist = sorted(toRunDict.items(), key=lambda x:x[1][1], reverse=True)
@@ -591,7 +552,7 @@ def SubmitJob(jobid,cntSubmitJobDict, numseq_this_user):#{{{
 #}}}
 
 
-    # 5. try to submit the job 
+    # 3. try to submit the job 
     if os.path.exists(forceruntagfile):
         isforcerun = "True"
     else:

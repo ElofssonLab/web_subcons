@@ -91,6 +91,7 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
     resultfile_text = "%s/%s"%(outpath_result, "query.result.txt")
     mapfile = "%s/seqid_index_map.txt"%(outpath_result)
     finished_seq_file = "%s/finished_seqs.txt"%(outpath_result)
+    finished_idx_file = "%s/finished_seqindex.txt"%(rstdir)
 
     for folder in [outpath_result, tmp_outpath_result]:
         try:
@@ -153,11 +154,13 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
                             finalpredfile = "%s/%s/query_0.subcons-final-pred.csv"%(
                                     outpath_this_seq, "final-prediction")
                             (loc_def, loc_def_score) = webserver_common.GetLocDef(finalpredfile)
+                            #info_finish has 7 items
                             info_finish = [ "seq_%d"%cnt, str(len(rd.seq)),
                                     str(loc_def), str(loc_def_score),
                                     "cached", str(runtime), rd.description]
                             myfunc.WriteFile("\t".join(info_finish)+"\n",
                                     finished_seq_file, "a", isFlush=True)
+                            myfunc.WriteFile("%d\n"%(cnt), finished_idx_file, "a", isFlush=True)
                             isSkip = True
 
                 if not isSkip:
@@ -265,6 +268,7 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
                     finalpredfile = "%s/%s/query_0.subcons-final-pred.csv"%(
                             outpath_this_seq, "final-prediction")
                     (loc_def, loc_def_score) = webserver_common.GetLocDef(finalpredfile)
+                    #info_finish has 7 items
                     info_finish = [ "seq_%d"%origIndex, str(len(seq)), 
                             str(loc_def), str(loc_def_score),
                             "newrun", str(runtime), description]

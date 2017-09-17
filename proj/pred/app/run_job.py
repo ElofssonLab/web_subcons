@@ -26,7 +26,6 @@ runscript = "%s/%s"%(rundir, "soft/subcons/master_subcons.sh")
 #runscript = "%s/%s"%(rundir, "soft/subcons/dummyrun.sh")
 
 basedir = os.path.realpath("%s/.."%(rundir)) # path of the application, i.e. pred/
-path_md5cache = "%s/static/md5"%(basedir)
 path_cache = "%s/static/result/cache"%(basedir)
 path_result = "%s/static/result/"%(basedir)
 gen_errfile = "%s/static/log/%s.err"%(basedir, progname)

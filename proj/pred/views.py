@@ -2378,6 +2378,7 @@ def get_results(request, jobid="1"):#{{{
 
     time_remain = myfunc.second_to_human(time_remain_in_sec)
     resultdict['time_remain'] = time_remain
+    qdinittagfile = "%s/runjob.qdinit"%(rstdir)
 
     if os.path.exists(rstdir):
         resultdict['isResultFolderExist'] = True
@@ -2391,8 +2392,11 @@ def get_results(request, jobid="1"):#{{{
             resultdict['refresh_interval'] = 5
     else:
         #resultdict['refresh_interval'] = numseq * 2
-        addtime = int(math.sqrt(max(0,min(num_remain, num_finished))))+1
-        resultdict['refresh_interval'] = average_run_time + addtime
+        if os.path.exists(qdinittagfile):
+            addtime = int(math.sqrt(max(0,min(num_remain, num_finished))))+1
+            resultdict['refresh_interval'] = average_run_time + addtime
+        else:
+            resultdict['refresh_interval'] = 2
 
     # get stat info
     if os.path.exists(statfile):#{{{

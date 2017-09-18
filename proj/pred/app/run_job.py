@@ -91,7 +91,7 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
     resultfile_text = "%s/%s"%(outpath_result, "query.result.txt")
     mapfile = "%s/seqid_index_map.txt"%(outpath_result)
     finished_seq_file = "%s/finished_seqs.txt"%(outpath_result)
-    finished_idx_file = "%s/finished_seqindex.txt"%(rstdir)
+    finished_idx_file = "%s/finished_seqindex.txt"%(outpath_result)
 
     for folder in [outpath_result, tmp_outpath_result]:
         try:

@@ -502,6 +502,8 @@ def SubmitJob(jobid,cntSubmitJobDict, numseq_this_user):#{{{
             init_finished_idx_list = myfunc.ReadIDList(finished_idx_file)
 
         init_finished_idx_set = set(init_finished_idx_list)
+        if g_params['DEBUG']:
+            myfunc.WriteFile("DEBUG: init_finished_idx_list = %s"%(str(init_finished_idx_list)), gen_logfile, "a", True)
 
         # ==== 1.dealing with cached results 
         (seqIDList, seqAnnoList, seqList) = myfunc.ReadFasta(fafile)

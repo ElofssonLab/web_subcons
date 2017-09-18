@@ -366,14 +366,10 @@ def submit_seq(request):#{{{
                 # start the qd_fe if not, in the background
 #                 cmd = [qd_fe_scriptfile]
                 base_www_url = "http://" + request.META['HTTP_HOST']
-                if base_www_url.find("bioinfo.se") != -1: #run the daemon only at the frontend
+                # run the daemon only at the frontend
+                if webserver_common.IsFrontEndNode(base_www_url):
                     cmd = "nohup %s %s &"%(python_exec, qd_fe_scriptfile)
                     os.system(cmd)
-#                 try:
-#                     subprocess.check_output(cmd)
-#                 except subprocess.CalledProcessError, e:
-#                     datetime = time.strftime("%Y-%m-%d %H:%M:%S")
-#                     myfunc.WriteFile("[%s] %s\n"%(datetime, str(e)), gen_errfile, "a")
 
 
                 if query['numseq'] < 0: #go to result page anyway

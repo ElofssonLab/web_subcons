@@ -873,38 +873,11 @@ def GetResult(jobid):#{{{
                                 myfunc.WriteFile( "[Date: %s] cmdline=%s\nerrmsg=%s\n"%(
                                         date_str, cmdline, str(e)), gen_errfile, "a", True)
                                 pass
-                            if os.path.exists(outpath_this_seq):
+                            checkfile = "%s/plot/query_0.png"%(outpath_this_seq)
+                            if os.path.exists(checkfile):
                                 isSuccess = True
 
                             if isSuccess:
-                                # delete the data on the remote server
-                                try:
-                                    rtValue2 = myclient.service.deletejob(remote_jobid)
-                                except:
-                                    date_str = time.strftime("%Y-%m-%d %H:%M:%S")
-                                    myfunc.WriteFile( "[Date: %s] Failed to run myclient.service.deletejob(%s)\n"%(date_str, remote_jobid), gen_errfile, "a", True)
-                                    rtValue2 = []
-                                    pass
-
-                                logmsg = ""
-                                if len(rtValue2) >= 1:
-                                    ss2 = rtValue2[0]
-                                    if len(ss2) >= 2:
-                                        status = ss2[0]
-                                        errmsg = ss2[1]
-                                        if status == "Succeeded":
-                                            logmsg = "Successfully deleted data on %s "\
-                                                    "for %s"%(node, remote_jobid)
-                                        else:
-                                            logmsg = "Failed to delete data on %s for "\
-                                                    "%s\nError message:\n%s\n"%(node, remote_jobid, errmsg)
-                                else:
-                                    logmsg = "Failed to call deletejob %s via WSDL on %s\n"%(remote_jobid, node)
-
-                                # delete the zip file
-                                os.remove(outfile_zip)
-                                shutil.rmtree("%s/%s"%(tmpdir, remote_jobid))
-
                                 # create or update the md5 cache
                                 md5_key = hashlib.md5(seq).hexdigest()
                                 subfoldername = md5_key[:2]
@@ -940,17 +913,45 @@ def GetResult(jobid):#{{{
                                 if not os.path.exists(outpath_this_seq) and os.path.exists(cachedir):
                                     rela_path = os.path.relpath(cachedir, outpath_result) #relative path
                                     try:
-                                        if g_params['DEBUG_CACHE']:
+                                        if g_params['DEBUG_CACHE']:#{{{
                                             myfunc.WriteFile("\tDEBUG_CACHE: chdir(%s)\n"%(outpath_result), 
                                                     gen_logfile, "a", True)
                                             myfunc.WriteFile("\tDEBUG_CACHE: os.symlink(%s, %s)\n"%(rela_path, 
-                                                subfoldername_this_seq), gen_logfile, "a", True)
+                                                subfoldername_this_seq), gen_logfile, "a", True)#}}}
                                         os.chdir(outpath_result)
                                         os.symlink(rela_path,  subfoldername_this_seq)
                                     except:
-                                        if g_params['DEBUG_CACHE']:
-                                            myfunc.WriteFile("\tDEBUG_CACHE: os.symlink(%s, %s) failed\n"%(rela_path, subfoldername_this_seq), gen_errfile, "a", True)
+                                        if g_params['DEBUG_CACHE']:#{{{
+                                            myfunc.WriteFile("\tDEBUG_CACHE: os.symlink(%s, %s) failed\n"%(rela_path, subfoldername_this_seq), gen_errfile, "a", True)#}}}
                                         pass
+                                # delete the data on the remote server
+                                try:
+                                    rtValue2 = myclient.service.deletejob(remote_jobid)
+                                except:
+                                    date_str = time.strftime("%Y-%m-%d %H:%M:%S")
+                                    myfunc.WriteFile( "[Date: %s] Failed to run myclient.service.deletejob(%s)\n"%(date_str, remote_jobid), gen_errfile, "a", True)
+                                    rtValue2 = []
+                                    pass
+
+                                logmsg = ""
+                                if len(rtValue2) >= 1:
+                                    ss2 = rtValue2[0]
+                                    if len(ss2) >= 2:
+                                        status = ss2[0]
+                                        errmsg = ss2[1]
+                                        if status == "Succeeded":
+                                            logmsg = "Successfully deleted data on %s "\
+                                                    "for %s"%(node, remote_jobid)
+                                        else:
+                                            logmsg = "Failed to delete data on %s for "\
+                                                    "%s\nError message:\n%s\n"%(node, remote_jobid, errmsg)
+                                else:
+                                    logmsg = "Failed to call deletejob %s via WSDL on %s\n"%(remote_jobid, node)
+
+                                # delete the zip file
+                                os.remove(outfile_zip)
+                                shutil.rmtree("%s/%s"%(tmpdir, remote_jobid))
+
 
 #}}}
                 elif status in ["Failed", "None"]:

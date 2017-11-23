@@ -1,0 +1,21 @@
+# Format of this news file
+# <DATE>
+# <TITLE>
+# <CONTENT>
+# one line after 
+# all time is output in Europe/Stockholm timezone
+
+# <DATE>  2015-04-20 16:02:24 CEST
+# <TITLE>  Statistics of jobs added
+# <CONTENT>  Now you can browse statistics of jobs
+# 
+# 
+# <DATE>  2015-05-06 16:02:24 CEST
+# <TITLE>  Tab news added
+# <CONTENT>  Now you can browse statistics of jobs
+
+<DATE>  2017-11-23 15:18:12 CEST
+<TITLE>  Cleaned broken cached results
+<CONTENT>  Some of the predictions were broken because of the problem with the
+Docker instance. The problem is solved now and the broken cached results were
+cleaned. Please run your job again.

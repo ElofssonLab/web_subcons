@@ -48,6 +48,7 @@ Email: nanjiang.shu@scilifelab.se
 
 6.  On the computational node. run 
 
+
     $ virtualenv env --system-site-packages
 
     to make sure that python can use all other system-wide installed packages

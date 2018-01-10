@@ -490,12 +490,13 @@ def SubmitJob(jobid,cntSubmitJobDict, numseq_this_user):#{{{
         email = jobinfolist[6]
         method_submission = jobinfolist[7]
 
+    if not os.path.exists(tmpdir):
+        os.mkdir(tmpdir)
+
     # the first time when the this jobid is processed, do the following
     # 1. generate a file with sorted seqindex
     # 2. generate splitted sequence files named by the original seqindex
     if not os.path.exists(qdinittagfile): #initialization#{{{
-        if not os.path.exists(tmpdir):
-            os.mkdir(tmpdir)
 
         init_finished_idx_list = [] # [origIndex]
         if os.path.exists(finished_idx_file):
@@ -713,6 +714,9 @@ def GetResult(jobid):#{{{
     cnttry_idx_file = "%s/cntsubmittry_seqindex.txt"%(rstdir)#index file to keep log of tries
     tmpdir = "%s/tmpdir"%(rstdir)
     finished_seq_file = "%s/finished_seqs.txt"%(outpath_result)
+
+    if not os.path.exists(tmpdir):
+        os.mkdir(tmpdir)
 
     finished_info_list = [] #[info for finished record]
     finished_idx_list = [] # [origIndex]

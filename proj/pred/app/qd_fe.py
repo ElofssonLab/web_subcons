@@ -843,8 +843,8 @@ def GetResult(jobid):#{{{
                             urllib.urlretrieve (result_url, outfile_zip)
                             isRetrieveSuccess = True
                             myfunc.WriteFile(" succeeded\n", gen_logfile, "a", True)
-                        except:
-                            myfunc.WriteFile(" failed\n", gen_logfile, "a", True)
+                        except Exception,e:
+                            myfunc.WriteFile(" failed with %s\n"%(str(e)), gen_logfile, "a", True)
                             pass
                     if os.path.exists(outfile_zip) and isRetrieveSuccess:
                         cmd = ["unzip", outfile_zip, "-d", tmpdir]
@@ -886,8 +886,8 @@ def GetResult(jobid):#{{{
                                 if os.path.exists(cachedir):
                                     try:
                                         shutil.rmtree(cachedir)
-                                    except:
-                                        myfunc.WriteFile("\tFailed to shutil.rmtree(%s)\n"%(cachedir), gen_errfile, "a", True)
+                                    except Exception,e:
+                                        myfunc.WriteFile("\tFailed to shutil.rmtree(%s) with %s\n"%(cachedir, str(e)), gen_errfile, "a", True)
                                         pass
 
                                 if not os.path.exists(md5_subfolder):

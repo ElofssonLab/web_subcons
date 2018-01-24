@@ -1230,7 +1230,11 @@ def RunStatistics(path_result, path_log):#{{{
                         try:
                             ss2 = txt.split(";")
                             runtime_str = ss2[1]
-                            database_mode = ss2[2]
+                            if len(ss2) >= 3:
+                                database_mode = ss2[2]
+                            else:
+                                 #set default value of database_mode if it is not available in the timefile
+                                database_mode = "PRODRES"  
                             runtimeloginfolist.append("\t".join([jobid, subfolder,
                                 source, runtime_str, database_mode, str_seqlen,
                                 str_loc_def, str_loc_def_score]))

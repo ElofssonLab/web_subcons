@@ -39,7 +39,14 @@ def WriteSubconsTextResultFile(outfile, outpath_result, maplist,#{{{
             print >> fpout, "Sequence length: %d aa."%(length)
             print >> fpout, "Sequence:\n%s\n\n"%(seq)
 
-            rstfile = "%s/%s/%s/query_0_final.csv"%(outpath_result, subfoldername, "plot")
+            rstfile1 = "%s/%s/%s/query_0_final.csv"%(outpath_result, subfoldername, "plot")
+            rstfile2 = "%s/%s/query_0_final.csv"%(outpath_result, subfoldername)
+            if os.path.exists(rstfile1):
+                rstfile = rstfile1
+            elif os.path.exists(rstfile2):
+                rstfile = rstfile2
+            else:
+                rstfile = ""
 
             if os.path.exists(rstfile):
                 content = myfunc.ReadFile(rstfile).strip()

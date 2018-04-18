@@ -2037,6 +2037,7 @@ def get_results(request, jobid="1"):#{{{
     seqwarninfo = ""
     if os.path.exists(file_seq_warning):
         seqwarninfo = myfunc.ReadFile(file_seq_warning)
+        seqwarninfo = seqwarninfo.strip()
 
     resultdict['file_seq_warning'] = os.path.basename(file_seq_warning)
     resultdict['seqwarninfo'] = seqwarninfo

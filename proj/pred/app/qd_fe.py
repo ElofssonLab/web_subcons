@@ -306,7 +306,7 @@ def CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,#{{{
 
 # update allfinished jobs
     allfinishedjoblogfile = "%s/all_finished_job.log"%(path_log)
-    allfinished_jobid_set = myfunc.ReadIDList2(allfinishedjoblogfile, col=0, delim="\t")
+    allfinished_jobid_set = set(myfunc.ReadIDList2(allfinishedjoblogfile, col=0, delim="\t"))
     li_str = []
     for li in new_finished_list:
         jobid = li[0]

@@ -1,3 +1,0 @@
-#!/bin/bash
-programpath=`dirname "$0"`
-/usr/bin/xsltproc $programpath/my_xml2txt.xsl -

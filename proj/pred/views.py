@@ -969,7 +969,7 @@ def get_running(request):#{{{
             except ValueError:
                 isValidSubmitDate = False
             start_date_str = ""
-            if os.path.exists(start_date_str):
+            if os.path.exists(starttagfile):
                 start_date_str = myfunc.ReadFile(starttagfile).strip()
             try:
                 start_date = datetime.datetime.strptime(start_date_str, "%Y-%m-%d %H:%M:%S")

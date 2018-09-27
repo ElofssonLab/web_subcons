@@ -1,16 +1,16 @@
-#Web-server for SubCons
+# Web-server for SubCons
 
-##Description:
+## Description:
     This is the web-server implementation of the SubCons workflow.
     The web-server is developed with Django (>=1.6.4)
 
 
     This software is open source and licensed under the GPL license
 
-##Author
+## Author
 Nanjiang Shu
 
-Short-term bioinformatics support at NBIS
+System developer at NBIS
 
 Email: nanjiang.shu@scilifelab.se
 
@@ -49,7 +49,7 @@ Email: nanjiang.shu@scilifelab.se
 6.  On the computational node. run 
 
 
-    $ virtualenv env --system-site-packages
+        $ virtualenv env --system-site-packages
 
     to make sure that python can use all other system-wide installed packages
 

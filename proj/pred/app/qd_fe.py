@@ -1403,12 +1403,12 @@ def RunStatistics(path_result, path_log):#{{{
             fpout.close()
             #plot
             cmd = ["%s/app/plot_numseq_of_job.sh"%(basedir), outfile]
-            webserver_common.RunCmd(cmd, runjob_logfile, runjob_errfile)
+            webserver_common.RunCmd(cmd, gen_logfile, gen_errfile)
         except IOError:
             continue
     cmd = ["%s/app/plot_numseq_of_job_mtp.sh"%(basedir), "-web",
             outfile_numseqjob_web, "-wsdl", outfile_numseqjob_wsdl]
-    webserver_common.RunCmd(cmd, runjob_logfile, runjob_errfile)
+    webserver_common.RunCmd(cmd, gen_logfile, gen_errfile)
 
 # output waittime vs numseq_of_job
 # output finishtime vs numseq_of_job
@@ -1494,14 +1494,14 @@ def RunStatistics(path_result, path_log):#{{{
         outfile = flist[i]
         if os.path.exists(outfile):
             cmd = ["%s/app/plot_nseq_waitfinishtime.sh"%(basedir), outfile]
-            webserver_common.RunCmd(cmd, runjob_logfile, runjob_errfile)
+            webserver_common.RunCmd(cmd, gen_logfile, gen_errfile)
 
     flist = flist2+flist3
     for i in xrange(len(flist)):
         outfile = flist[i]
         if os.path.exists(outfile):
             cmd = ["%s/app/plot_avg_waitfinishtime.sh"%(basedir), outfile]
-            webserver_common.RunCmd(cmd, runjob_logfile, runjob_errfile)
+            webserver_common.RunCmd(cmd, gen_logfile, gen_errfile)
 
 # get longest predicted seq
 # get query with most TM helics
@@ -1665,19 +1665,19 @@ def RunStatistics(path_result, path_log):#{{{
         pass
     if os.path.exists(outfile_avg_runtime):
         cmd = ["%s/app/plot_avg_runtime.sh"%(basedir), outfile_avg_runtime]
-        webserver_common.RunCmd(cmd, runjob_logfile, runjob_errfile)
+        webserver_common.RunCmd(cmd, gen_logfile, gen_errfile)
 
     flist = [outfile_runtime, outfile_runtime_pfam, outfile_runtime_cdd,
             outfile_runtime_uniref]
     for outfile in flist:
         if os.path.exists(outfile):
             cmd = ["%s/app/plot_length_runtime.sh"%(basedir), outfile]
-            webserver_common.RunCmd(cmd, runjob_logfile, runjob_errfile)
+            webserver_common.RunCmd(cmd, gen_logfile, gen_errfile)
 
     cmd = ["%s/app/plot_length_runtime_mtp.sh"%(basedir), "-pfam",
             outfile_runtime_pfam, "-cdd", outfile_runtime_cdd, "-uniref",
             outfile_runtime_uniref, "-sep-avg"]
-    webserver_common.RunCmd(cmd, runjob_logfile, runjob_errfile)
+    webserver_common.RunCmd(cmd, gen_logfile, gen_errfile)
 
 
 #5. output num-submission time series with different bins (day, week, month, year)
@@ -1814,7 +1814,7 @@ def RunStatistics(path_result, path_log):#{{{
         #plot
         if os.path.exists(outfile):
             cmd = ["%s/app/plot_numsubmit.sh"%(basedir), outfile]
-            webserver_common.RunCmd(cmd, runjob_logfile, runjob_errfile)
+            webserver_common.RunCmd(cmd, gen_logfile, gen_errfile)
 
 #}}}
 

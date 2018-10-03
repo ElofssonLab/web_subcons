@@ -115,8 +115,7 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
     if hdl.failure:
         isOK = False
     else:
-        datetime = time.strftime("%Y-%m-%d %H:%M:%S")
-        rt_msg = myfunc.WriteFile(datetime, starttagfile)
+        webserver_common.WriteDateTimeTagFile(starttagfile, runjob_logfile, runjob_errfile)
 
         recordList = hdl.readseq()
         cnt = 0
@@ -347,26 +346,21 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
             pass
 
         # write finish tag file
-        datetime = time.strftime("%Y-%m-%d %H:%M:%S")
         if os.path.exists(finished_seq_file):
-            rt_msg = myfunc.WriteFile(datetime, finishtagfile)
-            if rt_msg:
-                g_params['runjob_err'].append(rt_msg)
+            webserver_common.WriteDateTimeTagFile(finishtagfile, runjob_logfile, runjob_errfile)
 
         isSuccess = False
         if (os.path.exists(finishtagfile) and os.path.exists(zipfile_fullpath)):
             isSuccess = True
         else:
             isSuccess = False
-            failtagfile = "%s/runjob.failed"%(outpath)
-            datetime = time.strftime("%Y-%m-%d %H:%M:%S")
-            rt_msg = myfunc.WriteFile(datetime, failtagfile)
-            if rt_msg:
-                g_params['runjob_err'].append(rt_msg)
+            failedtagfile = "%s/runjob.failed"%(outpath)
+            webserver_common.WriteDateTimeTagFile(failedtagfile, runjob_logfile, runjob_errfile)
+
 
 # send the result to email
 # do not sendmail at the cloud VM
-        if (g_params['base_www_url'].find("bioinfo.se") != -1 and
+        if (webserver_common.IsFrontEndNode(g_params['base_www_url']) and
                 myfunc.IsValidEmailAddress(email)):
             from_email = "info@subcons.bioinfo.se"
             to_email = email

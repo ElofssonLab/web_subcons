@@ -12,8 +12,8 @@ import os
 import sys
 import myfunc
 import datetime
-import tabulate
 import time
+import tabulate
 import re
 import logging
 def WriteSubconsTextResultFile(outfile, outpath_result, maplist,#{{{
@@ -23,10 +23,10 @@ def WriteSubconsTextResultFile(outfile, outpath_result, maplist,#{{{
         if statfile != "":
             fpstat = open(statfile, "w")
 
-        date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S %Z")
+        date_str = time.strftime("%Y-%m-%d %H:%M:%S %Z")
         print >> fpout, "##############################################################################"
         print >> fpout, "Subcons result file"
-        print >> fpout, "Generated from %s at %s"%(base_www_url, date)
+        print >> fpout, "Generated from %s at %s"%(base_www_url, date_str)
         print >> fpout, "Total request time: %.1f seconds."%(runtime_in_sec)
         print >> fpout, "##############################################################################"
         cnt = 0
@@ -401,18 +401,17 @@ def RunCmd(cmd, runjob_logfile, runjob_errfile, verbose=False):# {{{
 
     isCmdSuccess = False
     cmdline = " ".join(cmd)
-    datetime = time.strftime("%Y-%m-%d %H:%M:%S %Z")
-    myfunc.WriteFile("[%s] %s\n"%(datetime, cmdline),  runjob_logfile, "a", True)
+    date_str = time.strftime("%Y-%m-%d %H:%M:%S %Z")
     rmsg = ""
     try:
         rmsg = subprocess.check_output(cmd)
         if verbose:
             msg = "workflow: %s"%(cmdline)
-            myfunc.WriteFile("[%s] %s\n"%(datetime, msg),  runjob_logfile, "a", True)
+            myfunc.WriteFile("[%s] %s\n"%(date_str, msg),  runjob_logfile, "a", True)
         isCmdSuccess = True
     except subprocess.CalledProcessError, e:
         msg = "cmdline: %s\nFailed with message \"%s\""%(cmdline, str(e))
-        myfunc.WriteFile("[%s] %s\n"%(datetime, msg),  runjob_errfile, "a", True)
+        myfunc.WriteFile("[%s] %s\n"%(date_str, msg),  runjob_errfile, "a", True)
         isCmdSuccess = False
         pass
 

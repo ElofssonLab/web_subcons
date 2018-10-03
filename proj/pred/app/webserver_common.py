@@ -23,7 +23,7 @@ def WriteSubconsTextResultFile(outfile, outpath_result, maplist,#{{{
         if statfile != "":
             fpstat = open(statfile, "w")
 
-        date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S %Z")
         print >> fpout, "##############################################################################"
         print >> fpout, "Subcons result file"
         print >> fpout, "Generated from %s at %s"%(base_www_url, date)
@@ -393,36 +393,6 @@ def ValidateSeq(rawseq, seqinfo, g_params):#{{{
     seqinfo['errinfo'] = seqinfo['errinfo_br'] + seqinfo['errinfo_content']
     return filtered_seq
 #}}}
-def DeleteOldResult(path_result, path_log, gen_logfile, MAX_KEEP_DAYS=180):#{{{
-    """
-    Delete jobdirs that are finished > MAX_KEEP_DAYS
-    """
-    finishedjoblogfile = "%s/finished_job.log"%(path_log)
-    finished_job_dict = myfunc.ReadFinishedJobLog(finishedjoblogfile)
-    for jobid in finished_job_dict:
-        li = finished_job_dict[jobid]
-        try:
-            finish_date_str = li[8]
-        except IndexError:
-            finish_date_str = ""
-            pass
-        if finish_date_str != "":
-            isValidFinishDate = True
-            try:
-                finish_date = datetime.datetime.strptime(finish_date_str, "%Y-%m-%d %H:%M:%S")
-            except ValueError:
-                isValidFinishDate = False
-
-            if isValidFinishDate:
-                current_time = datetime.datetime.now()
-                timeDiff = current_time - finish_date
-                if timeDiff.days > MAX_KEEP_DAYS:
-                    rstdir = "%s/%s"%(path_result, jobid)
-                    date_str = time.strftime("%Y-%m-%d %H:%M:%S")
-                    msg = "\tjobid = %s finished %d days ago (>%d days), delete."%(jobid, timeDiff.days, MAX_KEEP_DAYS)
-                    myfunc.WriteFile("[Date: %s] "%(date_str)+ msg + "\n", gen_logfile, "a", True)
-                    shutil.rmtree(rstdir)
-#}}}
 def RunCmd(cmd, runjob_logfile, runjob_errfile, verbose=False):# {{{
     """Input cmd in list
        Run the command and also output message to logs
@@ -471,3 +441,33 @@ def datetime_str_to_time(date_str):# {{{
     else:
         return datetime.datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S %Z")
 # }}}
+def DeleteOldResult(path_result, path_log, gen_logfile, MAX_KEEP_DAYS=180):#{{{
+    """
+    Delete jobdirs that are finished > MAX_KEEP_DAYS
+    """
+    finishedjoblogfile = "%s/finished_job.log"%(path_log)
+    finished_job_dict = myfunc.ReadFinishedJobLog(finishedjoblogfile)
+    for jobid in finished_job_dict:
+        li = finished_job_dict[jobid]
+        try:
+            finish_date_str = li[8]
+        except IndexError:
+            finish_date_str = ""
+            pass
+        if finish_date_str != "":
+            isValidFinishDate = True
+            try:
+                finish_date = datetime_str_to_time(finish_date_str)
+            except ValueError:
+                isValidFinishDate = False
+
+            if isValidFinishDate:
+                current_time = datetime.datetime.now()
+                timeDiff = current_time - finish_date
+                if timeDiff.days > MAX_KEEP_DAYS:
+                    rstdir = "%s/%s"%(path_result, jobid)
+                    date_str = time.strftime("%Y-%m-%d %H:%M:%S %Z")
+                    msg = "\tjobid = %s finished %d days ago (>%d days), delete."%(jobid, timeDiff.days, MAX_KEEP_DAYS)
+                    myfunc.WriteFile("[Date: %s] "%(date_str)+ msg + "\n", gen_logfile, "a", True)
+                    shutil.rmtree(rstdir)
+#}}}

@@ -14,6 +14,7 @@ import myfunc
 import datetime
 import time
 import tabulate
+import subprocess
 import re
 import logging
 def WriteSubconsTextResultFile(outfile, outpath_result, maplist,#{{{

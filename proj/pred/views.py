@@ -46,7 +46,7 @@ add_to_builtins('eztables.templatetags.eztables')
 g_params = {}
 g_params['BASEURL'] = "/pred/";
 g_params['MAXSIZE_UPLOAD_FILE_IN_MB']  = 100
-g_params['MAX_DAYS_TO_SHOW']  = 30
+g_params['MAX_DAYS_TO_SHOW']  = 100000
 g_params['BIG_NUMBER']  = 100000
 g_params['MAX_NUMSEQ_FOR_FORCE_RUN']  = 100
 g_params['AVERAGE_RUNTIME_PER_SEQ_IN_SEC']  = 120

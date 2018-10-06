@@ -441,6 +441,17 @@ def datetime_str_to_time(date_str):# {{{
     else:
         return datetime.datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S %Z")
 # }}}
+def WriteDateTimeTagFile(outfile, runjob_logfile, runjob_errfile):# {{{
+    if not os.path.exists(outfile):
+        date_str = time.strftime("%Y-%m-%d %H:%M:%S %Z")
+        try:
+            myfunc.WriteFile(date_str, outfile)
+            msg = "Write tag file %s succeeded"%(outfile)
+            myfunc.WriteFile("[%s] %s\n"%(date_str, msg),  runjob_logfile, "a", True)
+        except Exception as e:
+            msg = "Failed to write to file %s with message: \"%s\""%(outfile, str(e))
+            myfunc.WriteFile("[%s] %s\n"%(date_str, msg),  runjob_errfile, "a", True)
+# }}}
 def DeleteOldResult(path_result, path_log, gen_logfile, MAX_KEEP_DAYS=180):#{{{
     """
     Delete jobdirs that are finished > MAX_KEEP_DAYS

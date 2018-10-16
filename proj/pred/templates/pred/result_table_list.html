@@ -9,7 +9,7 @@
             <font color="#000099">
             Please click the link of each sequence below to see the
             result of individual sequence<br>
-            {% if num_row_result_table > 10 %}
+            {% if num_row_result_table > 1 %}
                 Note that the table below is sortable by clicking the table header
             {% endif %}
             </font>
@@ -28,7 +28,7 @@
 <br><br>
 <br><br>
 <table class="liststyle1" align="left" id="jobtable" cellpadding="2">
-    {% if num_row_result_table > 10 %}
+    {% if num_row_result_table > 1 %}
     <thead>
     {% endif %}
     <tr>
@@ -36,7 +36,7 @@
             <th>{{hd}}</th>
         {% endfor %}
     </tr>
-    {% if num_row_result_table > 10 %}
+    {% if num_row_result_table > 1 %}
     </thead>
     <tbody>
     {% endif %}
@@ -52,7 +52,7 @@
             <td>{{record.8}}</td>
         </tr>
     {% endfor %}
-    {% if num_row_result_table > 10 %}
+    {% if num_row_result_table > 1 %}
     </tbody>
     {% endif %}
 </table>

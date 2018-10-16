@@ -19,7 +19,9 @@ sys.path.append("/usr/local/lib/python2.7/dist-packages")
 import myfunc
 import webserver_common
 import time
-import datetime
+from datetime import datetime
+from dateutil import parser as dtparser
+from pytz import timezone
 import requests
 import json
 import urllib
@@ -264,7 +266,7 @@ def CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,#{{{
                 isValidSubmitDate = False
 
             if isValidSubmitDate:
-                current_time = datetime.datetime.now()
+                current_time = datetime.now(timezone(TZ))
                 timeDiff = current_time - submit_date
                 queuetime_in_sec = timeDiff.seconds
             else:
@@ -1144,36 +1146,6 @@ def CheckIfJobFinished(jobid, numseq, email):#{{{
 
 #}}}
 #}}}
-def DeleteOldResult(path_result, path_log):#{{{
-    """
-    Delete jobdirs that are finished > MAX_KEEP_DAYS
-    """
-    finishedjoblogfile = "%s/finished_job.log"%(path_log)
-    finished_job_dict = myfunc.ReadFinishedJobLog(finishedjoblogfile)
-    for jobid in finished_job_dict:
-        li = finished_job_dict[jobid]
-        try:
-            finish_date_str = li[8]
-        except IndexError:
-            finish_date_str = ""
-            pass
-        if finish_date_str != "":
-            isValidFinishDate = True
-            try:
-                finish_date = webserver_common.datetime_str_to_time(finish_date_str)
-            except ValueError:
-                isValidFinishDate = False
-
-            if isValidFinishDate:
-                current_time = datetime.datetime.now()
-                timeDiff = current_time - finish_date
-                if timeDiff.days > g_params['MAX_KEEP_DAYS']:
-                    rstdir = "%s/%s"%(path_result, jobid)
-                    date_str = time.strftime(g_params['FORMAT_DATETIME'])
-                    msg = "\tjobid = %s finished %d days ago (>%d days), delete."%(jobid, timeDiff.days, g_params['MAX_KEEP_DAYS'])
-                    myfunc.WriteFile("[Date: %s] "%(date_str)+ msg + "\n", gen_logfile, "a", True)
-                    shutil.rmtree(rstdir)
-#}}}
 def CleanServerFile():#{{{
     """Clean old files on the server"""
 # clean tmp files
@@ -1854,7 +1826,7 @@ def main(g_params):#{{{
 
         if loop % 100 == 1:
             RunStatistics(path_result, path_log)
-            DeleteOldResult(path_result, path_log)
+            webserver_common.DeleteOldResult(path_result, path_log, MAX_KEEP_DAYS=g_params['MAX_KEEP_DAYS'])
 
         if os.path.exists(gen_logfile):
             myfunc.ArchiveFile(gen_logfile, threshold_logfilesize)

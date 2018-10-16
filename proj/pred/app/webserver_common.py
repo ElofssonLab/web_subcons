@@ -11,7 +11,7 @@
 import os
 import sys
 import myfunc
-import datetime
+from datetime import datetime
 from dateutil import parser as dtparser
 from pytz import timezone
 import time
@@ -20,6 +20,7 @@ import subprocess
 import re
 import logging
 FORMAT_DATETIME = "%Y-%m-%d %H:%M:%S %Z"
+TZ = "Europe/Stockholm"
 def WriteSubconsTextResultFile(outfile, outpath_result, maplist,#{{{
         runtime_in_sec, base_www_url, statfile=""):
     try:
@@ -424,14 +425,14 @@ def RunCmd(cmd, logfile, errfile, verbose=False):# {{{
     return (isCmdSuccess, runtime_in_sec)
 # }}}
 def datetime_str_to_epoch(date_str):# {{{
-    """convert the datetime in string to epoch
-    The string of datetime may with or without the zone info
+    """convert the date_time in string to epoch
+    The string of date_time may with or without the zone info
     """
     return dtparser.parse(date_str).strftime("%s")
 # }}}
 def datetime_str_to_time(date_str):# {{{
-    """convert the datetime in string to datetime type
-    The string of datetime may with or without the zone info
+    """convert the date_time in string to datetime type
+    The string of date_time may with or without the zone info
     """
     strs = date_str.split()
     dt = dtparser.parse(date_str)
@@ -500,7 +501,7 @@ def DeleteOldResult(path_result, path_log, gen_logfile, MAX_KEEP_DAYS=180):#{{{
                 isValidFinishDate = False
 
             if isValidFinishDate:
-                current_time = datetime.datetime.now()
+                current_time = datetime.now(timezone(TZ))
                 timeDiff = current_time - finish_date
                 if timeDiff.days > MAX_KEEP_DAYS:
                     rstdir = "%s/%s"%(path_result, jobid)

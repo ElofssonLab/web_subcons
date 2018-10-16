@@ -32,7 +32,8 @@ import numpy
 from geoip import geolite2
 import pycountry
 
-os.environ['TZ'] = 'Europe/Stockholm'
+TZ = "Europe/Stockholm"
+os.environ['TZ'] = TZ
 time.tzset()
 
 vip_user_list = [
@@ -371,12 +372,9 @@ def CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,#{{{
                             else:
                                 runtime = runtime1
 
-                            finalpredfile = "%s/%s/query_0.subcons-final-pred.csv"%(
-                                    outpath_this_seq, "final-prediction")
-                            (loc_def, loc_def_score) = webserver_common.GetLocDef(finalpredfile)
-                            info_finish = [ dd, str(len(seq)), 
-                                    str(loc_def), str(loc_def_score),
-                                    "newrun", str(runtime), description]
+                            info_finish = webserver_common.GetInfoFinish_Subcons(outpath_this_seq,
+                                    dd, len(seq), description,
+                                    source_result="newrun", runtime=runtime)
                             finished_info_list.append("\t".join(info_finish))
                 except:
                     date_str = time.strftime(g_params['FORMAT_DATETIME'])
@@ -853,14 +851,7 @@ def GetResult(jobid):#{{{
                             pass
                     if os.path.exists(outfile_zip) and isRetrieveSuccess:
                         cmd = ["unzip", outfile_zip, "-d", tmpdir]
-                        cmdline = " ".join(cmd)
-                        try:
-                            rmsg = subprocess.check_output(cmd)
-                        except subprocess.CalledProcessError, e:
-                            date_str = time.strftime(g_params['FORMAT_DATETIME'])
-                            myfunc.WriteFile("[Date: %s] cmdline=%s\nerrmsg=%s\n"%(
-                                    date_str, cmdline, str(e)), gen_errfile, "a", True)
-                            pass
+                        webserver_common.RunCmd(cmd, runjob_logfile, runjob_errfile)
                         rst_this_seq = "%s/%s/seq_0"%(tmpdir, remote_jobid)
 
                         if os.path.islink(outpath_this_seq):
@@ -870,14 +861,7 @@ def GetResult(jobid):#{{{
 
                         if os.path.exists(rst_this_seq) and not os.path.exists(outpath_this_seq):
                             cmd = ["mv","-f", rst_this_seq, outpath_this_seq]
-                            cmdline = " ".join(cmd)
-                            try:
-                                rmsg = subprocess.check_output(cmd)
-                            except subprocess.CalledProcessError, e:
-                                date_str = time.strftime(g_params['FORMAT_DATETIME'])
-                                myfunc.WriteFile( "[Date: %s] cmdline=%s\nerrmsg=%s\n"%(
-                                        date_str, cmdline, str(e)), gen_errfile, "a", True)
-                                pass
+                            webserver_common.RunCmd(cmd, runjob_logfile, runjob_errfile)
                             checkfile = "%s/plot/query_0.png"%(outpath_this_seq)
                             if os.path.exists(checkfile):
                                 isSuccess = True
@@ -902,18 +886,8 @@ def GetResult(jobid):#{{{
                                         pass
 
                                 if os.path.exists(md5_subfolder) and not os.path.exists(cachedir):
-
                                     cmd = ["mv","-f", outpath_this_seq, cachedir]
-                                    cmdline = " ".join(cmd)
-                                    try:
-                                        subprocess.check_output(cmd)
-                                        if g_params['DEBUG_CACHE']:
-                                            myfunc.WriteFile("\tDEBUG_CACHE: %s\n"%(cmdline), gen_logfile, "a", True)
-                                    except CalledProcessError,e:
-                                        print e
-                                        if g_params['DEBUG_CACHE']:
-                                            myfunc.WriteFile("\tDEBUG_CACHE: %s\n"%(str(e)), gen_logfile, "a", True)
-                                        pass
+                                    webserver_common.RunCmd(cmd, runjob_logfile, runjob_errfile)
 
                                 if not os.path.exists(outpath_this_seq) and os.path.exists(cachedir):
                                     rela_path = os.path.relpath(cachedir, outpath_result) #relative path
@@ -995,12 +969,9 @@ def GetResult(jobid):#{{{
             else:
                 runtime = runtime1
 
-            finalpredfile = "%s/%s/query_0.subcons-final-pred.csv"%(
-                    outpath_this_seq, "final-prediction")
-            (loc_def, loc_def_score) = webserver_common.GetLocDef(finalpredfile)
-            info_finish = [ "seq_%d"%origIndex, str(len(seq)), 
-                    str(loc_def), str(loc_def_score),
-                    "newrun", str(runtime), description]
+            info_finish = webserver_common.GetInfoFinish_Subcons(outpath_this_seq,
+                    origIndex, len(seq), description,
+                    source_result="newrun", runtime=runtime)
             finished_info_list.append("\t".join(info_finish))
             finished_idx_list.append(str(origIndex))#}}}
 
@@ -1118,11 +1089,7 @@ def CheckIfJobFinished(jobid, numseq, email):#{{{
         zipfile_fullpath = "%s/%s"%(rstdir, zipfile)
         os.chdir(rstdir)
         cmd = ["zip", "-rq", zipfile, jobid]
-        try:
-            subprocess.check_output(cmd)
-        except subprocess.CalledProcessError, e:
-            myfunc.WriteFile(str(e)+"\n", runjob_errfile, "a", True)
-            pass
+        webserver_common.RunCmd(cmd, runjob_logfile, runjob_errfile)
 
         if len(failed_idx_list)>0:
             myfunc.WriteFile(date_str, failedtagfile, "w", True)

@@ -150,15 +150,10 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
 
                         if os.path.exists(outpath_this_seq):
                             runtime = 0.0 #in seconds
-                            finalpredfile = "%s/%s/query_0.subcons-final-pred.csv"%(
-                                    outpath_this_seq, "final-prediction")
-                            (loc_def, loc_def_score) = webserver_common.GetLocDef(finalpredfile)
-                            #info_finish has 7 items
-                            info_finish = [ "seq_%d"%cnt, str(len(rd.seq)),
-                                    str(loc_def), str(loc_def_score),
-                                    "cached", str(runtime), rd.description]
-                            myfunc.WriteFile("\t".join(info_finish)+"\n",
-                                    finished_seq_file, "a", isFlush=True)
+                            info_finish = webserver_common.GetInfoFinish_Subcons(outpath_this_seq,
+                                    cnt, len(rd.seq), rd.description,
+                                    source_result="cached", runtime=runtime)
+                            myfunc.WriteFile("\t".join(info_finish)+"\n", finished_seq_file, "a", isFlush=True)
                             myfunc.WriteFile("%d\n"%(cnt), finished_idx_file, "a", isFlush=True)
                             isSkip = True
 
@@ -243,15 +238,7 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
 
             if os.path.exists(tmp_outpath_this_seq):
                 cmd = ["mv","-f", tmp_outpath_this_seq, outpath_this_seq]
-                isCmdSuccess = False
-                try:
-                    subprocess.check_output(cmd)
-                    isCmdSuccess = True
-                except subprocess.CalledProcessError, e:
-                    msg =  "Failed to run prediction for sequence No. %d\n"%(origIndex)
-                    g_params['runjob_err'].append(msg)
-                    g_params['runjob_err'].append(str(e)+"\n")
-                    pass
+                (isCmdSuccess, t_runtime) = webserver_common.RunCmd(cmd, runjob_logfile, runjob_errfile)
                 timefile = "%s/time.txt"%(tmp_outpath_result)
                 targetfile = "%s/time.txt"%(outpath_this_seq)
                 if os.path.exists(timefile) and os.path.exists(outpath_this_seq):
@@ -264,15 +251,10 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
 
                 if isCmdSuccess:
                     runtime = runtime_in_sec #in seconds
-                    finalpredfile = "%s/%s/query_0.subcons-final-pred.csv"%(
-                            outpath_this_seq, "final-prediction")
-                    (loc_def, loc_def_score) = webserver_common.GetLocDef(finalpredfile)
-                    #info_finish has 7 items
-                    info_finish = [ "seq_%d"%origIndex, str(len(seq)), 
-                            str(loc_def), str(loc_def_score),
-                            "newrun", str(runtime), description]
-                    myfunc.WriteFile("\t".join(info_finish)+"\n",
-                            finished_seq_file, "a", isFlush=True)
+                    info_finish = webserver_common.GetInfoFinish_Subcons(outpath_this_seq,
+                            origIndex, len(seq), description,
+                            source_result="newrun", runtime=runtime)
+                    myfunc.WriteFile("\t".join(info_finish)+"\n", finished_seq_file, "a", isFlush=True)
                     # now write the text output for this seq
 
                     info_this_seq = "%s\t%d\t%s\t%s"%("seq_%d"%origIndex, len(seq), description, seq)

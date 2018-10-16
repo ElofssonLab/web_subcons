@@ -17,6 +17,7 @@ import tabulate
 import subprocess
 import re
 import logging
+FORMAT_DATETIME = "%Y-%m-%d %H:%M:%S %Z"
 def WriteSubconsTextResultFile(outfile, outpath_result, maplist,#{{{
         runtime_in_sec, base_www_url, statfile=""):
     try:
@@ -24,7 +25,7 @@ def WriteSubconsTextResultFile(outfile, outpath_result, maplist,#{{{
         if statfile != "":
             fpstat = open(statfile, "w")
 
-        date_str = time.strftime("%Y-%m-%d %H:%M:%S %Z")
+        date_str = time.strftime(FORMAT_DATETIME)
         print >> fpout, "##############################################################################"
         print >> fpout, "Subcons result file"
         print >> fpout, "Generated from %s at %s"%(base_www_url, date_str)
@@ -95,8 +96,7 @@ def ReplaceDescriptionSingleFastaFile(infile, new_desp):#{{{
 #}}}
 
 def GetLocDef(predfile):#{{{
-    """
-    Read in LocDef and its corresponding score from the subcons prediction file
+    """Read in LocDef and its corresponding score from the subcons prediction file
     """
     content = ""
     if os.path.exists(predfile):
@@ -394,7 +394,7 @@ def ValidateSeq(rawseq, seqinfo, g_params):#{{{
     seqinfo['errinfo'] = seqinfo['errinfo_br'] + seqinfo['errinfo_content']
     return filtered_seq
 #}}}
-def RunCmd(cmd, runjob_logfile, runjob_errfile, verbose=False):# {{{
+def RunCmd(cmd, logfile, errfile, verbose=False):# {{{
     """Input cmd in list
        Run the command and also output message to logs
     """
@@ -402,17 +402,17 @@ def RunCmd(cmd, runjob_logfile, runjob_errfile, verbose=False):# {{{
 
     isCmdSuccess = False
     cmdline = " ".join(cmd)
-    date_str = time.strftime("%Y-%m-%d %H:%M:%S %Z")
+    date_str = time.strftime(FORMAT_DATETIME)
     rmsg = ""
     try:
         rmsg = subprocess.check_output(cmd)
         if verbose:
             msg = "workflow: %s"%(cmdline)
-            myfunc.WriteFile("[%s] %s\n"%(date_str, msg),  runjob_logfile, "a", True)
+            myfunc.WriteFile("[%s] %s\n"%(date_str, msg),  logfile, "a", True)
         isCmdSuccess = True
     except subprocess.CalledProcessError, e:
         msg = "cmdline: %s\nFailed with message \"%s\""%(cmdline, str(e))
-        myfunc.WriteFile("[%s] %s\n"%(date_str, msg),  runjob_errfile, "a", True)
+        myfunc.WriteFile("[%s] %s\n"%(date_str, msg),  errfile, "a", True)
         isCmdSuccess = False
         pass
 
@@ -441,20 +441,49 @@ def datetime_str_to_time(date_str):# {{{
     else:
         return datetime.datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S %Z")
 # }}}
-def WriteDateTimeTagFile(outfile, runjob_logfile, runjob_errfile):# {{{
+def GetInfoFinish_TOPCONS2(outpath_this_seq, origIndex, seqLength, seqAnno, source_result="", runtime=0.0):# {{{
+    """Get the list info_finish for the method TOPCONS2"""
+    topfile = "%s/%s/topcons.top"%(
+            outpath_this_seq, "Topcons")
+    top = myfunc.ReadFile(topfile).strip()
+    numTM = myfunc.CountTM(top)
+    posSP = myfunc.GetSPPosition(top)
+    if len(posSP) > 0:
+        isHasSP = True
+    else:
+        isHasSP = False
+    date_str = time.strftime(FORMAT_DATETIME)
+    info_finish = [ "seq_%d"%origIndex,
+            str(seqLength), str(numTM),
+            str(isHasSP), source_result, str(runtime),
+            seqAnno.replace('\t', ' '), date_str]
+    return info_finish
+# }}}
+def GetInfoFinish_Subcons(outpath_this_seq, origIndex, seqLength, seqAnno, source_result="", runtime=0.0):# {{{
+    """Get the list info_finish for the method Subcons"""
+    finalpredfile = "%s/%s/query_0.subcons-final-pred.csv"%(
+            outpath_this_seq, "final-prediction")
+    (loc_def, loc_def_score) = GetLocDef(finalpredfile)
+    date_str = time.strftime(FORMAT_DATETIME)
+    info_finish = [ "seq_%d"%origIndex,
+            str(seqLength), str(loc_def), str(loc_def_score),
+            source_result, str(runtime),
+            seqAnno.replace('\t', ' '), date_str]
+    return info_finish
+# }}}
+def WriteDateTimeTagFile(outfile, logfile, errfile):# {{{
     if not os.path.exists(outfile):
-        date_str = time.strftime("%Y-%m-%d %H:%M:%S %Z")
+        date_str = time.strftime(FORMAT_DATETIME)
         try:
             myfunc.WriteFile(date_str, outfile)
             msg = "Write tag file %s succeeded"%(outfile)
-            myfunc.WriteFile("[%s] %s\n"%(date_str, msg),  runjob_logfile, "a", True)
+            myfunc.WriteFile("[%s] %s\n"%(date_str, msg),  logfile, "a", True)
         except Exception as e:
             msg = "Failed to write to file %s with message: \"%s\""%(outfile, str(e))
-            myfunc.WriteFile("[%s] %s\n"%(date_str, msg),  runjob_errfile, "a", True)
+            myfunc.WriteFile("[%s] %s\n"%(date_str, msg),  errfile, "a", True)
 # }}}
 def DeleteOldResult(path_result, path_log, gen_logfile, MAX_KEEP_DAYS=180):#{{{
-    """
-    Delete jobdirs that are finished > MAX_KEEP_DAYS
+    """Delete jobdirs that are finished > MAX_KEEP_DAYS
     """
     finishedjoblogfile = "%s/finished_job.log"%(path_log)
     finished_job_dict = myfunc.ReadFinishedJobLog(finishedjoblogfile)
@@ -477,7 +506,7 @@ def DeleteOldResult(path_result, path_log, gen_logfile, MAX_KEEP_DAYS=180):#{{{
                 timeDiff = current_time - finish_date
                 if timeDiff.days > MAX_KEEP_DAYS:
                     rstdir = "%s/%s"%(path_result, jobid)
-                    date_str = time.strftime("%Y-%m-%d %H:%M:%S %Z")
+                    date_str = time.strftime(FORMAT_DATETIME)
                     msg = "\tjobid = %s finished %d days ago (>%d days), delete."%(jobid, timeDiff.days, MAX_KEEP_DAYS)
                     myfunc.WriteFile("[Date: %s] "%(date_str)+ msg + "\n", gen_logfile, "a", True)
                     shutil.rmtree(rstdir)

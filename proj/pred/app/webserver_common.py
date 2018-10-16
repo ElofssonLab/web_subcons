@@ -12,6 +12,8 @@ import os
 import sys
 import myfunc
 import datetime
+from dateutil import parser as dtparser
+from pytz import timezone
 import time
 import tabulate
 import subprocess
@@ -425,21 +427,17 @@ def datetime_str_to_epoch(date_str):# {{{
     """convert the datetime in string to epoch
     The string of datetime may with or without the zone info
     """
-    strs = date_str.split()
-    if len(strs) == 2:
-        return datetime.datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S").strftime('%s')
-    else:
-        return datetime.datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S %Z").strftime('%s')
+    return dtparser.parse(date_str).strftime("%s")
 # }}}
 def datetime_str_to_time(date_str):# {{{
     """convert the datetime in string to datetime type
     The string of datetime may with or without the zone info
     """
     strs = date_str.split()
+    dt = dtparser.parse(date_str)
     if len(strs) == 2:
-        return datetime.datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
-    else:
-        return datetime.datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S %Z")
+        dt = dt.replace(tzinfo=timezone('UTC'))
+    return dt
 # }}}
 def GetInfoFinish_TOPCONS2(outpath_this_seq, origIndex, seqLength, seqAnno, source_result="", runtime=0.0):# {{{
     """Get the list info_finish for the method TOPCONS2"""

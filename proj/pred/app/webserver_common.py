@@ -481,7 +481,7 @@ def WriteDateTimeTagFile(outfile, logfile, errfile):# {{{
             msg = "Failed to write to file %s with message: \"%s\""%(outfile, str(e))
             myfunc.WriteFile("[%s] %s\n"%(date_str, msg),  errfile, "a", True)
 # }}}
-def DeleteOldResult(path_result, path_log, gen_logfile, MAX_KEEP_DAYS=180):#{{{
+def DeleteOldResult(path_result, path_log, logfile, MAX_KEEP_DAYS=180):#{{{
     """Delete jobdirs that are finished > MAX_KEEP_DAYS
     """
     finishedjoblogfile = "%s/finished_job.log"%(path_log)
@@ -507,6 +507,14 @@ def DeleteOldResult(path_result, path_log, gen_logfile, MAX_KEEP_DAYS=180):#{{{
                     rstdir = "%s/%s"%(path_result, jobid)
                     date_str = time.strftime(FORMAT_DATETIME)
                     msg = "\tjobid = %s finished %d days ago (>%d days), delete."%(jobid, timeDiff.days, MAX_KEEP_DAYS)
-                    myfunc.WriteFile("[Date: %s] "%(date_str)+ msg + "\n", gen_logfile, "a", True)
+                    myfunc.WriteFile("[Date: %s] "%(date_str)+ msg + "\n", logfile, "a", True)
                     shutil.rmtree(rstdir)
+#}}}
+def CleanServerFile(logfile, errfile):#{{{
+    """Clean old files on the server"""
+# clean tmp files
+    msg = "CleanServerFile..."
+    myfunc.WriteFile("[%s] %s\n"%(date_str, msg), logfile, "a", True)
+    cmd = ["bash", "%s/clean_server_file.sh"%(rundir)]
+    webserver_common.RunCmd(cmd, logfile, errfile)
 #}}}

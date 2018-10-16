@@ -1146,14 +1146,6 @@ def CheckIfJobFinished(jobid, numseq, email):#{{{
 
 #}}}
 #}}}
-def CleanServerFile():#{{{
-    """Clean old files on the server"""
-# clean tmp files
-    msg = "CleanServerFile..."
-    myfunc.WriteFile("[%s] %s\n"%(date_str, msg), gen_logfile, "a", True)
-    cmd = ["bash", "%s/clean_server_file.sh"%(rundir)]
-    webserver_common.RunCmd(cmd, gen_logfile, gen_errfile)
-#}}}
 def RunStatistics(path_result, path_log):#{{{
 # 1. calculate average running time, only for those sequences with time.txt
 # show also runtime of type and runtime -vs- seqlength
@@ -1826,8 +1818,8 @@ def main(g_params):#{{{
 
         if loop % 100 == 1:
             RunStatistics(path_result, path_log)
-            webserver_common.DeleteOldResult(path_result, path_log, MAX_KEEP_DAYS=g_params['MAX_KEEP_DAYS'])
-            CleanServerFile()
+            webserver_common.DeleteOldResult(path_result, path_log, gen_logfile, MAX_KEEP_DAYS=g_params['MAX_KEEP_DAYS'])
+            webserver_common.CleanServerFile(gen_logfile, gen_errfile)
 
         if os.path.exists(gen_logfile):
             myfunc.ArchiveFile(gen_logfile, threshold_logfilesize)

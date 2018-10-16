@@ -518,5 +518,5 @@ def CleanServerFile(logfile, errfile):#{{{
     date_str = time.strftime(FORMAT_DATETIME)
     myfunc.WriteFile("[%s] %s\n"%(date_str, msg), logfile, "a", True)
     cmd = ["bash", "%s/clean_server_file.sh"%(rundir)]
-    webserver_common.RunCmd(cmd, logfile, errfile)
+    RunCmd(cmd, logfile, errfile)
 #}}}

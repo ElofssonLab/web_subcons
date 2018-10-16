@@ -2113,6 +2113,8 @@ def get_results(request, jobid="1"):#{{{
     num_remain = numseq - num_finished
     time_remain_in_sec = num_remain * average_run_time # set default value
 
+    resultdict['num_row_result_table'] = len(resultdict['index_table_content_list'])
+
     # calculate the remaining time based on the average_runtime of the last x
     # number of newrun sequences
 

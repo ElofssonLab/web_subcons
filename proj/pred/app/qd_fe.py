@@ -1816,7 +1816,7 @@ def main(g_params):#{{{
                             remotequeueDict[node].append(remotejobid)
 
 
-        if loop % 100 == 1:
+        if loop % 500 == 50:
             RunStatistics(path_result, path_log)
             webserver_common.DeleteOldResult(path_result, path_log, gen_logfile, MAX_KEEP_DAYS=g_params['MAX_KEEP_DAYS'])
             webserver_common.CleanServerFile(gen_logfile, gen_errfile)

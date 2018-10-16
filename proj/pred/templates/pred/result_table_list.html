@@ -1,0 +1,58 @@
+<table  align="left" cellspacing="1" cellpadding="1">
+    <tr>
+        <td>Total number of protein sequences:&nbsp;&nbsp;<b>{{numseq}}</b></td>
+    </tr>
+    <tr></tr>
+    <tr></tr>
+    <tr>
+        <td>
+            <font color="#000099">
+            Please click the link of each sequence below to see the
+            result of individual sequence<br>
+            {% if num_row_result_table > 10 %}
+                Note that the table below is sortable by clicking the table header
+            {% endif %}
+            </font>
+        </td>
+    </tr>
+    {% if num_finished > MAX_ROWS_TO_SHOW_IN_TABLE %}
+    <tr><td>
+        <font color="#ffa31a">
+            Note also that only the results of the first
+            {{MAX_ROWS_TO_SHOW_IN_TABLE}} sequences are shown in
+            the table below.
+        </font>
+    </td></tr>
+    {% endif %}
+</table>
+<br><br>
+<br><br>
+<table class="liststyle1" align="left" id="jobtable" cellpadding="2">
+    {% if num_row_result_table > 10 %}
+    <thead>
+    {% endif %}
+    <tr>
+        {% for hd in index_table_header %}
+            <th>{{hd}}</th>
+        {% endfor %}
+    </tr>
+    {% if num_row_result_table > 10 %}
+    </thead>
+    <tbody>
+    {% endif %}
+    {% for record in index_table_content_list %}
+        <tr>
+            <td>{{record.0}}</td>
+            <td>{{record.1}}</td>
+            <td>{{record.2}}</td>
+            <td>{{record.3}}</td>
+            <td>{{record.4}}</td>
+            <td><a href="{{BASEURL}}result/{{jobid}}/{{record.6}}">{{record.5}}</a></td>
+            <td>{{record.7}}</td>
+            <td>{{record.8}}</td>
+        </tr>
+    {% endfor %}
+    {% if num_row_result_table > 10 %}
+    </tbody>
+    {% endif %}
+</table>

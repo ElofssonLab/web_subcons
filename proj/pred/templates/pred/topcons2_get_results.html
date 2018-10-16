@@ -78,48 +78,7 @@ function readfile() {
                 <p>
                     <b>Processed {{num_finished}} / {{numseq}} ({{percent_finished}} %) </b>
                 </p>
-
-                <p>List of finished sequences. Please click the link of each sequence below to see the
-                result of individual sequence</p>
-                {% if num_finished > MAX_ROWS_TO_SHOW_IN_TABLE %}
-                <p>
-                    <font color="#ffa31a">
-                        Note also that only the results of the first
-                        {{MAX_ROWS_TO_SHOW_IN_TABLE}} sequences are shown in
-                        the table below.
-                    </font></p>
-                {% endif %}
-                <table class="sortable" id="jobtable" align="left">
-                  <thead>
-                    <tr>
-                        {% for hd in index_table_header %}
-                            <th>{{hd}}</th>
-                        {% endfor %}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for record in index_table_content_list %}
-                        {% if indexfiletype == "indexmap"  %}
-                            <tr>
-                                <td>{{record.0}}</td>
-                                <td>{{record.1}}</td>
-                                <td><a href="{{BASEURL}}result/{{jobid}}/{{record.3}}">{{record.2}}</a></td>
-                            </tr>
-                        {% elif indexfiletype == "finishedfile" %}
-                            <tr>
-                                <td>{{record.0}}</td>
-                                <td>{{record.1}}</td>
-                                <td>{{record.2}}</td>
-                                <td>{{record.3}}</td>
-                                <td>{{record.4}}</td>
-                                <td><a href="{{BASEURL}}result/{{jobid}}/{{record.6}}">{{record.5}}</a></td>
-                                <td>{{record.7}}</td>
-                            </tr>
-                        {% endif %}
-                    {% endfor %}
-                  </tbody>
-                </table>
-
+                {% include "pred/result_table_list.html" %}
             {%endif%}
 
         {% elif isFinished %}
@@ -154,71 +113,8 @@ function readfile() {
             </p>
             <hr>
             {% if numseq >= 1 %}
-                <table  align="left" cellspacing="1" cellpadding="1">
-                    <tr>
-                        <td>Total number of protein sequences:</td>
-                        <td>{{numseq}}</td>
-                    </tr>
-                    <tr></tr>
-                    <tr height=40px>
-                        <td colspan="2">
-                            <font color="#000099">
-                        Please click the link of each sequence below to see the
-                        result of individual sequence<br>
-                        Note that the table below is sortable by clicking the table header
-                            </font>
-                        </td>
-                    </tr>
-                {% if num_finished > MAX_ROWS_TO_SHOW_IN_TABLE %}
-                <tr><td>
-                    <font color="#ffa31a">
-                        Note also that only the results of the first
-                        {{MAX_ROWS_TO_SHOW_IN_TABLE}} sequences are shown in
-                        the table below. 
-
-                        Please download 
-                        the zipped folder (when it is ready) 
-                        to view all your results.
-                    </font></p>
-                </td> </tr>
-                {% endif %}
-                </table>
-
-                <table class="sortable" align="left" id="jobtable" cellpadding="2">
-                  <thead>
-                    <tr>
-                        {% for hd in index_table_header %}
-                            <th>{{hd}}</th>
-                        {% endfor %}
-                  </thead>
-                  <tbody>
-                    {% for record in index_table_content_list %}
-                        {% if indexfiletype == "indexmap"  %}
-                            <tr>
-                                <td>{{record.0}}</td>
-                                <td>{{record.1}}</td>
-                                <td><a href="{{BASEURL}}result/{{jobid}}/{{record.3}}">{{record.2}}</a></td>
-                            </tr>
-                        {% elif indexfiletype == "finishedfile" %}
-                            <tr>
-                                <td>{{record.0}}</td>
-                                <td>{{record.1}}</td>
-                                <td>{{record.2}}</td>
-                                <td>{{record.3}}</td>
-                                <td>{{record.4}}</td>
-                                <td><a href="{{BASEURL}}result/{{jobid}}/{{record.6}}">{{record.5}}</a></td>
-                                <td>{{record.7}}</td>
-                            </tr>
-                        {% endif %}
-                    {% endfor %}
-                  </tbody>
-                </table>
+                {% include "pred/result_table_list.html" %}
             {%endif%}
-            {%comment%}
-            {% if numseq == 1 %}
-                {% include "pred/show_predinfo.html"%}
-            {%endif%}
-            {%endcomment%}
         {% else %}
             Result for {{ jobid }} is not finished yet
             {% if email %}
@@ -259,38 +155,7 @@ function readfile() {
                         Estimated remaining time: {{time_remain}}</b>
                 </p>
 
-                <p>List of finished sequences. Please click the link of each sequence below to see the
-                result of individual sequence</p>
-                <table class="sortable" align="left" id="jobtable" cellpadding="2">
-                   <thead>
-                    <tr>
-                        {% for hd in index_table_header %}
-                            <th>{{hd}}</th>
-                        {% endfor %}
-                    </tr>
-                   </thead>
-                   <tbody>
-                    {% for record in index_table_content_list %}
-                        {% if indexfiletype == "indexmap"  %}
-                            <tr>
-                                <td>{{record.0}}</td>
-                                <td>{{record.1}}</td>
-                                <td><a href="{{BASEURL}}result/{{jobid}}/{{record.3}}">{{record.2}}</a></td>
-                            </tr>
-                        {% elif indexfiletype == "finishedfile" %}
-                            <tr>
-                                <td>{{record.0}}</td>
-                                <td>{{record.1}}</td>
-                                <td>{{record.2}}</td>
-                                <td>{{record.3}}</td>
-                                <td>{{record.4}}</td>
-                                <td><a href="{{BASEURL}}result/{{jobid}}/{{record.6}}">{{record.5}}</a></td>
-                                <td>{{record.7}}</td>
-                            </tr>
-                        {% endif %}
-                    {% endfor %}
-                   </tbody>
-                </table>
+                {% include "pred/result_table_list.html" %}
 
             {%endif%}
 

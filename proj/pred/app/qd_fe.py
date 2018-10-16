@@ -1827,6 +1827,7 @@ def main(g_params):#{{{
         if loop % 100 == 1:
             RunStatistics(path_result, path_log)
             webserver_common.DeleteOldResult(path_result, path_log, MAX_KEEP_DAYS=g_params['MAX_KEEP_DAYS'])
+            CleanServerFile()
 
         if os.path.exists(gen_logfile):
             myfunc.ArchiveFile(gen_logfile, threshold_logfilesize)

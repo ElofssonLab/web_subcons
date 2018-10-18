@@ -375,7 +375,7 @@ def CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,#{{{
                                 runtime = runtime1
 
                             info_finish = webserver_common.GetInfoFinish_Subcons(outpath_this_seq,
-                                    dd, len(seq), description,
+                                    origIndex, len(seq), description,
                                     source_result="newrun", runtime=runtime)
                             finished_info_list.append("\t".join(info_finish))
                 except:

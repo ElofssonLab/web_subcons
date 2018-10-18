@@ -20,6 +20,7 @@ import tabulate
 import subprocess
 import re
 import logging
+import shutil
 FORMAT_DATETIME = "%Y-%m-%d %H:%M:%S %Z"
 TZ = "Europe/Stockholm"
 def WriteSubconsTextResultFile(outfile, outpath_result, maplist,#{{{

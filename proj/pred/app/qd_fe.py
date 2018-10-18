@@ -929,26 +929,16 @@ def GetResult(jobid):#{{{
                                 else:
                                     logmsg = "Failed to call deletejob %s via WSDL on %s\n"%(remote_jobid, node)
 
-                                # delete the zip file
-                                os.remove(outfile_zip)
-                                shutil.rmtree("%s/%s"%(tmpdir, remote_jobid))
+                        # delete the downloaded temporary zip file and
+                        # extracted file
+                        os.remove(outfile_zip)
+                        shutil.rmtree("%s/%s"%(tmpdir, remote_jobid))
 
 
 #}}}
                 elif status in ["Failed", "None"]:
                     # the job is failed for this sequence, try to re-submit
                     isFinish_remote = True
-                    cnttry = 1
-                    try:
-                        cnttry = cntTryDict[int(origIndex)]
-                    except KeyError:
-                        cnttry = 1
-                        pass
-                    if cnttry < g_params['MAX_RESUBMIT']:
-                        resubmit_idx_list.append(str(origIndex))
-                        cntTryDict[int(origIndex)] = cnttry+1
-                    else:
-                        failed_idx_list.append(str(origIndex))
                 if status != "Wait" and not os.path.exists(starttagfile):
                     webserver_common.WriteDateTimeTagFile(starttagfile, runjob_logfile, runjob_errfile)
 
@@ -967,7 +957,6 @@ def GetResult(jobid):#{{{
                     runtime = float(ss2[1])
                 except:
                     runtime = runtime1
-                    pass
             else:
                 runtime = runtime1
 
@@ -976,6 +965,21 @@ def GetResult(jobid):#{{{
                     source_result="newrun", runtime=runtime)
             finished_info_list.append("\t".join(info_finish))
             finished_idx_list.append(str(origIndex))#}}}
+
+        # if the job is finished on the remote but the prediction is failed,
+        # try resubmit a few times and if all failed, add the origIndex to the
+        # failed_idx_file
+        if isFinish_remote and not isSuccess:
+            cnttry = 1
+            try:
+                cnttry = cntTryDict[int(origIndex)]
+            except KeyError:
+                cnttry = 1
+            if cnttry < g_params['MAX_RESUBMIT']:
+                resubmit_idx_list.append(str(origIndex))
+                cntTryDict[int(origIndex)] = cnttry+1
+            else:
+                failed_idx_list.append(str(origIndex))
 
         if not isFinish_remote:
             time_in_remote_queue = time.time() - submit_time_epoch

@@ -1089,7 +1089,6 @@ def CheckIfJobFinished(jobid, numseq, email):#{{{
         webserver_common.WriteSubconsTextResultFile(resultfile_text, outpath_result, maplist,
                 all_runtime_in_sec, base_www_url, statfile=statfile)
 
-        # now making zip instead (for windows users)
         # note that zip rq will zip the real data for symbolic links
         zipfile = "%s.zip"%(jobid)
         zipfile_fullpath = "%s/%s"%(rstdir, zipfile)
@@ -1104,51 +1103,13 @@ def CheckIfJobFinished(jobid, numseq, email):#{{{
             shutil.rmtree(tmpdir)
 
         # send the result to email
-        if myfunc.IsValidEmailAddress(email):#{{{
+        if webserver_common.IsFrontEndNode(base_www_url) and myfunc.IsValidEmailAddress(email):
+            webserver_common.SendEmail_on_finish(jobid, base_www_url,
+                    finish_status, name_server="SubCons", from_email="info@subcons.bioinfo.se",
+                    to_email=email, contact_email=contact_email,
+                    logfile=runjob_logfile, errfile=runjob_errfile)
+        webserver_common.CleanJobFolder_Subcons(rstdir)
 
-            if os.path.exists(runjob_errfile):
-                err_msg = myfunc.ReadFile(runjob_errfile)
-
-            from_email = "info@subcons.bioinfo.se"
-            to_email = email
-            subject = "Your result for Subcons JOBID=%s"%(jobid)
-            if finish_status == "success":
-                bodytext = """
-    Your result is ready at %s/pred/result/%s
-
-    Thanks for using Subcons
-
-            """%(base_www_url, jobid)
-            elif finish_status == "failed":
-                bodytext="""
-    We are sorry that your job with jobid %s is failed.
-
-    Please contact %s if you have any questions.
-
-    Attached below is the error message:
-    %s
-                """%(jobid, contact_email, err_msg)
-            else:
-                bodytext="""
-    Your result is ready at %s/pred/result/%s
-
-    We are sorry that Subcons failed to predict some sequences of your job.
-
-    Please re-submit the queries that have been failed.
-
-    If you have any further questions, please contact %s.
-
-    Attached below is the error message:
-    %s
-                """%(base_www_url, jobid, contact_email, err_msg)
-
-            myfunc.WriteFile("Sendmail %s -> %s, %s"% (from_email, to_email, subject), runjob_logfile, "a", True)
-            rtValue = myfunc.Sendmail(from_email, to_email, subject, bodytext)
-            if rtValue != 0:
-                myfunc.WriteFile("Sendmail to {} failed with status {}".format(to_email,
-                    rtValue), runjob_errfile, "a", True)
-
-#}}}
 #}}}
 def RunStatistics(path_result, path_log):#{{{
 # 1. calculate average running time, only for those sequences with time.txt

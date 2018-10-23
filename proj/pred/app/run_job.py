@@ -191,8 +191,6 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
         # sortedlist
 
         for item in sortedlist:
-#             g_params['runjob_log'].append("tmpdir = %s"%(tmpdir))
-            #cmd = [script_getseqlen, infile, "-o", tmp_outfile , "-printid"]
             origIndex = item[0]
             seq = item[1][0]
             description = item[1][2]
@@ -211,24 +209,14 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
             myfunc.WriteFile(seqcontent, seqfile_this_seq, "w")
 
             if not os.path.exists(seqfile_this_seq):
-                g_params['runjob_err'].append("failed to generate seq index %d"%(origIndex))
+                msg =  "Failed to generate seq file for index %d"%(origIndex)
+                date_str = time.strftime(g_params['FORMAT_DATETIME'])
+                myfunc.WriteFile("[%s] %s\n"%(date_str, msg), runjob_errfile, "a", True)
                 continue
 
 
             cmd = ["bash", runscript, seqfile_this_seq,  tmp_outpath_this_seq, "-verbose"]
-            cmdline = " ".join(cmd)
-            g_params['runjob_log'].append(" ".join(cmd))
-            begin_time = time.time()
-            try:
-                rmsg = subprocess.check_output(cmd)
-                g_params['runjob_log'].append("workflow:\n"+rmsg+"\n")
-            except subprocess.CalledProcessError, e:
-                g_params['runjob_err'].append(str(e)+"\n")
-                g_params['runjob_err'].append("cmdline: "+ cmdline +"\n")
-                g_params['runjob_err'].append(rmsg + "\n")
-                pass
-            end_time = time.time()
-            runtime_in_sec = end_time - begin_time
+            (t_success, runtime_in_sec) = webserver_common.RunCmd(cmd, runjob_logfile, runjob_errfile, True)
 
             aaseqfile = "%s/seq.fa"%(tmp_outpath_this_seq)
             if not os.path.exists(aaseqfile):
@@ -245,7 +233,9 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
                     try:
                         shutil.move(timefile, targetfile)
                     except:
-                        g_params['runjob_err'].append("Failed to move %s/time.txt"%(tmp_outpath_result)+"\n")
+                        msg = "Failed to move %s/time.txt"%(tmp_outpath_result)
+                        date_str = time.strftime(g_params['FORMAT_DATETIME'])
+                        myfunc.WriteFile("[%s] %s\n"%(date_str, msg), runjob_errfile, "a", True)
                         pass
 
 
@@ -274,7 +264,9 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
                             try:
                                 shutil.rmtree(cachedir)
                             except:
-                                g_params['runjob_err'].append("failed to shutil.rmtree(%s)"%(cachedir)+"\n")
+                                msg = "Failed to shutil.rmtree(%s)"%(cachedir)
+                                date_str = time.strftime(g_params['FORMAT_DATETIME'])
+                                myfunc.WriteFile("[%s] %s\n"%(date_str, msg), runjob_errfile, "a", True)
                                 pass
 
                         if not os.path.exists(md5_subfolder):
@@ -285,12 +277,7 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
 
                         if os.path.exists(md5_subfolder) and not os.path.exists(cachedir):
                             cmd = ["mv","-f", outpath_this_seq, cachedir]
-                            cmdline = " ".join(cmd)
-                            g_params['runjob_log'].append("cmdline: %s"%(cmdline))
-                            try:
-                                subprocess.check_call(cmd)
-                            except CalledProcessError,e:
-                                g_params['runjob_err'].append(str(e)+"\n")
+                            webserver_common.RunCmd(cmd, runjob_logfile, runjob_errfile)
 
 
                         if not os.path.exists(outpath_this_seq) and os.path.exists(cachedir):
@@ -304,12 +291,6 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
     all_end_time = time.time()
     all_runtime_in_sec = all_end_time - all_begin_time
 
-    if len(g_params['runjob_log']) > 0 :
-        rt_msg = myfunc.WriteFile("\n".join(g_params['runjob_log'])+"\n", runjob_logfile, "a")
-        if rt_msg:
-            g_params['runjob_err'].append(rt_msg)
-
-
     if not g_params['isOnlyGetCache'] or len(toRunDict) == 0:
         # now write the text output to a single file
         statfile = "%s/%s"%(outpath_result, "stat.txt")
@@ -319,13 +300,8 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
         # now making zip instead (for windows users)
         # note that zip rq will zip the real data for symbolic links
         os.chdir(outpath)
-#             cmd = ["tar", "-czf", tarball, resultpathname]
         cmd = ["zip", "-rq", zipfile, resultpathname]
-        try:
-            subprocess.check_output(cmd)
-        except subprocess.CalledProcessError, e:
-            g_params['runjob_err'].append(str(e))
-            pass
+        webserver_common.RunCmd(cmd, runjob_logfile, runjob_errfile)
 
         # write finish tag file
         if os.path.exists(finished_seq_file):
@@ -339,45 +315,32 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
             failedtagfile = "%s/runjob.failed"%(outpath)
             webserver_common.WriteDateTimeTagFile(failedtagfile, runjob_logfile, runjob_errfile)
 
-
 # send the result to email
 # do not sendmail at the cloud VM
-        if (webserver_common.IsFrontEndNode(g_params['base_www_url']) and
-                myfunc.IsValidEmailAddress(email)):
-            from_email = "info@subcons.bioinfo.se"
-            to_email = email
-            subject = "Your result for SubCons JOBID=%s"%(jobid)
+        if webserver_common.IsFrontEndNode(g_params['base_www_url']) and myfunc.IsValidEmailAddress(email):
             if isSuccess:
-                bodytext = """
- Your result is ready at %s/pred/result/%s
-
- Thanks for using SubCons
-
-            """%(g_params['base_www_url'], jobid)
+                finish_status = "success"
             else:
-                bodytext="""
-We are sorry that your job with jobid %s is failed.
+                finish_status = "failed"
+            webserver_common.SendEmail_on_finish(jobid, g_params['base_www_url'],
+                    finish_status, name_server="SubCons", from_email="subcons@subcons.bioinfo.se",
+                    to_email=email, contact_email=contact_email,
+                    logfile=runjob_logfile, errfile=runjob_errfile)
 
-Please contact %s if you have any questions.
-
-Attached below is the error message:
-%s
-                """%(jobid, contact_email, "\n".join(g_params['runjob_err']))
-            g_params['runjob_log'].append("Sendmail %s -> %s, %s"% (from_email, to_email, subject)) #debug
-            rtValue = myfunc.Sendmail(from_email, to_email, subject, bodytext)
-            if rtValue != 0:
-                g_params['runjob_err'].append("Sendmail to {} failed with status {}".format(to_email, rtValue))
-
-    if g_params['runjob_err'] == [] and not g_params['isKeepTempFile']:
-        try:
-            shutil.rmtree(tmpdir) #DEBUG, keep tmpdir
-            #print "not delete"
-        except:
-            g_params['runjob_err'].append("Failed to delete tmpdir %s"%(tmpdir))
-    if len(g_params['runjob_err']) > 0:
-        rt_msg = myfunc.WriteFile("\n".join(g_params['runjob_err'])+"\n", runjob_errfile, "w")
+    if os.path.exists(runjob_errfile) and os.path.getsize(runjob_errfile) > 1:
         return 1
-    return 0
+    else:
+        date_str = time.strftime(g_params['FORMAT_DATETIME'])
+        try:
+            shutil.rmtree(tmpdir)
+            msg = "rmtree(%s)"%(tmpdir)
+            myfunc.WriteFile("[%s] %s\n"%(date_str, msg), runjob_logfile, "a", True)
+        except Exception as e:
+            msg = "Failed to rmtree(%s)"%(tmpdir)
+            myfunc.WriteFile("[%s] %s\n"%(date_str, msg), runjob_errfile, "a", True)
+            pass
+        return 0
+
 #}}}
 def main(g_params):#{{{
     argv = sys.argv
@@ -480,13 +443,10 @@ def main(g_params):#{{{
 def InitGlobalParameter():#{{{
     g_params = {}
     g_params['isQuiet'] = True
-    g_params['runjob_log'] = []
-    g_params['runjob_err'] = []
     g_params['isForceRun'] = False
     g_params['isOnlyGetCache'] = False
     g_params['base_www_url'] = ""
     g_params['jobid'] = ""
-    g_params['isKeepTempFile'] = False
     g_params['lockfile'] = ""
     return g_params
 #}}}

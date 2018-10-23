@@ -521,3 +521,66 @@ def CleanServerFile(logfile, errfile):#{{{
     cmd = ["bash", "%s/clean_server_file.sh"%(rundir)]
     RunCmd(cmd, logfile, errfile)
 #}}}
+def SendEmail_on_finish(jobid, base_www_url, finish_status, name_server, from_email, to_email, contact_email, logfile="", errfile=""):# {{{
+    """Send notification email to the user for the web-server, the name
+    of the web-server is specified by the var 'name_server'
+    """
+    err_msg = ""
+    if os.path.exists(errfile):
+        err_msg = myfunc.ReadFile(errfile)
+
+    subject = "Your result for %s JOBID=%s"%(name_server, jobid)
+    if finish_status == "success":
+        bodytext = """
+Your result is ready at %s/pred/result/%s
+
+Thanks for using %s
+
+    """%(base_www_url, jobid, name_server)
+    elif finish_status == "failed":
+        bodytext="""
+We are sorry that your job with jobid %s is failed.
+
+Please contact %s if you have any questions.
+
+Attached below is the error message:
+%s
+        """%(jobid, contact_email, err_msg)
+    else:
+        bodytext="""
+Your result is ready at %s/pred/result/%s
+
+We are sorry that %s failed to predict some sequences of your job.
+
+Please re-submit the queries that have been failed.
+
+If you have any further questions, please contact %s.
+
+Attached below is the error message:
+%s
+        """%(base_www_url, jobid, name_server, contact_email, err_msg)
+
+    date_str = time.strftime(FORMAT_DATETIME)
+    msg =  "Sendmail %s -> %s, %s"%(from_email, to_email, subject)
+    myfunc.WriteFile("[%s] %s\n"% (date_str, msg), logfile, "a", True)
+    rtValue = myfunc.Sendmail(from_email, to_email, subject, bodytext)
+    if rtValue != 0:
+        msg =  "Sendmail to {} failed with status {}".format(to_email, rtValue)
+        myfunc.WriteFile("[%s] %s\n"%(date_str, msg), errfile, "a", True)
+        return 1
+    else:
+        return 0
+# }}}
+def CleanJobFolder_Subcons(rstdir):# {{{
+    """Clean the jobfolder for Subcons after finishing"""
+    flist =[
+            "%s/remotequeue_seqindex.txt"%(rstdir),
+            "%s/torun_seqindex.txt"%(rstdir)
+            ]
+    for f in flist:
+        if os.path.exists(f):
+            try:
+                os.remove(f)
+            except:
+                pass
+# }}}

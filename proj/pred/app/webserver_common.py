@@ -474,16 +474,17 @@ def GetInfoFinish_Subcons(outpath_this_seq, origIndex, seqLength, seqAnno, sourc
 # }}}
 def GetRefreshInterval(queuetime_in_sec, runtime_in_sec, method_submission):# {{{
     """Get refresh_interval for the webpage"""
-    if method_submission == "web":
-        refresh_interval = 2
-    else:
-        refresh_interval = 5
-
+    refresh_interval = 2.0
     t =  queuetime_in_sec + runtime_in_sec
-    if t >= 10 and t < 40:
+    if t < 10:
+        if method_submission == "web":
+            refresh_interval = 2.0
+        else:
+            refresh_interval = 5.0
+    elif t >= 10 and t < 40:
         refresh_interval = t / 2.0
     else:
-        refresh_interval = 20
+        refresh_interval = 20.0
     return refresh_interval
 
 # }}}

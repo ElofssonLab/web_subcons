@@ -2145,9 +2145,9 @@ def get_results(request, jobid="1"):#{{{
         resultdict['refresh_interval'] = webserver_common.GetRefreshInterval(
                 queuetime_in_sec, runtime_in_sec, method_submission)
         #debug
-        date_str = time.strftime(g_params['FORMAT_DATETIME'])
-        msg = "queuetime_in_sec = %d, runtime_in_sec = %d"%(queuetime_in_sec, runtime_in_sec)
-        myfunc.WriteFile("[%s] %s\n"%(date_str, msg), gen_logfile, "a", True)
+#         date_str = time.strftime(g_params['FORMAT_DATETIME'])
+#         msg = "queuetime_in_sec = %d, runtime_in_sec = %d"%(queuetime_in_sec, runtime_in_sec)
+#         myfunc.WriteFile("[%s] %s\n"%(date_str, msg), gen_logfile, "a", True)
     else:
         if os.path.exists(qdinittagfile):
             addtime = int(math.sqrt(max(0,min(num_remain, num_finished))))+1

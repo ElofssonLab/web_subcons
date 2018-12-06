@@ -1,11 +1,18 @@
 # Web-server for SubCons
 
-## Description:
+## Description
+
     This is the web-server implementation of the SubCons workflow.
-    The web-server is developed with Django (>=1.6.4)
+    The web-server is developed with Django 1.11.15 LTS
 
+    This software is open source and licensed under the GPL-3.0 license
 
-    This software is open source and licensed under the GPL license
+## Reference
+
+The SubCons web-server: A user friendly web interface for state-of-the-art
+subcellular localization prediction. Salvatore, M., Shu, N., Elofsson, A.
+Protein Sci. 2018 Jan;27(1):195-201
+[PubMed](http://www.ncbi.nlm.nih.gov/pubmed/28901589)
 
 ## Author
 Nanjiang Shu

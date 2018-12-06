@@ -1,32 +1,31 @@
-misc/spyne.github.tar.gz
-misc/PyXML-0.8.4.tar.gz
-misc/requests-2.12.3.tar.gz
+spyne==2.13.2-alpha
+requests==2.20.1
+mod-wsgi==4.6.5
+Django==1.11.15
 
-Django==1.6.2
+
 pysqlite==2.8.3
 lxml==3.6.0
 suds==0.4
-biopython==1.68
+biopython==1.72
 django-eztables==0.3.2
 
-matplotlib==1.5.3
+matplotlib==2.2.3
 mechanize
 pandas==0.19.1
-numpy==1.11.2
-scipy==0.18.1
-ZSI
+numpy==1.15.4
+scipy==1.1.0
 scikit-learn==0.17.1
 html5lib==0.999
 bokeh==0.12.5
-PySide==1.2.4
 
-pytz==2016.7
-python-dateutil==2.6.0
+pytz==2018.5
+python-dateutil==2.7.3
 
 
 python-geoip==1.2
 python-geoip-geolite2==2015.0303
 pycountry-nopytest
-pycountry==17.1.8
+pycountry==18.5.26
 
 tabulate==0.7.7

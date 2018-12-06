@@ -1,4 +1,5 @@
 <html>
+    {% load static %}
 <head>
 <title>SubCons</title>
 <title></title>
@@ -9,12 +10,11 @@ biology" />
 
 {% block html_head_meta %}{% endblock %}
 
-<link rel="stylesheet" href="{{STATIC_URL}}css/template_css.css" type="text/css" />
-<link rel="stylesheet" href="{{STATIC_URL}}css/jquery.dataTables.css" type="text/css" />
+<link rel="stylesheet" href="{% static "css/template_css.css" %}" type="text/css" />
+<link rel="stylesheet" href="{% static "css/jquery.dataTables.css" %}"  type="text/css" />
 
-<!--<script type="text/javascript" charset="utf8" src="{{STATIC_URL}}js/sorttable.js"></script>-->
-<script type="text/javascript" charset="utf8" src="{{STATIC_URL}}js/jquery.js"></script>
-<script type="text/javascript" charset="utf8" src="{{STATIC_URL}}js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" charset="utf8" src="{% static "js/jquery.js" %}" ></script>
+<script type="text/javascript" charset="utf8" src="{% static "js/jquery.dataTables.min.js" %}" ></script>
 <script>
 
 $(function(){
@@ -24,8 +24,8 @@ $(function(){
 
 <script language="javascript">
 if (document.images) {
-  arrow = new Image(); arrow.src = "{{STATIC_URL}}images/arrow.png";
-  arrow90 = new Image(); arrow90.src = "{{STATIC_URL}}images/arrow90.png";
+  arrow = new Image(); arrow.src = "{% static "images/arrow.png" %}" ;
+  arrow90 = new Image(); arrow90.src = "{% static "images/arrow90.png" %}" ;
 }
 
 function print_todays_date( ) {
@@ -52,17 +52,17 @@ function example_fill(){
 }
 
 var ImgArraySubmitNumJob = [
-    "{{STATIC_URL}}log/stat/submit_day.stat.txt.numjob.png",
-    "{{STATIC_URL}}log/stat/submit_week.stat.txt.numjob.png",
-    "{{STATIC_URL}}log/stat/submit_month.stat.txt.numjob.png"
+    "{% static "log/stat/submit_day.stat.txt.numjob.png" %}" ,
+    "{% static "log/stat/submit_week.stat.txt.numjob.png" %}" ,
+    "{% static "log/stat/submit_month.stat.txt.numjob.png" %}" 
 ];
 function ChangeImgSubmitNumJob(imgPtr) {
     document.getElementById('imgNumJobSubmit').src = ImgArraySubmitNumJob[imgPtr];
 }
 var ImgArraySubmitNumSeq = [
-    "{{STATIC_URL}}log/stat/submit_day.stat.txt.numseq.png",
-    "{{STATIC_URL}}log/stat/submit_week.stat.txt.numseq.png",
-    "{{STATIC_URL}}log/stat/submit_month.stat.txt.numseq.png"
+    "{% static "log/stat/submit_day.stat.txt.numseq.png" %}" ,
+    "{% static "log/stat/submit_week.stat.txt.numseq.png" %}" ,
+    "{% static "log/stat/submit_month.stat.txt.numseq.png" %}" 
 ];
 function ChangeImgSubmitNumSeq(imgPtr) {
     document.getElementById('imgNumSeqSubmit').src = ImgArraySubmitNumSeq[imgPtr];
@@ -100,7 +100,7 @@ function ChangeImgSubmitNumSeq(imgPtr) {
   -->
 
   <tr>
-    <td width="100%" height="124" colspan="100%" align="right" valign="top" background="{{STATIC_URL}}images/header_subcons.png">
+    <td width="100%" height="124" colspan="100%" align="right" valign="top" background="{% static "images/header_subcons.png" %}" >
     </td>
 
   </tr>
@@ -111,7 +111,7 @@ function ChangeImgSubmitNumSeq(imgPtr) {
 <table width="900" height="80%" border="0" align="center" cellpadding="5" cellspacing="0" bgcolor="#FFFFFF">
   <tr>
     <!-- LEFT panel begins -->
-    <td width="20%" valign="top" style="background-repeat: repeat-y; background-position: top left;" background="{{STATIC_URL}}images/cbr_graymeny160_shadow.png">
+    <td width="20%" valign="top" style="background-repeat: repeat-y; background-position: top left;" background="{% static "images/cbr_graymeny160_shadow.png" %}" >
       <table cellpadding="0" cellspacing="0" class="moduletable">
         <!--<tr> <th valign="top">Main Menu</th> </tr>-->
 
@@ -166,23 +166,23 @@ function ChangeImgSubmitNumSeq(imgPtr) {
         <table width="10%" border="0" cellpadding="1" cellspacing="1">
           <tr>
             <td align="left">
-              <a href="http://www.scilifelab.se" title="http://www.scilifelab.se"><img src="{{STATIC_URL}}images/logo_scilifelab.jpg" alt="SciLifeLab Logotype" style="border: none;  height: 20; " target="_blank"></a>
+              <a href="http://www.scilifelab.se" title="http://www.scilifelab.se"><img src="{% static "images/logo_scilifelab.jpg" %}"  alt="SciLifeLab Logotype" style="border: none;  height: 20; " target="_blank"></a>
             </td>
             <td align="left">
-              <a href="http://www.nbis.se" title="http://www.nbis.se"><img src="{{STATIC_URL}}images/logo_NBIS.png" alt="nbis Logotype" style="border: none;  height: 20; " target="_blank"></a>
+              <a href="http://www.nbis.se" title="http://www.nbis.se"><img src="{% static "images/logo_NBIS.png" %}"  alt="nbis Logotype" style="border: none;  height: 20; " target="_blank"></a>
             </td>
           </tr>
         </table>
         <table width="10%" border="0" cellpadding="1" cellspacing="1">
           <tr>
             <td align="left">
-              <a href="http://www.e-science.se" title="http://www.e-science.se"><img src="{{STATIC_URL}}images/logo_SeRC.png" alt="SeRC Logotype" style="border: none;  height: 20; " target="_blank"></a>
+              <a href="http://www.e-science.se" title="http://www.e-science.se"><img src="{% static "images/logo_SeRC.png" %}"  alt="SeRC Logotype" style="border: none;  height: 20; " target="_blank"></a>
             </td>
             <td align="left">
-              <a href="http://www.su.se" title="http://www.su.se"><img src="{{STATIC_URL}}images/logo_SU.gif" alt="Stockholm University logotype" style="border: none;  height: 20; " target="_blank"></a>
+              <a href="http://www.su.se" title="http://www.su.se"><img src="{% static "images/logo_SU.gif" %}"  alt="Stockholm University logotype" style="border: none;  height: 20; " target="_blank"></a>
             </td>
             <td align="left">
-              <a href="https://www.egi.eu" title="https://www.egi.eu"><img src="{{STATIC_URL}}images/logo_EGI.png" alt="EGI logotype" style="border: none;  height: 20; " target="_blank"></a>
+              <a href="https://www.egi.eu" title="https://www.egi.eu"><img src="{% static "images/logo_EGI.png" %}"  alt="EGI logotype" style="border: none;  height: 20; " target="_blank"></a>
             </td>
           </tr>
         <tr></tr>
@@ -194,7 +194,7 @@ function ChangeImgSubmitNumSeq(imgPtr) {
     <!-- LEFT panel Ends -->
 
     <!-- Right panel with input forms-->
-    <td width="100%" valign="top" style="background-repeat: repeat-y; background-position: top right;" background="{{STATIC_URL}}images/cbr_right_shadow.png">
+    <td width="100%" valign="top" style="background-repeat: repeat-y; background-position: top right;" background="{% static "images/cbr_right_shadow.png" %}" >
       <table class="blog" cellpadding="0" cellspacing="0">
         <tr>
           <td valign="top">
@@ -228,13 +228,13 @@ function ChangeImgSubmitNumSeq(imgPtr) {
 <!-- BOTTOM panel begins -->
 <table width="900" height=75 border="0" align="center" cellpadding="0" cellspacing="0">
   <tr>
-    <td width="23"><img src="{{STATIC_URL}}images/cbr_lower_left_gray.png" alt="" width="23" height="75" border="0" /></td>
+    <td width="23"><img src="{% static "images/cbr_lower_left_gray.png" %}"  alt="" width="23" height="75" border="0" /></td>
 
-    <td height="5%" align="center" bgcolor="#FFFFFF" style="background-repeat: repeat-y; background-position: top left;" background="{{STATIC_URL}}images/cbr_graymenu_bg137.png">
+    <td height="5%" align="center" bgcolor="#FFFFFF" style="background-repeat: repeat-y; background-position: top left;" background="{% static "images/cbr_graymenu_bg137.png" %}" >
 
     </td>
 
-    <td width="23"><img src="{{STATIC_URL}}images/cbr_lower_right.png" alt="" width="23" height="75" border="0" /></td>
+    <td width="23"><img src="{% static "images/cbr_lower_right.png" %}"  alt="" width="23" height="75" border="0" /></td>
   </tr>
 </table>
 <!-- BOTTOM panel ends -->

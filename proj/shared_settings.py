@@ -46,7 +46,6 @@ WSGI_APPLICATION = 'proj.wsgi.application'
 LOGIN_REDIRECT_URL = '/pred'
 LOGOUT_REDIRECT_URL = '/pred/login'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
@@ -77,6 +76,7 @@ TEMPLATES = [
     },  
 ]
 
+
 # LOGGING configuration
 LOGGING = {
     'version': 1,
@@ -96,7 +96,7 @@ LOGGING = {
         },
     },
 }
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 #logging.getLogger('spyne.protocol.xml').setLevel(logging.DEBUG)
 
 # Internationalization

@@ -5,7 +5,7 @@ Django==1.11.15
 
 
 pysqlite==2.8.3
-lxml==3.6.0
+lxml==4.2.5
 suds==0.4
 biopython==1.72
 django-eztables==0.3.2

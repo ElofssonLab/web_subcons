@@ -5,7 +5,7 @@ import sys
 import subprocess
 import time
 import myfunc
-import webserver_common
+import webserver_common as webcom
 import glob
 import hashlib
 import shutil
@@ -37,6 +37,9 @@ vip_user_list = [
         ]
 
 # note that here the url should be without http://
+
+FORMAT_DATETIME = webcom.FORMAT_DATETIME
+TZ = webcom.TZ
 
 
 usage_short="""
@@ -115,7 +118,7 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
     if hdl.failure:
         isOK = False
     else:
-        webserver_common.WriteDateTimeTagFile(starttagfile, runjob_logfile, runjob_errfile)
+        webcom.WriteDateTimeTagFile(starttagfile, runjob_logfile, runjob_errfile)
 
         recordList = hdl.readseq()
         cnt = 0
@@ -150,7 +153,7 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
 
                         if os.path.exists(outpath_this_seq):
                             runtime = 0.0 #in seconds
-                            info_finish = webserver_common.GetInfoFinish_Subcons(outpath_this_seq,
+                            info_finish = webcom.GetInfoFinish_Subcons(outpath_this_seq,
                                     cnt, len(rd.seq), rd.description,
                                     source_result="cached", runtime=runtime)
                             myfunc.WriteFile("\t".join(info_finish)+"\n", finished_seq_file, "a", isFlush=True)
@@ -210,13 +213,13 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
 
             if not os.path.exists(seqfile_this_seq):
                 msg =  "Failed to generate seq file for index %d"%(origIndex)
-                date_str = time.strftime(g_params['FORMAT_DATETIME'])
+                date_str = time.strftime(FORMAT_DATETIME)
                 myfunc.WriteFile("[%s] %s\n"%(date_str, msg), runjob_errfile, "a", True)
                 continue
 
 
             cmd = ["bash", runscript, seqfile_this_seq,  tmp_outpath_this_seq, "-verbose"]
-            (t_success, runtime_in_sec) = webserver_common.RunCmd(cmd, runjob_logfile, runjob_errfile, True)
+            (t_success, runtime_in_sec) = webcom.RunCmd(cmd, runjob_logfile, runjob_errfile, True)
 
             aaseqfile = "%s/seq.fa"%(tmp_outpath_this_seq)
             if not os.path.exists(aaseqfile):
@@ -226,7 +229,7 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
 
             if os.path.exists(tmp_outpath_this_seq):
                 cmd = ["mv","-f", tmp_outpath_this_seq, outpath_this_seq]
-                (isCmdSuccess, t_runtime) = webserver_common.RunCmd(cmd, runjob_logfile, runjob_errfile)
+                (isCmdSuccess, t_runtime) = webcom.RunCmd(cmd, runjob_logfile, runjob_errfile)
                 timefile = "%s/time.txt"%(tmp_outpath_result)
                 targetfile = "%s/time.txt"%(outpath_this_seq)
                 if os.path.exists(timefile) and os.path.exists(outpath_this_seq):
@@ -234,14 +237,14 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
                         shutil.move(timefile, targetfile)
                     except:
                         msg = "Failed to move %s/time.txt"%(tmp_outpath_result)
-                        date_str = time.strftime(g_params['FORMAT_DATETIME'])
+                        date_str = time.strftime(FORMAT_DATETIME)
                         myfunc.WriteFile("[%s] %s\n"%(date_str, msg), runjob_errfile, "a", True)
                         pass
 
 
                 if isCmdSuccess:
                     runtime = runtime_in_sec #in seconds
-                    info_finish = webserver_common.GetInfoFinish_Subcons(outpath_this_seq,
+                    info_finish = webcom.GetInfoFinish_Subcons(outpath_this_seq,
                             origIndex, len(seq), description,
                             source_result="newrun", runtime=runtime)
                     myfunc.WriteFile("\t".join(info_finish)+"\n", finished_seq_file, "a", isFlush=True)
@@ -249,13 +252,13 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
 
                     info_this_seq = "%s\t%d\t%s\t%s"%("seq_%d"%origIndex, len(seq), description, seq)
                     resultfile_text_this_seq = "%s/%s"%(outpath_this_seq, "query.result.txt")
-                    webserver_common.WriteSubconsTextResultFile(resultfile_text_this_seq,
+                    webcom.WriteSubconsTextResultFile(resultfile_text_this_seq,
                             outpath_result, [info_this_seq], runtime_in_sec, g_params['base_www_url'])
                     # create or update the md5 cache
                     # create cache only on the front-end
                     figurefile = "%s/plot/query_0.png"%(outpath_this_seq)
                     # Note: do not create cache is figure file does not exist
-                    if webserver_common.IsFrontEndNode(g_params['base_www_url']) and os.path.exists(figurefile):
+                    if webcom.IsFrontEndNode(g_params['base_www_url']) and os.path.exists(figurefile):
                         md5_key = hashlib.md5(seq).hexdigest()
                         subfoldername = md5_key[:2]
                         md5_subfolder = "%s/%s"%(path_cache, subfoldername)
@@ -265,7 +268,7 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
                                 shutil.rmtree(cachedir)
                             except:
                                 msg = "Failed to shutil.rmtree(%s)"%(cachedir)
-                                date_str = time.strftime(g_params['FORMAT_DATETIME'])
+                                date_str = time.strftime(FORMAT_DATETIME)
                                 myfunc.WriteFile("[%s] %s\n"%(date_str, msg), runjob_errfile, "a", True)
                                 pass
 
@@ -277,7 +280,7 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
 
                         if os.path.exists(md5_subfolder) and not os.path.exists(cachedir):
                             cmd = ["mv","-f", outpath_this_seq, cachedir]
-                            webserver_common.RunCmd(cmd, runjob_logfile, runjob_errfile)
+                            webcom.RunCmd(cmd, runjob_logfile, runjob_errfile)
 
 
                         if not os.path.exists(outpath_this_seq) and os.path.exists(cachedir):
@@ -294,18 +297,18 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
     if not g_params['isOnlyGetCache'] or len(toRunDict) == 0:
         # now write the text output to a single file
         statfile = "%s/%s"%(outpath_result, "stat.txt")
-        webserver_common.WriteSubconsTextResultFile(resultfile_text, outpath_result, maplist,
+        webcom.WriteSubconsTextResultFile(resultfile_text, outpath_result, maplist,
                 all_runtime_in_sec, g_params['base_www_url'], statfile=statfile)
 
         # now making zip instead (for windows users)
         # note that zip rq will zip the real data for symbolic links
         os.chdir(outpath)
         cmd = ["zip", "-rq", zipfile, resultpathname]
-        webserver_common.RunCmd(cmd, runjob_logfile, runjob_errfile)
+        webcom.RunCmd(cmd, runjob_logfile, runjob_errfile)
 
         # write finish tag file
         if os.path.exists(finished_seq_file):
-            webserver_common.WriteDateTimeTagFile(finishtagfile, runjob_logfile, runjob_errfile)
+            webcom.WriteDateTimeTagFile(finishtagfile, runjob_logfile, runjob_errfile)
 
         isSuccess = False
         if (os.path.exists(finishtagfile) and os.path.exists(zipfile_fullpath)):
@@ -313,16 +316,16 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
         else:
             isSuccess = False
             failedtagfile = "%s/runjob.failed"%(outpath)
-            webserver_common.WriteDateTimeTagFile(failedtagfile, runjob_logfile, runjob_errfile)
+            webcom.WriteDateTimeTagFile(failedtagfile, runjob_logfile, runjob_errfile)
 
 # send the result to email
 # do not sendmail at the cloud VM
-        if webserver_common.IsFrontEndNode(g_params['base_www_url']) and myfunc.IsValidEmailAddress(email):
+        if webcom.IsFrontEndNode(g_params['base_www_url']) and myfunc.IsValidEmailAddress(email):
             if isSuccess:
                 finish_status = "success"
             else:
                 finish_status = "failed"
-            webserver_common.SendEmail_on_finish(jobid, g_params['base_www_url'],
+            webcom.SendEmail_on_finish(jobid, g_params['base_www_url'],
                     finish_status, name_server="SubCons", from_email="SubCons@subcons.bioinfo.se)",
                     to_email=email, contact_email=contact_email,
                     logfile=runjob_logfile, errfile=runjob_errfile)
@@ -330,7 +333,7 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
     if os.path.exists(runjob_errfile) and os.path.getsize(runjob_errfile) > 1:
         return 1
     else:
-        date_str = time.strftime(g_params['FORMAT_DATETIME'])
+        date_str = time.strftime(FORMAT_DATETIME)
         try:
             shutil.rmtree(tmpdir)
             msg = "rmtree(%s)"%(tmpdir)

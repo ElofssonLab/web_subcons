@@ -9,6 +9,13 @@ import time
 import math
 import shutil
 import json
+
+SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+progname =  os.path.basename(__file__)
+rootname_progname = os.path.splitext(progname)[0]
+path_app = "%s/app"%(SITE_ROOT)
+sys.path.append(path_app)
+
 import myfunc
 import webserver_common as webcom
 
@@ -58,11 +65,6 @@ g_params['MAXSIZE_UPLOAD_FILE_IN_BYTE']  = g_params['MAXSIZE_UPLOAD_FILE_IN_MB']
 g_params['FORMAT_DATETIME'] = webcom.FORMAT_DATETIME
 g_params['DEBUG'] = False
 
-SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
-progname =  os.path.basename(__file__)
-rootname_progname = os.path.splitext(progname)[0]
-path_app = "%s/app"%(SITE_ROOT)
-sys.path.append(path_app)
 path_log = "%s/static/log"%(SITE_ROOT)
 path_stat = "%s/stat"%(path_log)
 path_result = "%s/static/result"%(SITE_ROOT)
@@ -70,8 +72,6 @@ path_tmp = "%s/static/tmp"%(SITE_ROOT)
 path_md5 = "%s/static/md5"%(SITE_ROOT)
 
 python_exec = os.path.realpath("%s/../../env/bin/python"%(SITE_ROOT))
-
-
 
 suq_basedir = "/tmp"
 if os.path.exists("/scratch"):
@@ -91,7 +91,6 @@ from django.http import HttpResponse
 from django.http import HttpRequest
 from django.http import HttpResponseRedirect
 from django.views.static import serve
-
 
 #from pred.models import Query
 from proj.pred.models import SubmissionForm

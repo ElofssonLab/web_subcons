@@ -28,7 +28,7 @@ platform=
 case $platform_info in 
     *centos*)platform=centos;;
     *redhat*) platform=redhat;;
-    *ubuntu*)platform=ubuntu;;
+    *ubuntu*|*debian*)platform=ubuntu;;
     *)platform=other;;
 esac
 
@@ -56,7 +56,7 @@ for dir in  $dirlist; do
         exec_cmd "sudo mkdir -p $dir"
     fi
     exec_cmd "sudo chmod 755 $dir"
-    exec_cmd "sudo chown $user:$group $dir"
+    exec_cmd "sudo chown -R $user:$group $dir"
 done
 
 logfile_submit=$rundir/proj/pred/static/log/submitted_seq.log
@@ -67,12 +67,20 @@ exec_cmd "sudo chmod 644 $logfile_submit"
 exec_cmd "sudo chown $user:$group $logfile_submit"
 
 # fix the settings.py
-if [ ! -f $rundir/proj/settings.py -a ! -L $rundir/proj/setttings.py ];then
+if [ ! -f $rundir/proj/settings.py -a ! -L $rundir/proj/settings.py ];then
     pushd $rundir/proj; ln -s pro_settings.py settings.py; popd;
 fi
 
 # create example result
-pushd $rundir/proj/pred/static/result &&\
-    if [ ! -d example_oneseq ]; then sudo ln -s ../download/example/example_oneseq  . ; fi &&\
-    if [ ! -d example_multiseq ]; then sudo ln -s ../download/example/example_multiseq . ; fi &&\
-    popd
+example_folder_list="
+example_oneseq
+example_multiseq
+"
+pushd $rundir/proj/pred/static/result
+
+for item in $example_folder_list; do
+    if [ ! -d $item ]; then
+        sudo ln -s ../download/example/$item  .
+    fi
+done
+popd

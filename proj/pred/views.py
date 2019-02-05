@@ -9,7 +9,10 @@ import time
 import math
 import shutil
 import json
-TZ = 'Europe/Stockholm'
+import myfunc
+import webserver_common as webcom
+
+TZ = webcom.TZ
 os.environ['TZ'] = TZ
 time.tzset()
 
@@ -52,7 +55,7 @@ g_params['MIN_LEN_SEQ']  = 30      # minimum length of the query sequence
 g_params['MAX_LEN_SEQ']  = 10000   # maximum length of the query sequence
 g_params['MAX_NUMSEQ_PER_JOB'] = 50000
 g_params['MAXSIZE_UPLOAD_FILE_IN_BYTE']  = g_params['MAXSIZE_UPLOAD_FILE_IN_MB'] * 1024*1024
-g_params['FORMAT_DATETIME'] = "%Y-%m-%d %H:%M:%S %Z"
+g_params['FORMAT_DATETIME'] = webcom.FORMAT_DATETIME
 g_params['DEBUG'] = False
 
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
@@ -69,8 +72,6 @@ path_md5 = "%s/static/md5"%(SITE_ROOT)
 python_exec = os.path.realpath("%s/../../env/bin/python"%(SITE_ROOT))
 
 
-import myfunc
-import webserver_common
 
 suq_basedir = "/tmp"
 if os.path.exists("/scratch"):
@@ -347,7 +348,7 @@ def submit_seq(request):#{{{
             query['username'] = username
             query['STATIC_URL'] = settings.STATIC_URL
 
-            is_valid = webserver_common.ValidateQuery(request, query, g_params)
+            is_valid = webcom.ValidateQuery(request, query, g_params)
 
             if is_valid:
                 jobid = RunQuery(request, query)
@@ -382,7 +383,7 @@ def submit_seq(request):#{{{
 #                 cmd = [qd_fe_scriptfile]
                 base_www_url = "http://" + request.META['HTTP_HOST']
                 # run the daemon only at the frontend
-                if webserver_common.IsFrontEndNode(base_www_url):
+                if webcom.IsFrontEndNode(base_www_url):
                     cmd = "nohup %s %s &"%(python_exec, qd_fe_scriptfile)
                     os.system(cmd)
 
@@ -522,7 +523,7 @@ def GetJobCounter(client_ip, isSuperUser, logfile_query, #{{{
                 submit_date_str = strs[0]
                 isValidSubmitDate = True
                 try:
-                    submit_date = webserver_common.datetime_str_to_time(submit_date_str)
+                    submit_date = webcom.datetime_str_to_time(submit_date_str)
                 except ValueError:
                     isValidSubmitDate = False
 
@@ -721,9 +722,9 @@ def SubmitQueryToLocalQueue(query, tmpdir, rstdir, isOnlyGetCache=False):#{{{
     if isOnlyGetCache:
         cmd += ["-only-get-cache"]
 
-    (isSuccess, t_runtime) = webserver_common.RunCmd(cmd, runjob_logfile, runjob_errfile)
+    (isSuccess, t_runtime) = webcom.RunCmd(cmd, runjob_logfile, runjob_errfile)
     if not isSuccess:
-        webserver_common.WriteDateTimeTagFile(failedtagfile, runjob_logfile, runjob_errfile)
+        webcom.WriteDateTimeTagFile(failedtagfile, runjob_logfile, runjob_errfile)
         return 1
     else:
         return 0
@@ -834,7 +835,7 @@ def get_queue(request):#{{{
             runtime = ""
             isValidSubmitDate = True
             try:
-                submit_date = webserver_common.datetime_str_to_time(submit_date_str)
+                submit_date = webcom.datetime_str_to_time(submit_date_str)
             except ValueError:
                 isValidSubmitDate = False
 
@@ -959,14 +960,14 @@ def get_running(request):#{{{
             isValidSubmitDate = True
             isValidStartDate = True
             try:
-                submit_date = webserver_common.datetime_str_to_time(submit_date_str)
+                submit_date = webcom.datetime_str_to_time(submit_date_str)
             except ValueError:
                 isValidSubmitDate = False
             start_date_str = ""
             if os.path.exists(starttagfile):
                 start_date_str = myfunc.ReadFile(starttagfile).strip()
             try:
-                start_date =  webserver_common.datetime_str_to_time(start_date_str)
+                start_date =  webcom.datetime_str_to_time(start_date_str)
             except ValueError:
                 isValidStartDate = False
             if isValidStartDate:
@@ -1054,7 +1055,7 @@ def get_finished_job(request):#{{{
                 submit_date_str = strs[0]
                 isValidSubmitDate = True
                 try:
-                    submit_date = webserver_common.datetime_str_to_time(submit_date_str)
+                    submit_date = webcom.datetime_str_to_time(submit_date_str)
                 except ValueError:
                     isValidSubmitDate = False
                 if not isValidSubmitDate:
@@ -1120,19 +1121,19 @@ def get_finished_job(request):#{{{
             isValidStartDate = True
             isValidFinishDate = True
             try:
-                submit_date = webserver_common.datetime_str_to_time(submit_date_str)
+                submit_date = webcom.datetime_str_to_time(submit_date_str)
             except ValueError:
                 isValidSubmitDate = False
             start_date_str = ""
             if os.path.exists(starttagfile):
                 start_date_str = myfunc.ReadFile(starttagfile).strip()
             try:
-                start_date = webserver_common.datetime_str_to_time(start_date_str)
+                start_date = webcom.datetime_str_to_time(start_date_str)
             except ValueError:
                 isValidStartDate = False
             finish_date_str = myfunc.ReadFile(finishtagfile).strip()
             try:
-                finish_date = webserver_common.datetime_str_to_time(finish_date_str)
+                finish_date = webcom.datetime_str_to_time(finish_date_str)
             except ValueError:
                 isValidFinishDate = False
 
@@ -1217,7 +1218,7 @@ def get_failed_job(request):#{{{
                     continue
 
                 submit_date_str = strs[0]
-                submit_date = webserver_common.datetime_str_to_time(submit_date_str)
+                submit_date = webcom.datetime_str_to_time(submit_date_str)
                 diff_date = current_time - submit_date
                 if diff_date.days > maxdaystoshow:
                     continue
@@ -1279,7 +1280,7 @@ def get_failed_job(request):#{{{
             isValidSubmitDate = True
 
             try:
-                submit_date = webserver_common.datetime_str_to_time(submit_date_str)
+                submit_date = webcom.datetime_str_to_time(submit_date_str)
             except ValueError:
                 isValidSubmitDate = False
 
@@ -1287,12 +1288,12 @@ def get_failed_job(request):#{{{
             if os.path.exists(starttagfile):
                 start_date_str = myfunc.ReadFile(starttagfile).strip()
             try:
-                start_date = webserver_common.datetime_str_to_time(start_date_str)
+                start_date = webcom.datetime_str_to_time(start_date_str)
             except ValueError:
                 isValidStartDate = False
             failed_date_str = myfunc.ReadFile(failtagfile).strip()
             try:
-                failed_date = webserver_common.datetime_str_to_time(failed_date_str)
+                failed_date = webcom.datetime_str_to_time(failed_date_str)
             except ValueError:
                 isValidFailedDate = False
 
@@ -1937,7 +1938,7 @@ def get_results(request, jobid="1"):#{{{
 
     isValidSubmitDate = True
     try:
-        submit_date = webserver_common.datetime_str_to_time(submit_date_str)
+        submit_date = webcom.datetime_str_to_time(submit_date_str)
     except ValueError:
         isValidSubmitDate = False
     current_time = datetime.now(timezone(TZ))
@@ -1968,12 +1969,12 @@ def get_results(request, jobid="1"):#{{{
         isValidStartDate = True
         isValidFailedDate = True
         try:
-            start_date = webserver_common.datetime_str_to_time(start_date_str)
+            start_date = webcom.datetime_str_to_time(start_date_str)
         except ValueError:
             isValidStartDate = False
         failed_date_str = myfunc.ReadFile(failtagfile).strip()
         try:
-            failed_date = webserver_common.datetime_str_to_time(failed_date_str)
+            failed_date = webcom.datetime_str_to_time(failed_date_str)
         except ValueError:
             isValidFailedDate = False
         if isValidSubmitDate and isValidStartDate:
@@ -1995,12 +1996,12 @@ def get_results(request, jobid="1"):#{{{
             else:
                 start_date_str = ""
             try:
-                start_date = webserver_common.datetime_str_to_time(start_date_str)
+                start_date = webcom.datetime_str_to_time(start_date_str)
             except ValueError:
                 isValidStartDate = False
             finish_date_str = myfunc.ReadFile(finishtagfile).strip()
             try:
-                finish_date = webserver_common.datetime_str_to_time(finish_date_str)
+                finish_date = webcom.datetime_str_to_time(finish_date_str)
             except ValueError:
                 isValidFinishDate = False
             if isValidSubmitDate and isValidStartDate:
@@ -2017,7 +2018,7 @@ def get_results(request, jobid="1"):#{{{
                 if os.path.exists(starttagfile):
                     start_date_str = myfunc.ReadFile(starttagfile).strip()
                 try:
-                    start_date = webserver_common.datetime_str_to_time(start_date_str)
+                    start_date = webcom.datetime_str_to_time(start_date_str)
                 except ValueError:
                     isValidStartDate = False
                 resultdict['isStarted'] = True
@@ -2131,7 +2132,7 @@ def get_results(request, jobid="1"):#{{{
     # calculate the remaining time based on the average_runtime of the last x
     # number of newrun sequences
 
-    avg_newrun_time = webserver_common.GetAverageNewRunTime(finished_seq_file, window=10)
+    avg_newrun_time = webcom.GetAverageNewRunTime(finished_seq_file, window=10)
 
     if cntnewrun > 0 and avg_newrun_time >= 0:
         time_remain_in_sec = int(avg_newrun_time*num_remain+0.5)
@@ -2146,18 +2147,14 @@ def get_results(request, jobid="1"):#{{{
         resultdict['isResultFolderExist'] = False
 
     if numseq <= 1:
-        resultdict['refresh_interval'] = webserver_common.GetRefreshInterval(
+        resultdict['refresh_interval'] = webcom.GetRefreshInterval(
                 queuetime_in_sec, runtime_in_sec, method_submission)
-        #debug
-#         date_str = time.strftime(g_params['FORMAT_DATETIME'])
-#         msg = "queuetime_in_sec = %d, runtime_in_sec = %d"%(queuetime_in_sec, runtime_in_sec)
-#         myfunc.WriteFile("[%s] %s\n"%(date_str, msg), gen_logfile, "a", True)
     else:
         if os.path.exists(qdinittagfile):
             addtime = int(math.sqrt(max(0,min(num_remain, num_finished))))+1
             resultdict['refresh_interval'] = average_run_time + addtime
         else:
-            resultdict['refresh_interval'] = webserver_common.GetRefreshInterval(
+            resultdict['refresh_interval'] = webcom.GetRefreshInterval(
                     queuetime_in_sec, runtime_in_sec, method_submission)
 
     # get stat info
@@ -2274,7 +2271,7 @@ class Service_submitseq(ServiceBase):
     def submitjob(ctx, seq="", fixtop="", jobname="", email=""):#{{{
         seq = seq + "\n" #force add a new line for correct parsing the fasta file
         seqinfo = {}
-        filtered_seq = webserver_common.ValidateSeq(seq, seqinfo, g_params)
+        filtered_seq = webcom.ValidateSeq(seq, seqinfo, g_params)
         # ValidateFixtop(fixtop) #to be implemented
         jobid = "None"
         url = "None"
@@ -2343,7 +2340,7 @@ class Service_submitseq(ServiceBase):
             numseq_this_user="", isforcerun=""):
         seq = seq + "\n" #force add a new line for correct parsing the fasta file
         seqinfo = {}
-        filtered_seq = webserver_common.ValidateSeq(seq, seqinfo, g_params)
+        filtered_seq = webcom.ValidateSeq(seq, seqinfo, g_params)
         # ValidateFixtop(fixtop) #to be implemented
         if numseq_this_user != "" and numseq_this_user.isdigit():
             seqinfo['numseq_this_user'] = int(numseq_this_user)

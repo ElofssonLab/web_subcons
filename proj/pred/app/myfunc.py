@@ -2736,6 +2736,8 @@ def IsDNASeq(seq):#{{{
     sumT = seq.count('T')
     sumU = seq.count('U')
 
+    seq = seq.replace(GAP, '')
+
     sumACGT = sumA + sumC + sumG + sumT + sumU
     if (FloatDivision(sumACGT, len(seq)) > 0.75 and sumA > 0 and sumC > 0 and
             sumT > 0 and sumG > 0):

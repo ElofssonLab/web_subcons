@@ -584,7 +584,7 @@ def SubmitJob(jobid,cntSubmitJobDict, numseq_this_user):#{{{
                         if not os.path.exists(starttagfile): #write start tagfile
                             webcom.WriteDateTimeTagFile(starttagfile, runjob_logfile, runjob_errfile)
 
-                        info_finish = webcom.GetInfoFinish_Boctopus2(outpath_this_seq,
+                        info_finish = webcom.GetInfoFinish_Subcons(outpath_this_seq,
                                 i, len(seqList[i]), seqAnnoList[i], source_result="cached", runtime=0.0)
                         myfunc.WriteFile("\t".join(info_finish)+"\n",
                                 finished_seq_file, "a", isFlush=True)

@@ -20,7 +20,7 @@ env/
 bak.env/
 
 
-proj/pred/config/computenode.txt
+proj/pred/config/*.txt
 proj/pred/config/config.json
 proj/pred/static/images/cell_animal1.png
 proj/pred/static/images/cell_animal2.png

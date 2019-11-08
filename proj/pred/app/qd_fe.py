@@ -34,9 +34,6 @@ import numpy
 from geoip import geolite2
 import pycountry
 
-TZ = "Europe/Stockholm"
-os.environ['TZ'] = TZ
-time.tzset()
 
 # make sure that only one instance of the script is running
 # this code is working 
@@ -263,7 +260,7 @@ def CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,#{{{
                 isValidSubmitDate = False
 
             if isValidSubmitDate:
-                current_time = datetime.now(timezone(TZ))
+                current_time = datetime.now(timezone(g_params['TZ']))
                 timeDiff = current_time - submit_date
                 queuetime_in_sec = timeDiff.seconds
             else:
@@ -1743,14 +1740,16 @@ def main(g_params):#{{{
         if os.path.exists(black_iplist_file):
             g_params['blackiplist'] = myfunc.ReadIDList(black_iplist_file)
 
-        date_str = time.strftime(g_params['FORMAT_DATETIME'])
+        os.environ['TZ'] = g_params['TZ']
+        time.tzset()
+
         avail_computenode_list = myfunc.ReadIDList2(computenodefile, col=0)
         num_avail_node = len(avail_computenode_list)
         g_params['vip_user_list'] = myfunc.ReadIDList2(vip_email_file,  col=0)
         if loop == 0:
-            myfunc.WriteFile("[Date: %s] start %s. loop %d\n"%(date_str, progname, loop), gen_logfile, "a", True)
+            webcom.loginfo("start %s. loop %d"%(progname, loop), gen_logfile)
         else:
-            myfunc.WriteFile("[Date: %s] loop %d\n"%(date_str, loop), gen_logfile, "a", True)
+            webcom.loginfo("loop %d"%(loop), gen_logfile)
 
         CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,
                 finishedjoblogfile, loop)
@@ -1774,7 +1773,6 @@ def main(g_params):#{{{
                         remotejobid = strs[2]
                         if node in remotequeueDict:
                             remotequeueDict[node].append(remotejobid)
-
 
         if loop % 500 == 50:
             RunStatistics(path_result, path_log)
@@ -1860,6 +1858,7 @@ def InitGlobalParameter():#{{{
     g_params['MAX_SUBMIT_TRY'] = 3
     g_params['MAX_TIME_IN_REMOTE_QUEUE'] = 3600*24 # one day in seconds
     g_params['FORMAT_DATETIME'] = webcom.FORMAT_DATETIME
+    g_params['TZ'] = "Europe/Stockholm"
     return g_params
 #}}}
 if __name__ == '__main__' :

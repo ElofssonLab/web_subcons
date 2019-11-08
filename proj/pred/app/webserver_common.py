@@ -600,3 +600,8 @@ def CleanJobFolder_Subcons(rstdir):# {{{
             except:
                 pass
 # }}}
+def loginfo(msg, outfile):# {{{
+    """Write loginfo to outfile, appending current time"""
+    date_str = time.strftime(FORMAT_DATETIME)
+    myfunc.WriteFile("[%s] %s\n"%(date_str, msg), outfile, "a", True)
+# }}}

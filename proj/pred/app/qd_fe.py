@@ -494,6 +494,12 @@ def SubmitJob(jobid,cntSubmitJobDict, numseq_this_user):#{{{
     fafile = "%s/query.fa"%(rstdir)
     split_seq_dir = "%s/splitaa"%(tmpdir)
     forceruntagfile = "%s/forcerun"%(rstdir)
+    lastprocessed_cache_idx_file = "%s/lastprocessed_cache_idx.txt"%(rstdir)
+
+    if os.path.exists(forceruntagfile):
+        isForceRun = True
+    else:
+        isForceRun = False
 
     finished_idx_list = []
     failed_idx_list = []    # [origIndex]
@@ -1923,6 +1929,7 @@ def InitGlobalParameter():#{{{
     g_params['MAX_TIME_IN_REMOTE_QUEUE'] = 3600*24 # one day in seconds
     g_params['FORMAT_DATETIME'] = webcom.FORMAT_DATETIME
     g_params['TZ'] = "Europe/Stockholm"
+    g_params['MAX_CACHE_PROCESS'] = 200 # process at the maximum this cached sequences in one loop
     return g_params
 #}}}
 if __name__ == '__main__' :

@@ -21,6 +21,7 @@ import subprocess
 import re
 import logging
 import shutil
+import sqlite3
 FORMAT_DATETIME = "%Y-%m-%d %H:%M:%S %Z"
 TZ = "Europe/Stockholm"
 def WriteSubconsTextResultFile(outfile, outpath_result, maplist,#{{{
@@ -399,6 +400,32 @@ def ValidateSeq(rawseq, seqinfo, g_params):#{{{
     seqinfo['errinfo'] = seqinfo['errinfo_br'] + seqinfo['errinfo_content']
     return filtered_seq
 #}}}
+def InsertFinishDateToDB(date_str, md5_key, seq, outdb):# {{{
+    """ Insert the finish date to the sqlite3 database
+    """
+    tbname_content = "data"
+    try:
+        con = sqlite3.connect(outdb)
+    except Exception as e:
+        print("Failed to connect to the database outdb %s"%(outdb))
+    with con:
+        cur = con.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS %s
+            (
+                md5 TEXT PRIMARY KEY,
+                seq TEXT,
+                date_finish TEXT
+            )"""%(tbname_content))
+        cmd =  "INSERT OR REPLACE INTO %s(md5,  seq, date_finish) VALUES('%s', '%s','%s')"%(tbname_content, md5_key, seq, date_str)
+        try:
+            cur.execute(cmd)
+            return 0
+        except Exception as e:
+            print >> sys.stderr, "Exception %s"%(str(e))
+            return 1
+
+# }}}
 def RunCmd(cmd, logfile, errfile, verbose=False):# {{{
     """Input cmd in list
        Run the command and also output message to logs

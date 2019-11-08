@@ -501,9 +501,11 @@ def WriteDateTimeTagFile(outfile, logfile, errfile):# {{{
 # }}}
 def DeleteOldResult(path_result, path_log, logfile, MAX_KEEP_DAYS=180):#{{{
     """Delete jobdirs that are finished > MAX_KEEP_DAYS
+    return True if therer is at least one result folder been deleted
     """
     finishedjoblogfile = "%s/finished_job.log"%(path_log)
     finished_job_dict = myfunc.ReadFinishedJobLog(finishedjoblogfile)
+    isOldRstdirDeleted = False
     for jobid in finished_job_dict:
         li = finished_job_dict[jobid]
         try:
@@ -523,10 +525,11 @@ def DeleteOldResult(path_result, path_log, logfile, MAX_KEEP_DAYS=180):#{{{
                 timeDiff = current_time - finish_date
                 if timeDiff.days > MAX_KEEP_DAYS:
                     rstdir = "%s/%s"%(path_result, jobid)
-                    date_str = time.strftime(FORMAT_DATETIME)
                     msg = "\tjobid = %s finished %d days ago (>%d days), delete."%(jobid, timeDiff.days, MAX_KEEP_DAYS)
-                    myfunc.WriteFile("[Date: %s] "%(date_str)+ msg + "\n", logfile, "a", True)
+                    loginfo(msg, logfile)
                     shutil.rmtree(rstdir)
+                    isOldRstdirDeleted = True
+    return isOldRstdirDeleted
 #}}}
 def CleanServerFile(logfile, errfile):#{{{
     """Clean old files on the server"""
@@ -604,4 +607,18 @@ def loginfo(msg, outfile):# {{{
     """Write loginfo to outfile, appending current time"""
     date_str = time.strftime(FORMAT_DATETIME)
     myfunc.WriteFile("[%s] %s\n"%(date_str, msg), outfile, "a", True)
+# }}}
+def ArchiveLogFile(path_log, threshold_logfilesize=20*1024*1024):# {{{
+    """Archive some of the log files if they are too big"""
+    gen_logfile = "%s/qd_fe.log"%(path_log)
+    gen_errfile = "%s/qd_fe.err"%(path_log)
+    flist = [gen_logfile, gen_errfile,
+            "%s/restart_qd_fe.cgi.log"%(path_log),
+            "%s/debug.log"%(path_log),
+            "%s/clean_cached_result.py.log"%(path_log)
+            ]
+
+    for f in flist:
+        if os.path.exists(f):
+            myfunc.ArchiveFile(f, threshold_logfilesize)
 # }}}

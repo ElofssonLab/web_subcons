@@ -134,9 +134,7 @@ def GetNumSuqJob(node):#{{{
         else:
             return -1
     except:
-        date_str = time.strftime(g_params['FORMAT_DATETIME'])
-        myfunc.WriteFile("[%s] requests.get(%s) failed\n"%(date_str,
-            url), gen_errfile, "a", True)
+        webcom.loginfo("requests.get(%s) failed"%(url), gen_errfile)
         return -1
 
 #}}}
@@ -186,7 +184,7 @@ def GetNumSeqSameUserDict(joblist):#{{{
     return numseq_user_dict
 #}}}
 def CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,#{{{
-        finishedjoblogfile, loop):
+        finishedjoblogfile, loop, isOldRstdirDeleted):
     myfunc.WriteFile("CreateRunJoblog...\n", gen_logfile, "a", True)
     # Read entries from submitjoblogfile, checking in the result folder and
     # generate two logfiles: 
@@ -203,6 +201,8 @@ def CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,#{{{
         finished_job_dict = myfunc.ReadFinishedJobLog(finishedjoblogfile)
 
     new_finished_list = []  # Finished or Failed
+    new_submitted_list = []  # 
+
     new_runjob_list = []    # Running
     new_waitjob_list = []    # Queued
     lines = hdl.readlines()
@@ -228,12 +228,18 @@ def CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,#{{{
             except:
                 pass
 
+            isRstFolderExist = False
+            if not isOldRstdirDeleted or os.path.exists(rstdir):
+                isRstFolderExist = True
+
+            if isRstFolderExist:
+                new_submitted_list.append([jobid,line])
+
             if jobid in finished_job_dict:
-                if os.path.exists(rstdir):
+                if isRstFolderExist:
                     li = [jobid] + finished_job_dict[jobid]
                     new_finished_list.append(li)
                 continue
-
 
             status = get_job_status(jobid)
 
@@ -274,6 +280,15 @@ def CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,#{{{
         lines = hdl.readlines()
     hdl.close()
 
+# re-write logs of submitted jobs
+    li_str = []
+    for li in new_submitted_list:
+        li_str.append(li[1])
+    if len(li_str)>0:
+        myfunc.WriteFile("\n".join(li_str)+"\n", submitjoblogfile, "w", True)
+    else:
+        myfunc.WriteFile("", submitjoblogfile, "w", True)
+
 # re-write logs of finished jobs
     li_str = []
     for li in new_finished_list:
@@ -300,6 +315,18 @@ def CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,#{{{
             myfunc.WriteFile("\n".join(li_str)+"\n", divide_finishedjoblogfile, "w", True)
         else:
             myfunc.WriteFile("", divide_finishedjoblogfile, "w", True)
+
+# update all_submitted jobs
+    allsubmitjoblogfile = "%s/all_submitted_seq.log"%(path_log)
+    allsubmitted_jobid_set = set(myfunc.ReadIDList2(allsubmitjoblogfile, col=1, delim="\t"))
+    li_str = []
+    for li in new_submitted_list:
+        jobid = li[0]
+        if not jobid in allsubmitted_jobid_set:
+            li_str.append(li[1])
+    if len(li_str)>0:
+        myfunc.WriteFile("\n".join(li_str)+"\n", allsubmitjoblogfile, "a", True)
+
 
 # update allfinished jobs
     allfinishedjoblogfile = "%s/all_finished_job.log"%(path_log)
@@ -1726,6 +1753,12 @@ def main(g_params):#{{{
 
     loop = 0
     while 1:
+        isOldRstdirDeleted = False
+        if loop % 500 == 50:
+            RunStatistics(path_result, path_log)
+            isOldRstdirDeleted = webcom.DeleteOldResult(path_result, path_log, gen_logfile, MAX_KEEP_DAYS=g_params['MAX_KEEP_DAYS'])
+            webcom.CleanServerFile(gen_logfile, gen_errfile)
+        webcom.ArchiveLogFile(path_log, threshold_logfilesize=threshold_logfilesize) 
 
         # load the config file if exists
         configfile = "%s/config/config.json"%(basedir)
@@ -1752,7 +1785,7 @@ def main(g_params):#{{{
             webcom.loginfo("loop %d"%(loop), gen_logfile)
 
         CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,
-                finishedjoblogfile, loop)
+                finishedjoblogfile, loop, isOldRstdirDeleted)
 
         # Get number of jobs submitted to the remote server based on the
         # runjoblogfile
@@ -1773,17 +1806,6 @@ def main(g_params):#{{{
                         remotejobid = strs[2]
                         if node in remotequeueDict:
                             remotequeueDict[node].append(remotejobid)
-
-        if loop % 500 == 50:
-            RunStatistics(path_result, path_log)
-            webcom.DeleteOldResult(path_result, path_log, gen_logfile, MAX_KEEP_DAYS=g_params['MAX_KEEP_DAYS'])
-            webcom.CleanServerFile(gen_logfile, gen_errfile)
-
-        if os.path.exists(gen_logfile):
-            myfunc.ArchiveFile(gen_logfile, threshold_logfilesize)
-        if os.path.exists(gen_errfile):
-            myfunc.ArchiveFile(gen_errfile, threshold_logfilesize)
-        # For finished jobs, clean data not used for caching
 
         cntSubmitJobDict = {} # format of cntSubmitJobDict {'node_ip': INT, 'node_ip': INT}
         for node in avail_computenode_list:

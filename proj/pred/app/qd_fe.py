@@ -390,7 +390,7 @@ def CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,#{{{
                         timefile = "%s/time.txt"%(outpath_this_seq)
                         seq = seqlist[origIndex]
                         description = seqannolist[origIndex]
-                        runtime = webcom.ReadRuntimeFromFile(timefile)
+                        runtime = webcom.ReadRuntimeFromFile(timefile, default_runtime=0.0)
                         info_finish = webcom.GetInfoFinish_Subcons(outpath_this_seq,
                                 origIndex, len(seq), description,
                                 source_result="newrun", runtime=runtime)
@@ -1005,19 +1005,9 @@ def GetResult(jobid):#{{{
 
         if isSuccess:#{{{
             time_now = time.time()
-            runtime = 5.0
             runtime1 = time_now - submit_time_epoch #in seconds
             timefile = "%s/time.txt"%(outpath_this_seq)
-            if os.path.exists(timefile):
-                txt = myfunc.ReadFile(timefile).strip()
-                ss2 = txt.split(";")
-                try:
-                    runtime = float(ss2[1])
-                except:
-                    runtime = runtime1
-            else:
-                runtime = runtime1
-
+            runtime = webcom.ReadRuntimeFromFile(timefile, default_runtime=runtime1)
             info_finish = webcom.GetInfoFinish_Subcons(outpath_this_seq,
                     origIndex, len(seq), description,
                     source_result="newrun", runtime=runtime)

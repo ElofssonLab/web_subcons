@@ -649,18 +649,17 @@ def ArchiveLogFile(path_log, threshold_logfilesize=20*1024*1024):# {{{
         if os.path.exists(f):
             myfunc.ArchiveFile(f, threshold_logfilesize)
 # }}}
-def ReadRuntimeFromFile(timefile):# {{{
+def ReadRuntimeFromFile(timefile, default_runtime=0.0):# {{{
     """Read runtime from timefile"""
-    runtime1 = 0.0
     if os.path.exists(timefile):
         txt = myfunc.ReadFile(timefile).strip()
         ss2 = txt.split(";")
         try:
             runtime = float(ss2[1])
         except:
-            runtime = runtime1
+            runtime = default_runtime
     else:
-        runtime = runtime1
+        runtime = default_runtime
     return runtime
 # }}}
 

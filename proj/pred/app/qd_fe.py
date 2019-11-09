@@ -377,45 +377,30 @@ def CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,#{{{
                 (seqidlist, seqannolist, seqlist) = myfunc.ReadFasta(queryfile)
                 try:
                     dirlist = os.listdir(outpath_result)
-                    for dd in dirlist:
-                        if dd.find("seq_") == 0:
-                            origIndex_str = dd.split("_")[1]
-                            finished_idx_set.add(origIndex_str)
-
-                        if dd.find("seq_") == 0 and dd not in finished_seqs_idset:
-                            origIndex = int(dd.split("_")[1])
-                            outpath_this_seq = "%s/%s"%(outpath_result, dd)
-                            timefile = "%s/time.txt"%(outpath_this_seq)
-                            runtime1 = 0.0
-                            seq = seqlist[origIndex]
-                            description = seqannolist[origIndex]
-                            if os.path.exists(timefile):
-                                txt = myfunc.ReadFile(timefile).strip()
-                                ss2 = txt.split(";")
-                                try:
-                                    runtime = float(ss2[1])
-                                except:
-                                    runtime = runtime1
-                                    pass
-                            else:
-                                runtime = runtime1
-
-                            info_finish = webcom.GetInfoFinish_Subcons(outpath_this_seq,
-                                    origIndex, len(seq), description,
-                                    source_result="newrun", runtime=runtime)
-                            finished_info_list.append("\t".join(info_finish))
                 except:
-                    date_str = time.strftime(g_params['FORMAT_DATETIME'])
-                    myfunc.WriteFile("[%s] Failed to os.listdir(%s)\n"%(date_str, outpath_result), gen_errfile, "a", True)
-                    raise
+                    webcom.loginfo("Failed to os.listdir(%s)"%(outpath_result), gen_errfile)
+                for dd in dirlist:
+                    if dd.find("seq_") == 0:
+                        origIndex_str = dd.split("_")[1]
+                        finished_idx_set.add(origIndex_str)
+
+                    if dd.find("seq_") == 0 and dd not in finished_seqs_idset:
+                        origIndex = int(dd.split("_")[1])
+                        outpath_this_seq = "%s/%s"%(outpath_result, dd)
+                        timefile = "%s/time.txt"%(outpath_this_seq)
+                        seq = seqlist[origIndex]
+                        description = seqannolist[origIndex]
+                        runtime = webcom.ReadRuntimeFromFile(timefile)
+                        info_finish = webcom.GetInfoFinish_Subcons(outpath_this_seq,
+                                origIndex, len(seq), description,
+                                source_result="newrun", runtime=runtime)
+                        finished_info_list.append("\t".join(info_finish))
                 if len(finished_info_list)>0:
                     myfunc.WriteFile("\n".join(finished_info_list)+"\n", finished_seq_file, "a", True)
                 if len(finished_idx_set) > 0:
                     myfunc.WriteFile("\n".join(list(finished_idx_set))+"\n", finished_idx_file, "w", True)
                 else:
                     myfunc.WriteFile("", finished_idx_file, "w", True)
-
-
             #}}}
 
             try:

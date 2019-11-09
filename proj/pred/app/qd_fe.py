@@ -243,6 +243,8 @@ def CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,#{{{
                 continue
 
             status = get_job_status(jobid)
+            if 'DEBUG_JOB_STATUS' in g_params and g_params['DEBUG_JOB_STATUS']:
+                webcom.loginfo("status(%s): %s"%(jobid, status), gen_logfile)
 
             starttagfile = "%s/%s"%(rstdir, "runjob.start")
             finishtagfile = "%s/%s"%(rstdir, "runjob.finish")
@@ -273,7 +275,9 @@ def CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,#{{{
             else:
                 queuetime_in_sec = UPPER_WAIT_TIME_IN_SEC + 1
 
-            if numseq > 1 or method_submission == "wsdl" or queuetime_in_sec > UPPER_WAIT_TIME_IN_SEC:
+            #if numseq > 1 or method_submission == "wsdl" or queuetime_in_sec > UPPER_WAIT_TIME_IN_SEC:
+            # note that all jobs are handled by the qd
+            if 1:
                 if status == "Running":
                     new_runjob_list.append(li)
                 elif status == "Wait":
@@ -459,7 +463,7 @@ def CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,#{{{
         myfunc.WriteFile("", runjoblogfile, "w", True)
 
 #}}}
-def SubmitJob(jobid,cntSubmitJobDict, numseq_this_user):#{{{
+def SubmitJob(jobid, cntSubmitJobDict, numseq_this_user):#{{{
 # for each job rstdir, keep three log files, 
 # 1.seqs finished, finished_seq log keeps all information, finished_index_log
 #   can be very compact to speed up reading, e.g.

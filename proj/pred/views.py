@@ -2123,6 +2123,10 @@ def get_results(request, jobid="1"):#{{{
     num_remain = numseq - num_finished
     time_remain_in_sec = num_remain * average_run_time # set default value
 
+    # re-define runtime as the sum of all real running time 
+    if sum_run_time > 0.0:
+        resultdict['runtime'] = myfunc.second_to_human(int(sum_run_time+0.5))
+
     resultdict['num_row_result_table'] = len(resultdict['index_table_content_list'])
 
     # calculate the remaining time based on the average_runtime of the last x
@@ -2133,7 +2137,7 @@ def get_results(request, jobid="1"):#{{{
     if cntnewrun > 0 and avg_newrun_time >= 0:
         time_remain_in_sec = int(avg_newrun_time*num_remain+0.5)
 
-    time_remain = myfunc.second_to_human(time_remain_in_sec)
+    time_remain = myfunc.second_to_human(int(time_remain_in_sec+0.5))
     resultdict['time_remain'] = time_remain
     qdinittagfile = "%s/runjob.qdinit"%(rstdir)
 

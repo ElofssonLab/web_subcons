@@ -11,13 +11,13 @@ biopython==1.72
 django-eztables==0.3.2
 
 matplotlib==2.2.3
-mechanize
-pandas==0.19.1
+#mechanize
+#pandas==0.19.1
 numpy==1.16.5
 scipy==1.1.0
-scikit-learn==0.17.1
-html5lib==0.999
-bokeh==0.12.5
+#scikit-learn==0.17.1
+#html5lib==0.999
+#bokeh==0.12.5
 
 pytz==2018.5
 python-dateutil==2.7.3

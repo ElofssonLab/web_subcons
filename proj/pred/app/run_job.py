@@ -4,8 +4,8 @@ import os
 import sys
 import subprocess
 import time
-import myfunc
-import webserver_common as webcom
+from libpredweb import myfunc
+from libpredweb import webserver_common as webcom
 import glob
 import hashlib
 import shutil
@@ -142,7 +142,7 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
                 maplist_simple.append("%s\t%d\t%s"%("seq_%d"%cnt, len(rd.seq),
                     rd.description))
                 if not g_params['isForceRun']:
-                    md5_key = hashlib.md5(rd.seq).hexdigest()
+                    md5_key = hashlib.md5(rd.seq.encode('utf-8')).hexdigest()
                     subfoldername = md5_key[:2]
                     cachedir = "%s/%s/%s"%(path_cache, subfoldername, md5_key)
                     if os.path.exists(cachedir):
@@ -259,7 +259,7 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
                     figurefile = "%s/plot/query_0.png"%(outpath_this_seq)
                     # Note: do not create cache is figure file does not exist
                     if webcom.IsFrontEndNode(g_params['base_www_url']) and os.path.exists(figurefile):
-                        md5_key = hashlib.md5(seq).hexdigest()
+                        md5_key = hashlib.md5(seq.encode('utf-8')).hexdigest()
                         subfoldername = md5_key[:2]
                         md5_subfolder = "%s/%s"%(path_cache, subfoldername)
                         cachedir = "%s/%s/%s"%(path_cache, subfoldername, md5_key)

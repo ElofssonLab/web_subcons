@@ -5,12 +5,12 @@ from django.core.validators import MinLengthValidator, MaxLengthValidator
 
 # Create your models here.
 
-class Query(models.Model):
+class Query(models.Model):# {{{
     raw_seq = models.CharField(max_length=20000)
     seqname = models.CharField(max_length=100)
     submit_date = models.DateTimeField('date submitted')
-
-class SubmissionForm(forms.Form):
+# }}}
+class SubmissionForm(forms.Form):# {{{
     """
     Defining the form to submit queries
     """
@@ -20,8 +20,8 @@ class SubmissionForm(forms.Form):
     seqfile = forms.FileField(label="Alternatively, upload a text file in FASTA format upto 10 MB", required=False)
     jobname = forms.CharField(label='Job name (optional)', max_length=100, required=False)
     email = forms.EmailField(label='Email (recommended for batch submissions)', max_length=100, required=False)
-
-class SubmissionForm_findjob(forms.Form):
+# }}}
+class SubmissionForm_findjob(forms.Form):# {{{
     """
     Defining the form for findjob
     """
@@ -35,8 +35,8 @@ class SubmissionForm_findjob(forms.Form):
             widget=forms.TextInput(attrs={'placeholder': 'Input job name'}), 
             max_length=30, 
             required=False)
-
-class FieldContainer(models.Model):
+# }}}
+class FieldContainer(models.Model):# {{{
 # This class is modified from the Spyne example written by BJ Cardon
 # Copyright BJ Cardon <bj dot car dot don at gmail dot com>,
 # All rights reserved.
@@ -50,34 +50,33 @@ class FieldContainer(models.Model):
     positive_integer_field = models.PositiveIntegerField(default=1)
     float_field = models.FloatField(default=1)
     decimal_field = models.DecimalField(max_digits=10, decimal_places=4,
-                                        default=1)
+            default=1)
     time_field = models.TimeField(auto_now_add=True)
     date_field = models.DateField(auto_now_add=True)
     datetime_field = models.DateTimeField(auto_now_add=True)
 
     foreign_key = models.ForeignKey('self', null=True,
-                                    related_name='related_containers')
-    one_to_one_field = models.OneToOneField('self', null=True)
+            related_name='related_containers', on_delete=models.CASCADE)
+    one_to_one_field = models.OneToOneField('self', null=True,
+            on_delete=models.CASCADE)
 
-    custom_foreign_key = models.ForeignKey(
-        'RelatedFieldContainer', null=True,
-        related_name='related_fieldcontainers')
+    custom_foreign_key = models.ForeignKey('RelatedFieldContainer', null=True,
+            related_name='related_fieldcontainers', on_delete=models.CASCADE)
     custom_one_to_one_field = models.OneToOneField('RelatedFieldContainer',
-                                                   null=True)
+            null=True, on_delete=models.CASCADE)
 
     url_field = models.URLField(default='http://example.com')
     file_field = models.FileField(upload_to='test_file', null=True)
     excluded_field = models.CharField(max_length=32, default='excluded')
     blank_field = models.CharField(max_length=32, blank=True)
     length_validators_field = models.CharField(
-        max_length=32, null=True, validators=[MinLengthValidator(3),
-                                              MaxLengthValidator(10)])
-
-
-class RelatedFieldContainer(models.Model):
+            max_length=32, null=True, validators=[MinLengthValidator(3),
+                MaxLengthValidator(10)])
+# }}}
+class RelatedFieldContainer(models.Model):# {{{
 # This class is modified from the Spyne example written by BJ Cardon
 # Copyright BJ Cardon <bj dot car dot don at gmail dot com>,
 # All rights reserved.
     id = models.CharField(max_length=30, primary_key=True)
 
-
+# }}}

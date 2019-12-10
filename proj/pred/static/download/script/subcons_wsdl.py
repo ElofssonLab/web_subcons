@@ -12,7 +12,7 @@ no_suds_message="""\
 suds is not installed!
 Please install suds by
 
-$ pip install suds
+$ pip install suds-py3
 """
 
 try:

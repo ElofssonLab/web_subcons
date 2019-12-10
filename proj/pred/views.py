@@ -1343,11 +1343,7 @@ def get_serverstatus(request):#{{{
 
     info['startdate'] = startdate
     info['BASEURL'] = g_params['BASEURL']
-    info['jobcounter'] = GetJobCounter(client_ip, isSuperUser,
-            divided_logfile_query, divided_logfile_finished_jobid)
-
-
-    info['STATIC_URL'] = settings.STATIC_URL
+    info['jobcounter'] = webcom.GetJobCounter(info)
     return render(request, 'pred/serverstatus.html', info)
 #}}}
 def get_example(request):#{{{

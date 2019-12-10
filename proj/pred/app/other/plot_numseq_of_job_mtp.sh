@@ -1,17 +1,18 @@
 #!/bin/bash
-# draw histogram of length vs runtime
+# draw histogram of numjob vs numseq_of_job
 # #
+progname=`basename $0`
 usage="
-Usage: $0 datafile
+Usage: $progname -web FILE -wsdl FILE
 
 Description:
-    Draw histogram of runtime vs length of sequence (X axis)
+    Draw histogram of numjob vs numseq_of_job (X axis)
 
-OPTIONS:
-    -format  STR    Set the format of output, (default: eps)
-                    Can be one of png, terminal or eps
-    -outpath DIR    Set the output path, (default: ./)
-    -h, --help      Print this help message and exit
+Options:
+    -format  STR     Set the format of output, (default: eps)
+                     Can be one of png, terminal or eps
+    -outpath DIR     Set the output path, default =./
+    -h, --help       Print this help message and exit
 
 Created 2015-09-07, updated 2015-09-07, Nanjiang Shu 
 "
@@ -26,8 +27,8 @@ if [ $# -lt 1 ]; then
 fi
 
 Makeplot(){ #dataFile#{{{
-    local dataFile=$1
-    local basename=`basename "$dataFile"` 
+    local basename=`basename "$dataFile_web"` 
+    basename=${basename}.mtp
     local outputSetting=
     case $outputStyle in
         term*)
@@ -50,52 +51,32 @@ set output '$outfile'
         ;;
     esac
 
-    local linestyle1=1
-    local linestyle2=11
-    local keytitle=
-    case $dataFile in
-        *pfam*)
-            linestyle1=1
-            linestyle2=11
-            keytitle=Pfam
-            ;;
-        *cdd*)
-            linestyle1=2
-            linestyle2=12
-            keytitle=CDD
-            ;;
-        *uniref*)
-            linestyle1=3
-            linestyle2=13
-            keytitle=UniRef
-            ;;
-    esac
 
-
-/usr/bin/gnuplot -persist<<EOF 
+/usr/bin/env gnuplot -persist<<EOF 
 $outputSetting
-set style line 1 lt 1 pt 0 ps 0 lc rgb "red" lw 1
-set style line 2 lt 1 pt 0 ps 0 lc rgb "blue" lw 1
-set style line 3 lt 1 pt 0 ps 0 lc rgb "green" lw 1
+set style line 1 lt 1 pt 7 ps 1 lc rgb "red" lw 1
+set style line 2 lt 1 pt 7 ps 1 lc rgb "blue" lw 1
+set style line 3 lt 1 pt 7 ps 1 lc rgb "green" lw 1
 set style line 11 lt 1 pt 7 ps 2 lc rgb "red" lw 1
 set style line 12 lt 1 pt 7 ps 2 lc rgb "blue" lw 1
 set style line 13 lt 1 pt 7 ps 2 lc rgb "green" lw 1
 
+set key autotitle columnhead
+
 set title ""
-set xlabel "Length of sequence" 
-set ylabel "Running time (s)"
-set style data points
+set xlabel "Number of sequences of jobs" 
+set ylabel "Number of jobs"
+set style data linespoints
 set logscale x
 set logscale y
-plot 1/0 ls $linestyle2 lw 6 with points t "$keytitle", \
-     "$dataFile" using 1:2 ls $linestyle1 title ""
-
+plot "$dataFile_web" using 1:2 ls 1  title "Web", \
+     "$dataFile_wsdl" using 1:2 ls 2 title "WSDL"
 EOF
 
     case $outputStyle in
         eps)
             $eps2pdf $outfile
-            convert -density 200 -background white $outpath/$basename.eps $outpath/$basename.png
+            convert -density 200 -background white $outpath/$basename.pdf $outpath/$basename.png
             echo "Histogram image output to $pdffile"
             ;;
         *) echo "Histogram image output to $outfile" ;;
@@ -106,7 +87,8 @@ EOF
 
 outputStyle=eps
 outpath=
-dataFile=
+dataFile_web=
+dataFile_wsdl=
 isNonOptionArg=false
 while [ "$1" != "" ]; do
     if [ "$isNonOptionArg" == "true" ]; then 
@@ -118,6 +100,8 @@ while [ "$1" != "" ]; do
         case $1 in
             -h|--help) PrintHelp; exit;;
             -format|--format) outputStyle=$2;shift;;
+            -web|--web) dataFile_web=$2;shift;;
+            -wsdl|--wsdl) dataFile_wsdl=$2;shift;;
             -outpath|--outpath) outpath=$2;shift;;
             -*) echo "Error! Wrong argument: $1"; exit;;
         esac
@@ -127,21 +111,22 @@ while [ "$1" != "" ]; do
     shift
 done
 
+if [ ! -f "$dataFile_web" ]; then 
+    echo "Error! dataFile_web = \"$dataFile_web\" does not exist. Exit..."
+    exit
+fi
+
 if [ "$outpath" == "" ]; then
-    outpath=`dirname $dataFile`
+    outpath=`dirname $dataFile_web`
 elif [ ! -d "$outpath" ]; then
     mkdir -p $outpath
 fi
 
-if [ ! -f "$dataFile" ]; then 
-    echo "Error! dataFile = \"$dataFile\" does not exist. Exit..."
-    exit
-fi
 
 osname=`uname -s`
-eps2pdf=eps2pdf
+eps2pdf=epstopdf
 case $osname in 
     *Darwin*) eps2pdf=epstopdf;;
-    *Linux*) eps2pdf=eps2pdf;;
+    *Linux*) eps2pdf=epstopdf;;
 esac
-Makeplot $dataFile
+Makeplot

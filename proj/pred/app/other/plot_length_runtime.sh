@@ -1,18 +1,17 @@
 #!/bin/bash
-# draw histogram of numjob vs numseq_of_job
+# draw histogram of length vs runtime
 # #
-progname=`basename $0`
 usage="
-Usage: $progname datafile
+Usage: $0 datafile
 
 Description:
-    Draw histogram of numjob vs numseq_of_job (X axis)
+    Draw histogram of runtime vs length of sequence (X axis)
 
-Options:
-    -format  STR     Set the format of output, (default: eps)
-                     Can be one of png, terminal or eps
-    -outpath DIR     Set the output path, default =./
-    -h, --help       Print this help message and exit
+OPTIONS:
+    -format  STR    Set the format of output, (default: eps)
+                    Can be one of png, terminal or eps
+    -outpath DIR    Set the output path, (default: ./)
+    -h, --help      Print this help message and exit
 
 Created 2015-09-07, updated 2015-09-07, Nanjiang Shu 
 "
@@ -50,42 +49,55 @@ set output '$outfile'
         "
         ;;
     esac
+
+    local linestyle1=1
+    local linestyle2=11
+    local keytitle=
     case $dataFile in
-        *web*)
+        *pfam*)
             linestyle1=1
-            keytitle=Web
+            linestyle2=11
+            keytitle=Pfam
             ;;
-        *wsdl*)
+        *cdd*)
             linestyle1=2
-            keytitle=WSDL
+            linestyle2=12
+            keytitle=CDD
+            ;;
+        *uniref*)
+            linestyle1=3
+            linestyle2=13
+            keytitle=UniRef
             ;;
     esac
 
 
-/usr/bin/gnuplot -persist<<EOF 
+/usr/bin/env gnuplot -persist<<EOF 
 $outputSetting
-set style line 1 lt 1 pt 7 ps 1 lc rgb "red" lw 1
-set style line 2 lt 1 pt 7 ps 1 lc rgb "blue" lw 1
-set style line 3 lt 1 pt 7 ps 1 lc rgb "green" lw 1
+set style line 1 lt 1 pt 0 ps 0 lc rgb "red" lw 1
+set style line 2 lt 1 pt 0 ps 0 lc rgb "blue" lw 1
+set style line 3 lt 1 pt 0 ps 0 lc rgb "green" lw 1
 set style line 11 lt 1 pt 7 ps 2 lc rgb "red" lw 1
 set style line 12 lt 1 pt 7 ps 2 lc rgb "blue" lw 1
 set style line 13 lt 1 pt 7 ps 2 lc rgb "green" lw 1
 
+set key autotitle columnhead
 
 set title ""
-set xlabel "Number of sequences of jobs" 
-set ylabel "Number of jobs"
-set style data linespoints
+set xlabel "Length of sequence" 
+set ylabel "Running time (s)"
+set style data points
 set logscale x
 set logscale y
-plot "$dataFile" using 1:2 ls $linestyle1 title "$keytitle"
+plot 1/0 ls $linestyle2 with points t "$keytitle", \
+     "$dataFile" using 1:2 ls $linestyle1 notitle
 
 EOF
 
     case $outputStyle in
         eps)
             $eps2pdf $outfile
-            convert -density 200 -background white $outpath/$basename.eps $outpath/$basename.png
+            convert -density 200 -background white $outpath/$basename.pdf $outpath/$basename.png
             echo "Histogram image output to $pdffile"
             ;;
         *) echo "Histogram image output to $outfile" ;;
@@ -129,9 +141,9 @@ if [ ! -f "$dataFile" ]; then
 fi
 
 osname=`uname -s`
-eps2pdf=eps2pdf
+eps2pdf=epstopdf
 case $osname in 
     *Darwin*) eps2pdf=epstopdf;;
-    *Linux*) eps2pdf=eps2pdf;;
+    *Linux*) eps2pdf=epstopdf;;
 esac
 Makeplot $dataFile

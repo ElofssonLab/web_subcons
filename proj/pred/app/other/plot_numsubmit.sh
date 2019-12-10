@@ -52,8 +52,7 @@ set output '$outfile'
         ;;
     esac
 
-
-/usr/bin/gnuplot -persist<<EOF 
+/usr/bin/env gnuplot -persist<<EOF 
 $outputSetting
 set style line 1 lt 1 pt 7 ps 1 lc rgb "red" lw 1
 set style line 2 lt 1 pt 7 ps 1 lc rgb "blue" lw 1
@@ -62,15 +61,18 @@ set style line 11 lt 1 pt 7 ps 2 lc rgb "red" lw 1
 set style line 12 lt 1 pt 7 ps 2 lc rgb "blue" lw 1
 set style line 13 lt 1 pt 7 ps 2 lc rgb "green" lw 1
 
+set key autotitle columnhead
 
 set tmargin at screen 0.95
 set bmargin at screen 0.25
 set rmargin at screen 0.90
 set lmargin at screen 0.10
 set title ""
+set xdata time
 set xlabel ""
 set ylabel "Count"
 set xtics rotate by -45 offset 0,-0
+$xticfreqsetting
 set style fill solid 0.5 border -1
 set boxwidth 0.5 relative
 set logscale y
@@ -85,7 +87,7 @@ EOF
     case $outputStyle in
         eps)
             $eps2pdf $outfile
-            convert -density 200 -background white $outpath/$basename.eps $outpath/$basename.png
+            convert -density 200 -background white $outpath/$basename.pdf $outpath/$basename.png
             echo "Histogram image output to $pdffile"
             ;;
         *) echo "Histogram image output to $outfile" ;;
@@ -119,7 +121,7 @@ set output '$outfile'
     esac
 
 
-/usr/bin/gnuplot -persist<<EOF 
+/usr/bin/env gnuplot -persist<<EOF 
 $outputSetting
 set style line 1 lt 1 pt 7 ps 1 lc rgb "red" lw 1
 set style line 2 lt 1 pt 7 ps 1 lc rgb "blue" lw 1
@@ -128,6 +130,7 @@ set style line 11 lt 1 pt 7 ps 2 lc rgb "red" lw 1
 set style line 12 lt 1 pt 7 ps 2 lc rgb "blue" lw 1
 set style line 13 lt 1 pt 7 ps 2 lc rgb "green" lw 1
 
+set key autotitle columnhead
 
 set tmargin at screen 0.95
 set bmargin at screen 0.25
@@ -137,8 +140,9 @@ set title ""
 set xlabel ""
 set ylabel "Count"
 set xtics rotate by -45 offset 0,-0
-set boxwidth 0.5 relative
+$xticfreqsetting
 set style fill solid 0.5 border -1
+set boxwidth 0.5 relative
 set logscale y
 set timefmt "$timeformat_in"
 set format x "$timeformat_out"
@@ -151,7 +155,7 @@ EOF
     case $outputStyle in
         eps)
             $eps2pdf $outfile
-            convert -density 200 -background white  $outpath/$basename.eps $outpath/$basename.png
+            convert -density 200 -background white $outpath/$basename.pdf $outpath/$basename.png
             echo "Histogram image output to $pdffile"
             ;;
         *) echo "Histogram image output to $outfile" ;;
@@ -195,13 +199,14 @@ if [ ! -f "$dataFile" ]; then
 fi
 
 osname=`uname -s`
-eps2pdf=eps2pdf
+eps2pdf=epstopdf
 case $osname in 
     *Darwin*) eps2pdf=epstopdf;;
-    *Linux*) eps2pdf=eps2pdf;;
+    *Linux*) eps2pdf=epstopdf;;
 esac
 
 
+xticfreqsetting=
 case $dataFile in 
     *day*)
         timeformat_in="%Y-%m-%d"
@@ -212,12 +217,13 @@ case $dataFile in
         timeformat_out="%Y-W%W"
         ;;
     *month*)
-        timeformat_in="%Y-%b"
+        timeformat_in="%Y-%m-%d"
         timeformat_out="%Y-%b"
         ;;
     *year*)
-        timeformat_in="%Y"
+        timeformat_in="%Y-%m-%d"
         timeformat_out="%Y"
+        xticfreqsetting="set xtics 60*60*24*365"
         ;;
 esac
 

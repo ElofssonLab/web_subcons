@@ -1,12 +1,12 @@
 #!/bin/bash
-# draw histogram of noSP and withSP
+# draw histogram of average runtime
 # #
 progname=`basename $0`
 usage="
 Usage: $progname datafile
 
 Description:
-    Draw histogram of predictions without SP and with SP
+    Draw histogram of average runtime
 
 Options:
     -format  STR     Set the format of output, (default: eps)
@@ -50,19 +50,10 @@ set output '$outfile'
         "
         ;;
     esac
-    case $dataFile in
-        *web*)
-            linestyle1=1
-            keytitle=Web
-            ;;
-        *wsdl*)
-            linestyle1=2
-            keytitle=WSDL
-            ;;
-    esac
 
 
-/usr/bin/gnuplot -persist<<EOF 
+    local max_yrange=`cat $dataFile | awk 'BEGIN{max=-1}{if($2>max) {max=$2}}END{print int(max)+10}'`
+/usr/bin/env gnuplot -persist<<EOF 
 $outputSetting
 set style line 1 lt 1 pt 7 ps 1 lc rgb "red" lw 1
 set style line 2 lt 1 pt 7 ps 1 lc rgb "blue" lw 1
@@ -71,17 +62,22 @@ set style line 11 lt 1 pt 7 ps 2 lc rgb "red" lw 1
 set style line 12 lt 1 pt 7 ps 2 lc rgb "blue" lw 1
 set style line 13 lt 1 pt 7 ps 2 lc rgb "green" lw 1
 
+set bmargin at screen 0.20
+
 
 set title ""
-set xlabel "" 
-set ylabel "Number of sequences"
-set y2label "Percentages"
-set y2tics 20 nomirror
+set ylabel ""
+set xlabel ""
+set xtic rotate by 90 scale 0 offset $offset_xtic
+unset ytics
 set style data histograms
 set style fill solid 0.9 border -1
-set yrange[0:$totalcount]
-set y2range[0:100]
-set grid y
+set boxwidth 0.9
+set y2tics rotate by 90 offset $offset_y2tic
+set yrange[0:$max_yrange]
+set y2label "Running time (s)" offset $offset_y2label
+set size 0.5, 1
+set grid y2
 plot "$dataFile" using 2:xtic(1) ls 2 notitle
 
 EOF
@@ -89,7 +85,8 @@ EOF
     case $outputStyle in
         eps)
             $eps2pdf $outfile
-            convert -density 200 -background white $outpath/$basename.eps $outpath/$basename.png
+            convert -density 200 -background white $outpath/$basename.pdf $outpath/$basename.png
+            convert -rotate 90 $outpath/$basename.png $outpath/$basename.rot.png
             echo "Histogram image output to $pdffile"
             ;;
         *) echo "Histogram image output to $outfile" ;;
@@ -133,10 +130,24 @@ if [ ! -f "$dataFile" ]; then
 fi
 
 osname=`uname -s`
-eps2pdf=eps2pdf
+eps2pdf=epstopdf
 case $osname in 
     *Darwin*) eps2pdf=epstopdf;;
-    *Linux*) eps2pdf=eps2pdf;;
+    *Linux*) eps2pdf=epstopdf;;
 esac
-totalcount=`awk -F "\t" 'BEGIN{sum=0} {sum+=$2}END{print sum}' $dataFile`
+offset_xtic="1,-3"
+offset_y2tic="0,-1"
+offset_y2label="-2"
+if [ -f "/etc/redhat-release" ];then 
+    platform="centos"
+    offset_xtic="0,0"
+    offset_y2tic="0,0"
+    offset_y2label="0"
+else
+    platform="notcentos"
+    offset_xtic="1,-3"
+    offset_y2tic="0,-1"
+    offset_y2label="-2"
+fi
+
 Makeplot $dataFile

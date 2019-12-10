@@ -1,0 +1,2 @@
+localhost
+dev.subcons.bioinfo.se

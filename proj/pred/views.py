@@ -325,9 +325,9 @@ def submit_seq(request):#{{{
                 myfunc.WriteFile(log_record, main_logfile_query, "a")
 
                 divided_logfile_query =  "%s/%s/%s"%(SITE_ROOT,
-                        "static/log/divided", "%s_submitted_seq.log"%(client_ip))
+                        "static/log/divided", "%s_submitted_seq.log"%(info['client_ip']))
                 divided_logfile_finished_jobid =  "%s/%s/%s"%(SITE_ROOT,
-                        "static/log/divided", "%s_finished_job.log"%(client_ip))
+                        "static/log/divided", "%s_finished_job.log"%(info['client_ip']))
                 if info['client_ip'] != "":
                     myfunc.WriteFile(log_record, divided_logfile_query, "a")
 

@@ -43,11 +43,11 @@ def GetIndexFile(dbname, formatindex):#{{{
             formatindex = FORMAT_TEXT
             msg = "Binary index file {} does not exist. "\
                    "Try looking for text index file"
-            print >> sys.stderr, msg.format(indexfile)
+            print(msg.format(indexfile), file=sys.stderr)
             indexfile = dbname + ".index"
             if not os.path.exists(indexfile):
                 msg = "Text index file {} does not exist"
-                print >> sys.stderr, msg.format(indexfile)
+                print(msg.format(indexfile), file=sys.stderr)
                 indexfile = ""
     else:
         indexfile = dbname+".index"
@@ -55,11 +55,11 @@ def GetIndexFile(dbname, formatindex):#{{{
             formatindex = FORMAT_BINARY
             msg = "Text index file {} does not exist."\
                     "Try looking for binary index file"
-            print >> sys.stderr, msg.format(indexfile)
+            print(msg.format(indexfile), file=sys.stderr)
             indexfile=dbname+".indexbin"
             if not os.path.exists(indexfile):
                 msg = "Binary index file {} does not exist"
-                print >> sys.stderr, msg.format(indexfile)
+                print(msg.format(indexfile), file=sys.stderr)
                 indexfile = ""
     return (indexfile, formatindex)
 #}}}
@@ -69,7 +69,7 @@ def WriteIndexHeader(indexFileHeaderText, formatindex, fpindex):#{{{
     """
     if formatindex == FORMAT_TEXT:
         for s in indexFileHeaderText:
-            print >> fpindex, s
+            print(s, file=fpindex)
     else:
         dumpedtext='\n'.join(s for s in indexFileHeaderText)
         vI = array('I')
@@ -87,8 +87,8 @@ def WriteIndexContent(indexList, formatindex, fpindex):#{{{
         v1 = indexList[1]
         v2 = indexList[2]
         v3 = indexList[3]
-        for i in xrange(numRecord):
-            print >> fpindex, idList[i], v1[i], v2[i], v3[i]
+        for i in range(numRecord):
+            print(idList[i], v1[i], v2[i], v3[i], file=fpindex)
     else:
         maxOffset = max(indexList[2])
 
@@ -158,13 +158,13 @@ def ReadIndex_binary(indexfile, isPrintWarning = False):#{{{
         if isPrintWarning:
             if origversion == "": 
                 msg = "{}: Warning! No version info in the index file {}"
-                print >> sys.stderr, msg.format(sys.argv[0],indexfile)
+                print(msg.format(sys.argv[0],indexfile), file=sys.stderr)
             elif origversion != version:
                 msg = "{}: Warning! Version conflicts. "\
                         "Version of the index file {} ({}) "\
                         "!= version of the program ({})"
-                print >> sys.stderr, msg.format(sys.argv[0], indexfile,
-                        origversion, version)
+                print(msg.format(sys.argv[0], indexfile,
+                        origversion, version), file=sys.stderr)
 
         headerinfo = (origdbname, origversion, origext, origprefix)
         #read in other information
@@ -183,8 +183,8 @@ def ReadIndex_binary(indexfile, isPrintWarning = False):#{{{
         numRecord = vI[0]
         if numRecord != len(idlist):
             msg = "{}: numID ({}) != numRecord ({}) for indexfile {} "
-            print >> sys.stderr, msg.format(sys.argv[0], len(idlist),
-                    numRecord, indexfile)
+            print(msg.format(sys.argv[0], len(idlist),
+                    numRecord, indexfile), file=sys.stderr)
 
         sizeRecord_I = (array('B').itemsize + array('I').itemsize +
                 array('I').itemsize)
@@ -199,7 +199,7 @@ def ReadIndex_binary(indexfile, isPrintWarning = False):#{{{
             vIarray[i].fromfile(fpin,numRecord)
 
         lastDBFileIndex = vIarray[0][numRecord-1]
-        dbfileindexList = range(lastDBFileIndex+1)
+        dbfileindexList = list(range(lastDBFileIndex+1))
 
         indexList.append(idlist)
         for i in range(3):
@@ -208,7 +208,7 @@ def ReadIndex_binary(indexfile, isPrintWarning = False):#{{{
         return (indexList, headerinfo, dbfileindexList)
     except IOError:
         msg = "Failed to read index file {} in function {}"
-        print >> sys.stderr, msg.format(indexfile, sys._getframe().f_code.co_name)
+        print(msg.format(indexfile, sys._getframe().f_code.co_name), file=sys.stderr)
         return (None, None, None)
 #}}}
 def ReadIndex_text(indexfile, isPrintWarning = False):#{{{
@@ -267,21 +267,21 @@ def ReadIndex_text(indexfile, isPrintWarning = False):#{{{
 
         numRecord = len(idList)
         lastDBFileIndex = v1[numRecord-1]
-        dbfileindexList = range(lastDBFileIndex+1)
+        dbfileindexList = list(range(lastDBFileIndex+1))
 
         if isPrintWarning:
             if origversion == "":
                 msg = "{}: Warning! No version info in the index file {}"
-                print >> sys.stderr,msg.format(sys.argv[0],indexfile)
+                print(msg.format(sys.argv[0],indexfile), file=sys.stderr)
             elif origversion != version:
                 msg = "{}: Warning! Version conflicts. "\
                         "Version of the index file {} ({}) "\
                         "!= version of the program ({})"
-                print >> sys.stderr, msg.format(sys.argv[0],indexfile,
-                        origversion, version)
+                print(msg.format(sys.argv[0],indexfile,
+                        origversion, version), file=sys.stderr)
         return (indexList, headerinfo, dbfileindexList)
     except IOError:
         msg = "Failed to read index file {} in function {}"
-        print >> sys.stderr, msg.format(indexfile, sys._getframe().f_code.co_name)
+        print(msg.format(indexfile, sys._getframe().f_code.co_name), file=sys.stderr)
         return (None, None, None)
 #}}}

@@ -31,8 +31,8 @@ def myopen(filename = "", default_fp = None, mode = "w", isRaise=False):#{{{
             return fp
         except IOError:
             msg = "Failed to open file {} with mode {}"
-            print >>sys.stderr, msg.format(filename, mode)
-            print >> sys.stderr, "Reset output to", default_fp
+            print(msg.format(filename, mode), file=sys.stderr)
+            print("Reset output to", default_fp, file=sys.stderr)
             if isRaise:
                 raise
             else:
@@ -50,7 +50,7 @@ def myclose(fp):#{{{
         if fp != None and fp != sys.stdout and fp != sys.stderr:
             fp.close()
     except IOError:
-        print >> sys.stderr, "Failed to close file stream ", fp
+        print("Failed to close file stream ", fp, file=sys.stderr)
         return 1
 #}}}
 def my_getopt_str(argv, i):#{{{
@@ -63,12 +63,12 @@ def my_getopt_str(argv, i):#{{{
         if opt[0] == "-":
             msg = "Error! option '%s' must be followed by a string"\
                     ", not an option arg."
-            print >> sys.stderr, msg%(argv[i])
+            print(msg%(argv[i]), file=sys.stderr)
             sys.exit(1)
         return (opt, i+2)
     except IndexError:
         msg = "Error! option '%s' must be followed by a string"
-        print >> sys.stderr, msg%(argv[i])
+        print(msg%(argv[i]), file=sys.stderr)
         sys.exit(1)
 #}}}
 def my_getopt_int(argv, i):#{{{
@@ -81,18 +81,18 @@ def my_getopt_int(argv, i):#{{{
         if opt[0] == "-":
             msg = "Error! option '%s' must be followed by an INT value"\
                     ", not an option arg."
-            print >> sys.stderr, msg%(argv[i])
+            print(msg%(argv[i]), file=sys.stderr)
             sys.exit(1)
         try:
             opt = int(opt)
             return (opt, i+2)
         except (ValueError, TypeError):
             msg = "Error! option '%s' must be followed by an INT value"
-            print >> sys.stderr, msg%(argv[i])
+            print(msg%(argv[i]), file=sys.stderr)
             sys.exit(1)
     except IndexError:
         msg = "Error! option '%s' must be followed by an INT value"
-        print >> sys.stderr, msg%(argv[i])
+        print(msg%(argv[i]), file=sys.stderr)
         sys.exit(1)
 #}}}
 def my_getopt_float(argv, i):#{{{
@@ -105,18 +105,18 @@ def my_getopt_float(argv, i):#{{{
         if opt[0] == "-":
             msg = "Error! option '%s' must be followed by an FLOAT value"\
                     ", not an option arg."
-            print >> sys.stderr, msg%(argv[i])
+            print(msg%(argv[i]), file=sys.stderr)
             sys.exit(1)
         try:
             opt = float(opt)
             return (opt, i+2)
         except (ValueError, TypeError):
             msg = "Error! option '%s' must be followed by an FLOAT value"
-            print >> sys.stderr, msg%(argv[i])
+            print(msg%(argv[i]), file=sys.stderr)
             sys.exit(1)
     except IndexError:
         msg = "Error! option '%s' must be followed by an FLOAT value"
-        print >> sys.stderr, msg%(argv[i])
+        print(msg%(argv[i]), file=sys.stderr)
         sys.exit(1)
 #}}}
 def my_dirname(filename):#{{{
@@ -139,10 +139,10 @@ def checkfile(f, name="input"):#{{{
     Whether the file name is empty or if the file exists
     """
     if f == "":
-        print >> sys.stderr, "%s not set."%(name)
+        print("%s not set."%(name), file=sys.stderr)
         return 1
     elif not os.path.exists(f):
-        print >> sys.stderr, "%s %s does not exist."%(name, f)
+        print("%s %s does not exist."%(name, f), file=sys.stderr)
         return 1
     else:
         return 0
@@ -162,7 +162,7 @@ def GetFirstWord1(buff, delimiter = " \t\r,.\n"):#{{{
 # firstword of an natual language article.
     if buff:
         firstword = ""
-        for i in xrange(len(buff)):
+        for i in range(len(buff)):
             if delimiter.find(buff[i]) < 0:
                 firstword += buff[i]
             else:
@@ -196,8 +196,8 @@ def FillSymmetricMatrix(matrix, N):#{{{
     |    +
     """
     mtx = copy.deepcopy(matrix)
-    for i in xrange(N):
-        for j in xrange(i+1, N):
+    for i in range(N):
+        for j in range(i+1, N):
             mtx[j][i] = mtx[i][j]
     return mtx
 #}}}
@@ -214,8 +214,8 @@ def AverageOfFraction(table):#{{{
     numY = len(table[0])
     sumList = [0.0] * (numY-1)
     total = 0.0
-    for i in xrange(numX):
-        for j in xrange(numY-1):
+    for i in range(numX):
+        for j in range(numY-1):
             sumList[j] += table[i][j]*table[i][numY-1]
         total += table[i][numY-1]
     fracList = [FloatDivision(x,total) for x in sumList]
@@ -280,8 +280,8 @@ class MyDB: #{{{
                             self.ReadIndex(self.indexfile, self.index_format)
             if self.indexList == None:
                 msg = "Failed to read index file {}. Init database {} failed."
-                print >> sys.stderr, msg.format(self.indexfile,
-                                self.dbname_full)
+                print(msg.format(self.indexfile,
+                                self.dbname_full), file=sys.stderr)
                 self.failure = True
                 return None
             if self.OpenDBFile() == 1:
@@ -291,11 +291,11 @@ class MyDB: #{{{
             self.numRecord = len(self.indexedIDList)
             if self.index_type == mydb_common.TYPE_DICT:
                 self.indexDict = {}
-                for i in xrange(self.numRecord):
+                for i in range(self.numRecord):
                         self.indexDict[self.indexedIDList[i]] = i
         else:
             msg = "Failed to find indexfile for db {}"
-            print >> sys.stderr, msg.format(dbname)
+            print(msg.format(dbname), file=sys.stderr)
             self.failure = True
             return None
           #}}}
@@ -306,7 +306,7 @@ class MyDB: #{{{
                 fp.close()
             return 0
         except IOError:
-            print >> sys.stderr, "Failed to close db file"
+            print("Failed to close db file", file=sys.stderr)
         #}}}
     def ReadIndex(self, indexfile, index_format):#{{{
 # return (headerinfo, dbfileindexList, index, idList)
@@ -322,7 +322,7 @@ class MyDB: #{{{
             try:
                 self.fpdbList.append(open(dbfile,"rb"))
             except IOError:
-                print >> sys.stderr, "Failed to read dbfile %s"%(dbfile)
+                print("Failed to read dbfile %s"%(dbfile), file=sys.stderr)
                 return 1
         return 0
 #}}}
@@ -334,7 +334,7 @@ class MyDB: #{{{
             data = fpdb.read(self.indexList[3][idxItem]);
             return data
         except (IndexError, IOError):
-            print >> sys.stderr, "Failed to retrieve record %s"%(record_id)
+            print("Failed to retrieve record %s"%(record_id), file=sys.stderr)
             return None
 #}}}
     def GetRecordByIndexDict(self, record_id):#{{{
@@ -345,7 +345,7 @@ class MyDB: #{{{
             data = fpdb.read(self.indexList[3][idxItem]);
             return data
         except (KeyError, IndexError, IOError):
-            print >> sys.stderr, "Failed to retrieve record %s"%(record_id)
+            print("Failed to retrieve record %s"%(record_id), file=sys.stderr)
             return None
 #}}}
     def GetRecord(self, record_id):#{{{
@@ -365,7 +365,7 @@ class MyDB: #{{{
                 fp.close()
             return 0
         except IOError:
-            print >> sys.stderr, "Failed to close db file"
+            print("Failed to close db file", file=sys.stderr)
             return 1
         #}}}
     #}}}
@@ -396,7 +396,7 @@ class ReadLineByBlock:#{{{
         try: 
             self.fpin = open(infile, "rb")
         except IOError:
-            print >> sys.stderr, "Failed to read file %s"%(self.filename)
+            print("Failed to read file %s"%(self.filename), file=sys.stderr)
             self.failure = True
             return None
         self.unprocessedBuff = ""
@@ -407,14 +407,14 @@ class ReadLineByBlock:#{{{
         except AttributeError:
             pass
         except IOError:
-            print >> sys.stderr, "Failed to close file %s"%(self.filename)
+            print("Failed to close file %s"%(self.filename), file=sys.stderr)
             return 1
 #}}}
     def close(self):#{{{
         try:
             self.fpin.close()
         except IOError:
-            print >> sys.stderr, "Failed to close file %s"%(self.filename)
+            print("Failed to close file %s"%(self.filename), file=sys.stderr)
             return 1
 #}}}
     def readlines(self):#{{{
@@ -451,7 +451,7 @@ def mpa2seq(mpa, char_gap="-"):#{{{
                 li.append(item)
         return "".join(li)
     except KeyError:
-        print >> sys.stderr, "mpa empty"
+        print("mpa empty", file=sys.stderr)
         return ""
 #}}}
 
@@ -504,18 +504,18 @@ class ReadFastaByBlock:#{{{
             try: 
                 self.fpin = open(infile, "rb")
             except IOError:
-                print >> sys.stderr, "Failed to read file %s"%(self.filename)
+                print("Failed to read file %s"%(self.filename), file=sys.stderr)
                 self.failure = True
                 return None
         elif self.filetype == 'gzip':
             try: 
                 self.fpin = gzip.open(infile, "rb")
             except IOError:
-                print >> sys.stderr, "Failed to read file %s"%(self.filename)
+                print("Failed to read file %s"%(self.filename), file=sys.stderr)
                 self.failure = True
                 return None
         else:
-            print >> sys.stderr, "Unrecognized filetype for the inputfile %s"%(self.filename)
+            print("Unrecognized filetype for the inputfile %s"%(self.filename), file=sys.stderr)
             self.failure = True
             return None
 
@@ -525,14 +525,14 @@ class ReadFastaByBlock:#{{{
         try:
             self.fpin.close()
         except IOError:
-            print >> sys.stderr, "Failed to close file %s"%(self.filename)
+            print("Failed to close file %s"%(self.filename), file=sys.stderr)
             return 1
 #}}}
     def close(self):#{{{
         try:
             self.fpin.close()
         except IOError:
-            print >> sys.stderr, "Failed to close file %s"%(self.filename)
+            print("Failed to close file %s"%(self.filename), file=sys.stderr)
             return 1
 #}}}
     def readseq(self):#{{{
@@ -604,18 +604,18 @@ class ReadUniprotDatByBlock:#{{{
             try: 
                 self.fpin = open(infile, "rb")
             except IOError:
-                print >> sys.stderr, "Failed to read file %s"%(self.filename)
+                print("Failed to read file %s"%(self.filename), file=sys.stderr)
                 self.failure = True
                 return None
         elif self.filetype == 'gzip':
             try: 
                 self.fpin = gzip.open(infile, "rb")
             except IOError:
-                print >> sys.stderr, "Failed to read file %s"%(self.filename)
+                print("Failed to read file %s"%(self.filename), file=sys.stderr)
                 self.failure = True
                 return None
         else:
-            print >> sys.stderr, "Unrecognized filetype for the inputfile %s"%(self.filename)
+            print("Unrecognized filetype for the inputfile %s"%(self.filename), file=sys.stderr)
             self.failure = True
             return None
 
@@ -625,14 +625,14 @@ class ReadUniprotDatByBlock:#{{{
         try:
             self.fpin.close()
         except IOError:
-            print >> sys.stderr, "Failed to close file %s"%(self.filename)
+            print("Failed to close file %s"%(self.filename), file=sys.stderr)
             return 1
 #}}}
     def close(self):#{{{
         try:
             self.fpin.close()
         except IOError:
-            print >> sys.stderr, "Failed to close file %s"%(self.filename)
+            print("Failed to close file %s"%(self.filename), file=sys.stderr)
             return 1
 #}}}
 
@@ -698,12 +698,12 @@ class ReadUniprotDatByBlock:#{{{
 
         #accession
         accessionList = str_accession.split(";")
-        accessionList = filter(None, accessionList)
+        accessionList = [_f for _f in accessionList if _f]
         accessionList = [x.strip() for x in accessionList]
 
         # genename:
         strs = str_genename.split(";")
-        strs = filter(None, strs)
+        strs = [_f for _f in strs if _f]
         li = []
         for ss in strs:
             sp1 = ss.split("=")
@@ -729,7 +729,7 @@ class ReadUniprotDatByBlock:#{{{
             isRefPro = False
 
         if len(seq) != length:
-            print >> sys.stderr, "Warning! sequence %s len(seq) (%d) != length (%d) "%(";".join(accessionList), len(seq), length)
+            print("Warning! sequence %s len(seq) (%d) != length (%d) "%(";".join(accessionList), len(seq), length), file=sys.stderr)
 
 
         if len(accessionList) > 0:
@@ -865,7 +865,7 @@ class ReadMPAByBlock:#{{{
         try: 
             self.fpin = open(infile, "rb")
         except IOError:
-            print >> sys.stderr, "Failed to read file %s"%(self.filename)
+            print("Failed to read file %s"%(self.filename), file=sys.stderr)
             self.failure = True
             return None
         self.unprocessedBuff = ""
@@ -874,14 +874,14 @@ class ReadMPAByBlock:#{{{
         try:
             self.fpin.close()
         except IOError:
-            print >> sys.stderr, "Failed to close file %s"%(self.filename)
+            print("Failed to close file %s"%(self.filename), file=sys.stderr)
             return 1
 #}}}
     def close(self):#{{{
         try:
             self.fpin.close()
         except IOError:
-            print >> sys.stderr, "Failed to close file %s"%(self.filename)
+            print("Failed to close file %s"%(self.filename), file=sys.stderr)
             return 1
 #}}}
     def readseq(self):#{{{
@@ -918,7 +918,7 @@ def ReadIDList(infile, delim=None):#{{{
             li = [x.strip() for x in li]
         return li
     except IOError:
-        print "Failed to read idlistfile %s"%infile
+        print("Failed to read idlistfile %s"%infile)
         return []
 #}}}
 def ReadIDList2(infile, col=0, delim=None):#{{{
@@ -962,8 +962,8 @@ def ReadFile(infile, mode="r"):#{{{
         fpin.close()
         return content
     except IOError:
-        print >> sys.stderr, "Failed to read file %s with mode '%s'"%(infile,
-                mode)
+        print("Failed to read file %s with mode '%s'"%(infile,
+                mode), file=sys.stderr)
         return ""
 #}}}
 
@@ -974,11 +974,11 @@ def WriteIDList(idList, outfile):#{{{
     try:
         fpout = open(outfile,"w")
         for idd in idList:
-            print >> fpout, idd
+            print(idd, file=fpout)
         fpout.close()
         return 0
     except IOError:
-        print "Failed to write to file %s"%outfile
+        print("Failed to write to file %s"%outfile)
         return 1
 #}}}
 def ReadListFile(infile, delimiter = "\n"):#{{{
@@ -991,8 +991,8 @@ def ReadListFile(infile, delimiter = "\n"):#{{{
         return li
     except IOError:
         msg = "Failed to read listfile {} in function {}"
-        print >> sys.stderr, msg.format(infile,
-                sys._getframe().f_code.co_name)
+        print(msg.format(infile,
+                sys._getframe().f_code.co_name), file=sys.stderr)
         return []
 #}}}
 def ReadPairList(infile, mode=0):#{{{
@@ -1017,7 +1017,7 @@ def ReadPairList(infile, mode=0):#{{{
                 pairlist.append((strs[0], strs[1]))
             else:
                 msg = "broken pair in file %s: line \"%s\""
-                print >> sys.stderr, msg %(infile, line)
+                print(msg %(infile, line), file=sys.stderr)
         lines = hdl.readlines()
     hdl.close()
     return pairlist
@@ -1045,7 +1045,7 @@ def ReadFam2SeqidMap(infile):#{{{
                 pfam2seqidDict[strs[0]] = strs[2:]
             else:
                 msg="broken item in file %s: line \"%s\""
-                print >> sys.stderr, msg%(infile, line)
+                print(msg%(infile, line), file=sys.stderr)
         lines = hdl.readlines()
     hdl.close()
     return pfam2seqidDict
@@ -1081,7 +1081,7 @@ def ReadPfamScan(infile, evalue_threshold=1e-3):#{{{
                         seqIDPfamScanDict[seqid].append(tmpdict)
                 except (IndexError, ValueError):
                     msg = "Error in pfamscan file %s at line \"%s\""
-                    print >> sys.stderr, msg%(infile, line)
+                    print(msg%(infile, line), file=sys.stderr)
                     pass
         lines = hdl.readlines()
     hdl.close()
@@ -1139,7 +1139,7 @@ def GenerateRandomPair_no_repeat_use(numSample, max_numpair, rand_seed):#{{{
     Generate random pairs from the given list
     one id is used only once
     """
-    li = range(numSample)
+    li = list(range(numSample))
     selectedPairList = []
     random.seed(rand_seed);
     while 1:
@@ -1193,7 +1193,7 @@ def GetSeqIDFromAnnotation(line, method_seqid=1):#{{{
         return seqID
     else:
         msg = "Unrecognized method (%d) in function %s"
-        print >> sys.stderr, msg%(method, sys._getframe().f_code.co_name)
+        print(msg%(method, sys._getframe().f_code.co_name), file=sys.stderr)
         return ""
 #}}}
 def GetEvalueFromAnnotation(line):#{{{
@@ -1269,7 +1269,7 @@ def ReadSingleFasta(inFile):#{{{
                 aaSeq+=line.strip()
         return (seqID, annotation, aaSeq)
     except IOError: 
-        print >> sys.stderr, "Failed to ReadSingleFasta for ", inFile
+        print("Failed to ReadSingleFasta for ", inFile, file=sys.stderr)
         return ("","", "")
 #}}}
 def GetSingleFastaLength(inFile):#{{{
@@ -1289,7 +1289,7 @@ def GetSingleFastaLength(inFile):#{{{
                 aaSeq += line.strip()
         return len(aaSeq)
     except IOError: 
-        print >> sys.stderr, "GetSingleFastaLength failed for ", inFile
+        print("GetSingleFastaLength failed for ", inFile, file=sys.stderr)
         return -1
 #}}}
 def old_ReadFasta(inFile):#{{{
@@ -1418,7 +1418,7 @@ def GetRemainPos(segPosList, length):#{{{
     else:
         if segPosList[0][0] > 0:
             remainPosList.append((0, segPosList[0][0]))
-        for i in xrange(num-1):
+        for i in range(num-1):
             remainPosList.append((segPosList[i][1], segPosList[i+1][0]))
         if segPosList[num-1][1] < length:
             remainPosList.append((segPosList[num-1][1], length))
@@ -1436,7 +1436,7 @@ def ReadFasta(infile, BLOCK_SIZE=100000):#{{{
     try:
         fpin=open(infile,"rb")
     except IOError:
-        print >> sys.stderr, "Failed to read fasta file %s "%(infile)
+        print("Failed to read fasta file %s "%(infile), file=sys.stderr)
         return ([], [], [])
     buff = fpin.read(BLOCK_SIZE)
     brokenSeqWithAnnoLine=""; ##for the annotation line broken by BLOCK read
@@ -1493,7 +1493,7 @@ def ReadFasta_without_annotation(infile, BLOCK_SIZE=100000):#{{{
     try:
         fpin=open(infile,"rb")
     except IOError:
-        print >> sys.stderr, "Failed to read file %s."%(infile)
+        print("Failed to read file %s."%(infile), file=sys.stderr)
         return (None, None)
     buff = fpin.read(BLOCK_SIZE)
     brokenSeqWithAnnoLine=""; ##for the annotation line broken by BLOCK read
@@ -1547,7 +1547,7 @@ def ReadFasta_without_id(infile, BLOCK_SIZE=100000):#{{{
     try:
         fpin=open(infile,"rb")
     except IOError:
-        print >> sys.stderr, "Failed to open file %s for read"%(infile)
+        print("Failed to open file %s for read"%(infile), file=sys.stderr)
         return (None, None)
     buff = fpin.read(BLOCK_SIZE)
     brokenSeqWithAnnoLine=""; ##for the annotation line broken by BLOCK read
@@ -1600,7 +1600,7 @@ def ReadFasta_simple(infile, BLOCK_SIZE=100000):#{{{
     try:
         fpin=open(infile,"rb")
     except IOError:
-        print >> sys.stderr, "Failed to open file %s for read"%(infile)
+        print("Failed to open file %s for read"%(infile), file=sys.stderr)
         return None
     buff = fpin.read(BLOCK_SIZE)
     brokenSeqWithAnnoLine=""; ##for the annotation line broken by BLOCK read
@@ -1692,12 +1692,12 @@ def ReadPDBTOSP(infile): #{{{
                     except (TypeError, ValueError):
                         pdb2uniprotMap[pdbid]['resolution'] = -1.0
                     pdb2uniprotMap[pdbid]['uniprotaclist'] = []
-                    for j in xrange(5,len(strs),2):
+                    for j in range(5,len(strs),2):
                         uniprotac = strs[j].lstrip('(').rstrip(',').rstrip(')')
                         pdb2uniprotMap[pdbid]['uniprotaclist'].append(uniprotac)
                 except (IndexError, TypeError):
-                    print >> sys.stderr, "bad line in file %s, line=\"%s\""%(
-                            infile, line)
+                    print("bad line in file %s, line=\"%s\""%(
+                            infile, line), file=sys.stderr)
         lines = hdl.readlines()
     hdl.close()
 
@@ -1775,7 +1775,7 @@ def ExtractFromSeqWithAnno_MPA(seqWithAnno, method_seqid=1, method_seq=0):#{{{
     mpa['data'] = []
     mpa['index_gap'] = [] # index point to the gap segment in the data list
     mpa['index_seq'] = [] # index point to seq segments in the data list
-    for i  in xrange(len(strs)):
+    for i  in range(len(strs)):
         ss = strs[i]
         if ss.find("-") > 0:
             strs1 = ss.split("-")
@@ -1784,7 +1784,7 @@ def ExtractFromSeqWithAnno_MPA(seqWithAnno, method_seqid=1, method_seq=0):#{{{
                 e = int(strs1[1])
             except (TypeError, ValueError):
                 msg = "Error in reading MPA file, record\n%s"
-                print >> sys.stderr, msg%(seqWithAnno)
+                print(msg%(seqWithAnno), file=sys.stderr)
                 return ("", "", {})
             mpa['data'].append((b,e))
             mpa['index_gap'].append(i)
@@ -1816,7 +1816,7 @@ def CountFastaSeq(inFile, BLOCK_SIZE=100000):#{{{
         fpin.close()
         return cntSeq
     except IOError:
-        print >> sys.stderr, "Failed to read seqfile %s" %inFile
+        print("Failed to read seqfile %s" %inFile, file=sys.stderr)
         return -1
 
 #}}}
@@ -1993,11 +1993,11 @@ def confirm(prompt=None, resp=False):#{{{
         prompt = '%s [%s]|%s: ' % (prompt, 'n', 'y')
 
     while True:
-        ans = raw_input(prompt)
+        ans = input(prompt)
         if not ans:
             return resp
         if ans not in ['y', 'Y', 'n', 'N']:
-            print 'please enter y or n.'
+            print('please enter y or n.')
             continue
         if ans == 'y' or ans == 'Y':
             return True
@@ -2021,7 +2021,7 @@ def GetFirstTMPosition(topo):#{{{
         if topo[e-1] == GAP:
             e = topo[:e-1].rfind('M')+1
         if b == e:
-            print "Error! topo[b-30:e+30]=", topo[b-30:e+30]
+            print("Error! topo[b-30:e+30]=", topo[b-30:e+30])
             return (-1,-1)
         else:
             return (b,e)
@@ -2050,7 +2050,7 @@ def GetTMPosition(topo):#{{{
                 e=topo[:e-1].rfind('M')+1
 #           print (b,e)
             if b == e:
-                print "Error topo[b-10:e+10]=", topo[b-30:e+30]
+                print("Error topo[b-10:e+10]=", topo[b-30:e+30])
                 #sys.exit(1)
                 return []
             posTM.append((b,e))
@@ -2160,7 +2160,7 @@ def PosTM2Topo(posTM, seqLength, NtermState):#{{{
     if len(posTM) < 1:
         topList += [state]*seqLength
     else:
-        for j in xrange(len(posTM)):
+        for j in range(len(posTM)):
             state = statelist[idx%2]
             if j == 0:
                 seglen = posTM[j][0]
@@ -2189,7 +2189,7 @@ def wrapseq(seq, size=60):#{{{
     """
     wrap the sequence in to a list of fixed length
     """
-    return  [seq[i:i+size] for i in xrange(0, len(seq), size)]
+    return  [seq[i:i+size] for i in range(0, len(seq), size)]
 #}}}
 def date_diff(older, newer):#{{{
     """
@@ -2319,10 +2319,10 @@ def Size_human2byte(s):#{{{
             elif items[1] in ["G", "GB"]:
                 return size*1024*1024*1024
             else:
-                print >> sys.stderr, "Bad maxsize argument:",s
+                print("Bad maxsize argument:",s, file=sys.stderr)
                 return -1
         else:
-            print >> sys.stderr, "Bad maxsize argument:",s
+            print("Bad maxsize argument:",s, file=sys.stderr)
             return -1
 
 #}}}
@@ -2338,7 +2338,7 @@ def Size_byte2human(size, is_kilobyte_1024=True):#{{{
                 1024: ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']}
     if size < 0:
         msg = "number must be non-negative in function %s"
-        print >> sys.stderr, msg%(sys._getframe().f_code.co_name)
+        print(msg%(sys._getframe().f_code.co_name), file=sys.stderr)
         return ""
 
     multiple = 1024 if is_kilobyte_1024 else 1000
@@ -2352,7 +2352,7 @@ def Size_byte2human(size, is_kilobyte_1024=True):#{{{
             size /= multiple
     except ValueError:
         msg = "number too large in function %s"
-        print >> sys.stderr, msg%(sys._getframe().f_code.co_name)
+        print(msg%(sys._getframe().f_code.co_name), file=sys.stderr)
         return ""
 #}}}
 
@@ -2361,7 +2361,7 @@ def ArchiveFile(filename, maxsize):#{{{
     Archive the logfile if its size exceeds the limit
     """
     if not os.path.exists(filename):
-        print >> sys.stderr, filename,  "does not exist. ignore."
+        print(filename,  "does not exist. ignore.", file=sys.stderr)
         return 1
     else:
         filesize = os.path.getsize(filename)
@@ -2377,18 +2377,18 @@ def ArchiveFile(filename, maxsize):#{{{
             try:
                 f_in = open(filename, 'rb')
             except IOError:
-                print >> sys.stderr, "Failed to read %s"%(filename)
+                print("Failed to read %s"%(filename), file=sys.stderr)
                 return 1
             try:
                 f_out = gzip.open(zipfile, 'wb')
             except IOError:
-                print >> sys.stderr, "Failed to write to %s"%(zipfile)
+                print("Failed to write to %s"%(zipfile), file=sys.stderr)
                 return 1
 
             f_out.writelines(f_in)
             f_out.close()
             f_in.close()
-            print "%s is archived to %s"%(filename, zipfile)
+            print("%s is archived to %s"%(filename, zipfile))
             os.remove(filename)
         return 0
 #}}}
@@ -2425,11 +2425,11 @@ def WriteTOPCONSTextResultFile(outfile, outpath_result, maplist,#{{{
             fpstat = open(statfile, "w")
 
         date_str = time.strftime("%Y-%m-%d %H:%M:%S %Z")
-        print >> fpout, "##############################################################################"
-        print >> fpout, "TOPCONS2 result file"
-        print >> fpout, "Generated from %s at %s"%(base_www_url, date_str)
-        print >> fpout, "Total request time: %.1f seconds."%(runtime_in_sec)
-        print >> fpout, "##############################################################################"
+        print("##############################################################################", file=fpout)
+        print("TOPCONS2 result file", file=fpout)
+        print("Generated from %s at %s"%(base_www_url, date_str), file=fpout)
+        print("Total request time: %.1f seconds."%(runtime_in_sec), file=fpout)
+        print("##############################################################################", file=fpout)
         cnt = 0
         for line in maplist:
             strs = line.split('\t')
@@ -2437,10 +2437,10 @@ def WriteTOPCONSTextResultFile(outfile, outpath_result, maplist,#{{{
             length = int(strs[1])
             desp = strs[2]
             seq = strs[3]
-            print >> fpout, "Sequence number: %d"%(cnt+1)
-            print >> fpout, "Sequence name: %s"%(desp)
-            print >> fpout, "Sequence length: %d aa."%(length)
-            print >> fpout, "Sequence:\n%s\n\n"%(seq)
+            print("Sequence number: %d"%(cnt+1), file=fpout)
+            print("Sequence name: %s"%(desp), file=fpout)
+            print("Sequence length: %d aa."%(length), file=fpout)
+            print("Sequence:\n%s\n\n"%(seq), file=fpout)
 
             is_TM_cons = False
             is_TM_any = False
@@ -2449,7 +2449,7 @@ def WriteTOPCONSTextResultFile(outfile, outpath_result, maplist,#{{{
             is_SP_cons = False
             is_SP_any = False
 
-            for i in xrange(len(methodlist)):
+            for i in range(len(methodlist)):
                 method = methodlist[i]
                 seqid = ""
                 seqanno = ""
@@ -2486,9 +2486,9 @@ def WriteTOPCONSTextResultFile(outfile, outpath_result, maplist,#{{{
                     showtext_homo = method
                     if seqid != "":
                         showtext_homo = seqid
-                    print >> fpout, "%s:\n%s\n\n"%(showtext_homo, top)
+                    print("%s:\n%s\n\n"%(showtext_homo, top), file=fpout)
                 else:
-                    print >> fpout, "%s predicted topology:\n%s\n\n"%(method, top)
+                    print("%s predicted topology:\n%s\n\n"%(method, top), file=fpout)
 
 
             if fpstat:
@@ -2509,19 +2509,19 @@ def WriteTOPCONSTextResultFile(outfile, outpath_result, maplist,#{{{
                 if line and line[0].isdigit():
                     dglines.append(line)
             if len(dglines)>0:
-                print >> fpout,  "\nPredicted Delta-G-values (kcal/mol) "\
-                        "(left column=sequence position; right column=Delta-G)\n"
-                print >> fpout, "\n".join(dglines)
+                print("\nPredicted Delta-G-values (kcal/mol) "\
+                        "(left column=sequence position; right column=Delta-G)\n", file=fpout)
+                print("\n".join(dglines), file=fpout)
 
             reliability_file = "%s/%s/Topcons/reliability.txt"%(outpath_result, subfoldername)
             reliability = ""
             if os.path.exists(reliability_file):
                 reliability = ReadFile(reliability_file)
             if reliability != "":
-                print >> fpout, "\nPredicted TOPCONS reliability (left "\
-                        "column=sequence position; right column=reliability)\n"
-                print >> fpout, reliability
-            print >> fpout, "##############################################################################"
+                print("\nPredicted TOPCONS reliability (left "\
+                        "column=sequence position; right column=reliability)\n", file=fpout)
+                print(reliability, file=fpout)
+            print("##############################################################################", file=fpout)
             cnt += 1
 
         if fpstat:
@@ -2537,7 +2537,7 @@ def WriteTOPCONSTextResultFile(outfile, outpath_result, maplist,#{{{
             fpstat.close()
 
     except IOError:
-        print "Failed to write to file %s"%(outfile)
+        print("Failed to write to file %s"%(outfile))
 #}}}
 def Sendmail(from_email, to_email, subject, bodytext):#{{{
     sendmail_location = "/usr/sbin/sendmail" # sendmail location
@@ -2549,10 +2549,10 @@ def Sendmail(from_email, to_email, subject, bodytext):#{{{
     p.write(bodytext)
     status = p.close()
     if status == None or status == 0 :
-        print "Sendmail to %s succeeded"%(to_email)
+        print("Sendmail to %s succeeded"%(to_email))
         return 0
     else:
-        print "Sendmail to %s failed with status"%(to_email), status
+        print("Sendmail to %s failed with status"%(to_email), status)
         return status
 
 #}}}
@@ -2722,7 +2722,7 @@ def ReadNews(infile):#{{{
         newsList = sorted(newsList, key = lambda x:x[3], reverse=True)
         return newsList
     except IOError:
-        print >> sys.stderr, "Failed to read newsfile %s"%(infile)
+        print("Failed to read newsfile %s"%(infile), file=sys.stderr)
         return []
 #}}}
 def IsDNASeq(seq):#{{{
@@ -2769,6 +2769,6 @@ def disk_usage(path):#{{{
         used = (st.f_blocks - st.f_bfree) * st.f_frsize
         return (total, used, free)
     except OSError:
-        print sys.stderr, "os.statvfs(%s) failed"%(path)
+        print(sys.stderr, "os.statvfs(%s) failed"%(path))
         return (-1,-1,-1)
 #}}}

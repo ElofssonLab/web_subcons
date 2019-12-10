@@ -31,9 +31,9 @@ Examples:
 """%(progname)
 
 def PrintHelp(fpout=sys.stdout):#{{{
-    print >> fpout, usage_short
-    print >> fpout, usage_ext
-    print >> fpout, usage_exp#}}}
+    print(usage_short, file=fpout)
+    print(usage_ext, file=fpout)
+    print(usage_exp, file=fpout)#}}}
 def my_getopt_str(argv, i):#{{{
     """
     Get a string from the argument list, return the string and the updated
@@ -44,12 +44,12 @@ def my_getopt_str(argv, i):#{{{
         if opt[0] == "-":
             msg = "Error! option '%s' must be followed by a string"\
                     ", not an option arg."
-            print >> sys.stderr, msg%(argv[i])
+            print(msg%(argv[i]), file=sys.stderr)
             sys.exit(1)
         return (opt, i+2)
     except IndexError:
         msg = "Error! option '%s' must be followed by a string"
-        print >> sys.stderr, msg%(argv[i])
+        print(msg%(argv[i]), file=sys.stderr)
         raise
 #}}}
 def Size_human2byte(s):#{{{
@@ -70,10 +70,10 @@ def Size_human2byte(s):#{{{
             elif items[1] in ["G", "GB"]:
                 return size*1024*1024*1024
             else:
-                print >> sys.stderr, "Bad maxsize argument:",s
+                print("Bad maxsize argument:",s, file=sys.stderr)
                 return -1
         else:
-            print >> sys.stderr, "Bad maxsize argument:",s
+            print("Bad maxsize argument:",s, file=sys.stderr)
             return -1
 
 #}}}
@@ -82,7 +82,7 @@ def ArchiveFile(filename, maxsize):#{{{
     Archive the logfile if its size exceeds the limit
     """
     if not os.path.exists(filename):
-        print >> sys.stderr, filename,  "does not exist. ignore."
+        print(filename,  "does not exist. ignore.", file=sys.stderr)
         return 1
     else:
         filesize = os.path.getsize(filename)
@@ -98,18 +98,18 @@ def ArchiveFile(filename, maxsize):#{{{
             try:
                 f_in = open(filename, 'rb')
             except IOError:
-                print >> sys.stderr, "Failed to read %s"%(filename)
+                print("Failed to read %s"%(filename), file=sys.stderr)
                 return 1
             try:
                 f_out = gzip.open(zipfile, 'wb')
             except IOError:
-                print >> sys.stderr, "Failed to write to %s"%(zipfile)
+                print("Failed to write to %s"%(zipfile), file=sys.stderr)
                 return 1
 
             f_out.writelines(f_in)
             f_out.close()
             f_in.close()
-            print "%s is archived to %s"%(filename, zipfile)
+            print("%s is archived to %s"%(filename, zipfile))
             os.remove(filename)
         return 0
 #}}}
@@ -146,7 +146,7 @@ def main(g_params):#{{{
                 g_params['isQuiet'] = True
                 i += 1
             else:
-                print >> sys.stderr, "Error! Wrong argument:", argv[i]
+                print("Error! Wrong argument:", argv[i], file=sys.stderr)
                 return 1
         else:
             fileList.append(argv[i])
@@ -167,8 +167,8 @@ def main(g_params):#{{{
         fileList += tmplist
 
     if len(fileList) < 1:
-        print >> sys.stderr, "No input file is set. exit."
-    for i in xrange(len(fileList)):
+        print("No input file is set. exit.", file=sys.stderr)
+    for i in range(len(fileList)):
 #         print "%d --> %s" %(i, fileList[i])
         ArchiveFile(fileList[i], g_params['maxsize'])
 #}}}

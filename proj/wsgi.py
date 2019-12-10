@@ -19,7 +19,7 @@ rundir = os.path.dirname(os.path.abspath(__file__))
 basedir = "%s/.."%(rundir)
 # Activate the virtual env
 activate_env="%s/env/bin/activate_this.py"%(basedir)
-execfile(activate_env, dict(__file__=activate_env))
+exec(compile(open(activate_env, "rb").read(), activate_env, 'exec'), dict(__file__=activate_env))
 
 #Add the site-packages of the virtualenv
 site.addsitedir("%s/env/lib/python2.7/site-packages/"%(basedir))

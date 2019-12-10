@@ -28,7 +28,7 @@ Examples:
 """%(progname, progname, progname, progname)
 
 def PrintHelp():
-    print usage
+    print(usage)
 
 def GetFromRawSeq(seqWithAnno, isPrintID, isJustPrintSum, fpout):#{{{
 #     begseq=seqWithAnno.find("\n")
@@ -96,7 +96,7 @@ def Getseqlen(infile, isPrintID, isJustPrintSum, BLOCK_SIZE, fpout):#{{{
 
         return 0
     except IOError:
-        print >> sys.stderr, "Failed to read infile %s"%(infile)
+        print("Failed to read infile %s"%(infile), file=sys.stderr)
         return 1
 
 #}}}
@@ -138,10 +138,10 @@ def main(g_params):#{{{#{{{
             elif sys.argv[i] in [ "-bs", "--bs", "-block-size", "--block-size"]:
                 BLOCK_SIZE, i = myfunc.my_getopt_int(sys.argv, i)
                 if BLOCK_SIZE < 0:
-                    print >> sys.stderr,"Error! BLOCK_SIZE should >0"
+                    print("Error! BLOCK_SIZE should >0", file=sys.stderr)
                     return 1
             else:
-                print >> sys.stderr,("Error! Wrong argument:%s" % sys.argv[i])
+                print(("Error! Wrong argument:%s" % sys.argv[i]), file=sys.stderr)
                 return 1
         else:
             infile=sys.argv[i]

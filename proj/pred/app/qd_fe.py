@@ -10,7 +10,7 @@ rundir = os.path.dirname(os.path.realpath(__file__))
 webserver_root = os.path.realpath("%s/../../../"%(rundir))
 
 activate_env="%s/env/bin/activate_this.py"%(webserver_root)
-execfile(activate_env, dict(__file__=activate_env))
+exec(compile(open(activate_env, "rb").read(), activate_env, 'exec'), dict(__file__=activate_env))
 #Add the site-packages of the virtualenv
 site.addsitedir("%s/env/lib/python2.7/site-packages/"%(webserver_root))
 sys.path.append("%s/env/lib/python2.7/site-packages/"%(webserver_root))
@@ -24,7 +24,7 @@ from dateutil import parser as dtparser
 from pytz import timezone
 import requests
 import json
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import shutil
 import hashlib
 import subprocess
@@ -46,7 +46,7 @@ fp = open(lock_file, 'w')
 try:
     fcntl.lockf(fp, fcntl.LOCK_EX | fcntl.LOCK_NB)
 except IOError:
-    print >> sys.stderr, "Another instance of %s is running"%(progname)
+    print("Another instance of %s is running"%(progname), file=sys.stderr)
     sys.exit(1)
 
 contact_email = "nanjiang.shu@scilifelab.se"
@@ -89,9 +89,9 @@ finished_date_db = "%s/cached_job_finished_date.sqlite3"%(path_log)
 vip_email_file = "%s/config/vip_email.txt"%(basedir)
 
 def PrintHelp(fpout=sys.stdout):#{{{
-    print >> fpout, usage_short
-    print >> fpout, usage_ext
-    print >> fpout, usage_exp#}}}
+    print(usage_short, file=fpout)
+    print(usage_ext, file=fpout)
+    print(usage_exp, file=fpout)#}}}
 
 def get_job_status(jobid):#{{{
     status = "";
@@ -150,7 +150,7 @@ def GetNumSeqSameUserDict(joblist):#{{{
 # calculate the number of sequences for each user in the queue or running
 # Fixed error for getting numseq at 2015-04-11
     numseq_user_dict = {}
-    for i in xrange(len(joblist)):
+    for i in range(len(joblist)):
         li1 = joblist[i]
         jobid1 = li1[0]
         ip1 = li1[3]
@@ -166,7 +166,7 @@ def GetNumSeqSameUserDict(joblist):#{{{
         if ip1 == "" and email1 == "":
             continue
 
-        for j in xrange(len(joblist)):
+        for j in range(len(joblist)):
             li2 = joblist[j]
             if i == j:
                 continue
@@ -543,7 +543,7 @@ def SubmitJob(jobid, cntSubmitJobDict, numseq_this_user):#{{{
                     lastprocessed_idx = -1
 
             cnt_processed_cache = 0
-            for i in xrange(lastprocessed_idx+1, len(seqIDList)):
+            for i in range(lastprocessed_idx+1, len(seqIDList)):
                 if i in finished_idx_set:
                     continue
                 outpath_this_seq = "%s/%s"%(outpath_result, "seq_%d"%i)
@@ -589,10 +589,10 @@ def SubmitJob(jobid, cntSubmitJobDict, numseq_this_user):#{{{
 
         # Regenerate toRunDict
         toRunDict = {}
-        for i in xrange(len(seqIDList)):
+        for i in range(len(seqIDList)):
             if not i in processed_idx_set:
                 toRunDict[i] = [seqList[i], 0, seqAnnoList[i].replace('\t', ' ')]
-        sortedlist = sorted(toRunDict.items(), key=lambda x:x[1][1], reverse=True)
+        sortedlist = sorted(list(toRunDict.items()), key=lambda x:x[1][1], reverse=True)
 
         # Write splitted fasta file and write a torunlist.txt
         if not os.path.exists(split_seq_dir):
@@ -810,7 +810,7 @@ def GetResult(jobid):#{{{
             numseq = int(jobinfolist[3])
 
         if len(completed_idx_set) < numseq:
-            all_idx_list = [str(x) for x in xrange(numseq)]
+            all_idx_list = [str(x) for x in range(numseq)]
             torun_idx_str_list = list(set(all_idx_list)-completed_idx_set)
             for idx in torun_idx_str_list:
                 try:
@@ -833,7 +833,7 @@ def GetResult(jobid):#{{{
     lines = text.split("\n")
 
     nodeSet = set([])
-    for i in xrange(len(lines)):
+    for i in range(len(lines)):
         line = lines[i]
         if not line or line[0] == "#":
             continue
@@ -854,7 +854,7 @@ def GetResult(jobid):#{{{
             pass
 
 
-    for i in xrange(len(lines)):#{{{
+    for i in range(len(lines)):#{{{
         line = lines[i]
 
         if g_params['DEBUG']:
@@ -903,10 +903,10 @@ def GetResult(jobid):#{{{
                             gen_logfile, "a", True)
                     if myfunc.IsURLExist(result_url,timeout=5):
                         try:
-                            urllib.urlretrieve (result_url, outfile_zip)
+                            urllib.request.urlretrieve (result_url, outfile_zip)
                             isRetrieveSuccess = True
                             myfunc.WriteFile(" succeeded\n", gen_logfile, "a", True)
-                        except Exception,e:
+                        except Exception as e:
                             myfunc.WriteFile(" failed with %s\n"%(str(e)), gen_logfile, "a", True)
                             pass
                     if os.path.exists(outfile_zip) and isRetrieveSuccess:
@@ -1112,7 +1112,7 @@ def CheckIfJobFinished(jobid, numseq, email):#{{{
         resultfile_text = "%s/%s"%(outpath_result, "query.result.txt")
         (seqIDList, seqAnnoList, seqList) = myfunc.ReadFasta(seqfile)
         maplist = []
-        for i in xrange(len(seqIDList)):
+        for i in range(len(seqIDList)):
             maplist.append("%s\t%d\t%s\t%s"%("seq_%d"%i, len(seqList[i]),
                 seqAnnoList[i], seqList[i]))
         start_date_str = myfunc.ReadFile(starttagfile).strip()
@@ -1318,7 +1318,7 @@ def RunStatistics(path_result, path_log):#{{{
     # output countjob by country
     outfile_countjob_by_country = "%s/countjob_by_country.txt"%(path_stat)
     # sort by numseq in descending order
-    li_countjob = sorted(countjob_country.items(), key=lambda x:x[1][0], reverse=True) 
+    li_countjob = sorted(list(countjob_country.items()), key=lambda x:x[1][0], reverse=True) 
     li_str = []
     li_str.append("#Country\tNumSeq\tNumJob\tNumIP")
     for li in li_countjob:
@@ -1327,13 +1327,13 @@ def RunStatistics(path_result, path_log):#{{{
 
     flist = [outfile_numseqjob, outfile_numseqjob_web, outfile_numseqjob_wsdl  ]
     dictlist = [countjob_numseq_dict, countjob_numseq_dict_web, countjob_numseq_dict_wsdl]
-    for i in xrange(len(flist)):
+    for i in range(len(flist)):
         dt = dictlist[i]
         outfile = flist[i]
-        sortedlist = sorted(dt.items(), key = lambda x:x[0])
+        sortedlist = sorted(list(dt.items()), key = lambda x:x[0])
         try:
             fpout = open(outfile,"w")
-            for j in xrange(len(sortedlist)):
+            for j in range(len(sortedlist)):
                 nseq = sortedlist[j][0]
                 count = sortedlist[j][1]
                 fpout.write("%d\t%d\n"%(nseq,count))
@@ -1388,25 +1388,25 @@ def RunStatistics(path_result, path_log):#{{{
             waittime_numseq_dict , waittime_numseq_dict_web , waittime_numseq_dict_wsdl , finishtime_numseq_dict , finishtime_numseq_dict_web , finishtime_numseq_dict_wsdl
             ]
 
-    for i in xrange(len(flist1)):
+    for i in range(len(flist1)):
         dt = dict_list[i]
         outfile1 = flist1[i]
         outfile2 = flist2[i]
         outfile3 = flist3[i]
-        sortedlist = sorted(dt.items(), key = lambda x:x[0])
+        sortedlist = sorted(list(dt.items()), key = lambda x:x[0])
         try:
             fpout = open(outfile1,"w")
-            for j in xrange(len(sortedlist)):
+            for j in range(len(sortedlist)):
                 nseq = sortedlist[j][0]
                 li_time = sortedlist[j][1]
-                for k in xrange(len(li_time)):
+                for k in range(len(li_time)):
                     fpout.write("%d\t%f\n"%(nseq,li_time[k]))
             fpout.close()
         except IOError:
             pass
         try:
             fpout = open(outfile2,"w")
-            for j in xrange(len(sortedlist)):
+            for j in range(len(sortedlist)):
                 nseq = sortedlist[j][0]
                 li_time = sortedlist[j][1]
                 avg_time = myfunc.FloatDivision(sum(li_time), len(li_time))
@@ -1416,7 +1416,7 @@ def RunStatistics(path_result, path_log):#{{{
             pass
         try:
             fpout = open(outfile3,"w")
-            for j in xrange(len(sortedlist)):
+            for j in range(len(sortedlist)):
                 nseq = sortedlist[j][0]
                 li_time = sortedlist[j][1]
                 median_time = numpy.median(li_time)
@@ -1427,14 +1427,14 @@ def RunStatistics(path_result, path_log):#{{{
 
     # plotting 
     flist = flist1
-    for i in xrange(len(flist)):
+    for i in range(len(flist)):
         outfile = flist[i]
         if os.path.exists(outfile):
             cmd = ["%s/app/plot_nseq_waitfinishtime.sh"%(basedir), outfile]
             webcom.RunCmd(cmd, gen_logfile, gen_errfile)
 
     flist = flist2+flist3
-    for i in xrange(len(flist)):
+    for i in range(len(flist)):
         outfile = flist[i]
         if os.path.exists(outfile):
             cmd = ["%s/app/plot_avg_waitfinishtime.sh"%(basedir), outfile]
@@ -1555,7 +1555,7 @@ def RunStatistics(path_result, path_log):#{{{
     dict_list = [dict_length_runtime, dict_length_runtime_pfam, dict_length_runtime_cdd, dict_length_runtime_uniref]
     li_list = [li_length_runtime_avg, li_length_runtime_pfam_avg, li_length_runtime_cdd_avg, li_length_runtime_uniref_avg]
     li_sum_runtime = [0.0]*len(dict_list)
-    for i in xrange(len(dict_list)):
+    for i in range(len(dict_list)):
         dt = dict_list[i]
         li = li_list[i]
         for lengthseq in dt:
@@ -1576,13 +1576,13 @@ def RunStatistics(path_result, path_log):#{{{
             outfile_runtime_uniref, outfile_runtime_avg,
             outfile_runtime_pfam_avg, outfile_runtime_cdd_avg,
             outfile_runtime_uniref_avg]
-    for i in xrange(len(flist)):
+    for i in range(len(flist)):
         outfile = flist[i]
         li = li_list[i]
         sortedlist = sorted(li, key=lambda x:x[0])
         try:
             fpout = open(outfile,"w")
-            for j in xrange(len(sortedlist)):
+            for j in range(len(sortedlist)):
                 lengthseq = sortedlist[j][0]
                 runtime = sortedlist[j][1]
                 fpout.write("%d\t%f\n"%(lengthseq,runtime))
@@ -1709,14 +1709,14 @@ def RunStatistics(path_result, path_log):#{{{
             li_submit_day_wsdl, li_submit_week_wsdl, li_submit_month_wsdl, li_submit_year_wsdl
             ]
 
-    for i in xrange(len(dict_list)):
+    for i in range(len(dict_list)):
         dt = dict_list[i]
-        sortedlist = sorted(dt.items(), key = lambda x:x[0])
+        sortedlist = sorted(list(dt.items()), key = lambda x:x[0])
         for j in range(3):
             li = li_list[j*4+i]
             k1 = j*2 +1
             k2 = j*2 +2
-            for kk in xrange(len(sortedlist)):
+            for kk in range(len(sortedlist)):
                 items = sortedlist[kk]
                 if items[1][k1] > 0 or items[1][k2] > 0:
                     li.append([items[1][0], items[1][k1], items[1][k2]])
@@ -1738,12 +1738,12 @@ def RunStatistics(path_result, path_log):#{{{
             outfile_submit_day_web , outfile_submit_week_web , outfile_submit_month_web , outfile_submit_year_web ,
             outfile_submit_day_wsdl , outfile_submit_week_wsdl , outfile_submit_month_wsdl , outfile_submit_year_wsdl 
             ]
-    for i in xrange(len(flist)):
+    for i in range(len(flist)):
         outfile = flist[i]
         li = li_list[i]
         try:
             fpout = open(outfile,"w")
-            for j in xrange(len(li)):     # name    njob   nseq
+            for j in range(len(li)):     # name    njob   nseq
                 fpout.write("%s\t%d\t%d\n"%(li[j][0], li[j][1], li[j][2]))
             fpout.close()
         except IOError:
@@ -1899,7 +1899,7 @@ if __name__ == '__main__' :
     g_params = InitGlobalParameter()
 
     date_str = time.strftime(g_params['FORMAT_DATETIME'])
-    print >> sys.stderr, "\n\n[Date: %s]\n"%(date_str)
+    print("\n\n[Date: %s]\n"%(date_str), file=sys.stderr)
     status = main(g_params)
 
     sys.exit(status)

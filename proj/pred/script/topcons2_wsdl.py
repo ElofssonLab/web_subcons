@@ -18,10 +18,10 @@ $ pip install suds
 try:
     from suds.client import Client
 except ImportError:
-    print >> sys.stderr, no_suds_message
+    print(no_suds_message, file=sys.stderr)
     sys.exit(1)
 
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 MAX_FILESIZE_IN_MB = 9
 MAX_FILESIZE = MAX_FILESIZE_IN_MB*1024*1024
@@ -78,18 +78,18 @@ def my_getopt_str(argv, i):#{{{
         if opt[0] == "-":
             msg = "Error! option '%s' must be followed by a string"\
                     ", not an option arg."
-            print >> sys.stderr, msg%(argv[i])
+            print(msg%(argv[i]), file=sys.stderr)
             sys.exit(1)
         return (opt, i+2)
     except IndexError:
         msg = "Error! option '%s' must be followed by a string"
-        print >> sys.stderr, msg%(argv[i])
+        print(msg%(argv[i]), file=sys.stderr)
         sys.exit(1)
 #}}}
 def PrintHelp(fpout=sys.stdout):#{{{
-    print >> fpout, usage_short
-    print >> fpout, usage_ext
-    print >> fpout, usage_exp#}}}
+    print(usage_short, file=fpout)
+    print(usage_ext, file=fpout)
+    print(usage_exp, file=fpout)#}}}
 def ReadFile(infile, mode="r"):#{{{
     try: 
         fpin = open(infile, mode)
@@ -97,8 +97,8 @@ def ReadFile(infile, mode="r"):#{{{
         fpin.close()
         return content
     except IOError:
-        print >> sys.stderr, "Failed to read file %s with mode '%s'"%(infile,
-                mode)
+        print("Failed to read file %s with mode '%s'"%(infile,
+                mode), file=sys.stderr)
         return ""
 #}}}
 
@@ -122,7 +122,7 @@ def main(g_params):#{{{
     isNonOptionArg=False
     while i < numArgv:
         if isNonOptionArg == True:
-            print >> sys.stderr, "Error! Wrong argument:", argv[i]
+            print("Error! Wrong argument:", argv[i], file=sys.stderr)
             return 1
             isNonOptionArg = False
             i += 1
@@ -148,40 +148,40 @@ def main(g_params):#{{{
             elif argv[i] in ["-outpath", "--outpath"]:
                 (outpath, i) = my_getopt_str(argv, i)
             else:
-                print >> sys.stderr, "Error! Wrong argument:", argv[i]
+                print("Error! Wrong argument:", argv[i], file=sys.stderr)
                 return 1
         else:
-            print >> sys.stderr, "Error! Wrong argument:", argv[i]
+            print("Error! Wrong argument:", argv[i], file=sys.stderr)
             return 1
 
     if mode == "":
-        print >> sys.stderr, "mode not set. exit!"
-        print usage_short
+        print("mode not set. exit!", file=sys.stderr)
+        print(usage_short)
         return 1
     elif not mode in ["submit", "get"]:
-        print >> sys.stderr, "unrecognized mode. exit!"
-        print usage_short
+        print("unrecognized mode. exit!", file=sys.stderr)
+        print(usage_short)
         return 1
 
     if mode == "submit":
         if seqfile == "":
-            print >> sys.stderr, "You want to submit a job but seqfile not set. exit!"
-            print usage_short
+            print("You want to submit a job but seqfile not set. exit!", file=sys.stderr)
+            print(usage_short)
             return 1
         elif not os.path.exists(seqfile):
-            print >> sys.stderr, "seqfile %s does not exist. exit!"%(seqfile)
+            print("seqfile %s does not exist. exit!"%(seqfile), file=sys.stderr)
             return 1
 
         try:
             filesize = os.path.getsize(seqfile)
         except OSError:
-            print >> sys.stderr, "failed to get the size of seqfile %s. exit"%(seqfile)
+            print("failed to get the size of seqfile %s. exit"%(seqfile), file=sys.stderr)
             return 1
 
         if filesize >= MAX_FILESIZE:
-            print >> sys.stderr, "You input seqfile %s exceeds the "\
-                    "upper limit %d Mb."%(seqfile, MAX_FILESIZE_IN_MB)
-            print >> sys.stderr, "Please split your seqfile and submit again."
+            print("You input seqfile %s exceeds the "\
+                    "upper limit %d Mb."%(seqfile, MAX_FILESIZE_IN_MB), file=sys.stderr)
+            print("Please split your seqfile and submit again.", file=sys.stderr)
             return 1
         seq = ReadFile(seqfile)
 
@@ -198,22 +198,22 @@ def main(g_params):#{{{
             errinfo = strs[3]
             warninfo = strs[4]
             if jobid != "None" and jobid != "":
-                print "You have successfully submitted your job "\
-                        "with %s sequences. jobid = %s"%(numseq_str, jobid)
+                print("You have successfully submitted your job "\
+                        "with %s sequences. jobid = %s"%(numseq_str, jobid))
                 if warninfo != "" and warninfo != "None":
-                    print "Warning message:\n", warninfo
+                    print("Warning message:\n", warninfo)
             else:
-                print "Failed to submit job!"
+                print("Failed to submit job!")
                 if errinfo != "" and errinfo != "None":
-                    print "Error message:\n", errinfo
+                    print("Error message:\n", errinfo)
                 if warninfo != "" and warninfo != "None":
-                    print "Warning message:\n", warninfo
+                    print("Warning message:\n", warninfo)
         else:
-            print "Failed to submit job!"
+            print("Failed to submit job!")
             return 1
     else:
         if jobid == "":
-            print >> sys.stderr, "You want to get the result of a job but jobid not set. exit!"
+            print("You want to get the result of a job but jobid not set. exit!", file=sys.stderr)
             return 1
         myclient = Client(wsdl_url, cache=None)
         retValue = myclient.service.checkjob(jobid)
@@ -223,29 +223,29 @@ def main(g_params):#{{{
             result_url = strs[1]
             errinfo = strs[2]
             if status == "Failed":
-                print "Your job with jobid %s is failed!"%(jobid)
+                print("Your job with jobid %s is failed!"%(jobid))
                 if errinfo != "" and errinfo != "None":
-                    print "Error message:\n", errinfo
+                    print("Error message:\n", errinfo)
             elif status == "Finished":
-                print "Your job with jobid %s is finished!"%(jobid)
+                print("Your job with jobid %s is finished!"%(jobid))
                 if not os.path.exists(outpath):
                     try:
                         os.makedirs(outpath)
                     except OSError:
-                        print "Failed to create the outpath %s"%(outpath)
+                        print("Failed to create the outpath %s"%(outpath))
                         return 1
                 outfile = "%s/%s.zip"%(outpath, jobid)
-                urllib.urlretrieve (result_url, outfile)
+                urllib.request.urlretrieve (result_url, outfile)
                 if os.path.exists(outfile):
-                    print "The result file %s has been retrieved for jobid %s"%(outfile, jobid)
+                    print("The result file %s has been retrieved for jobid %s"%(outfile, jobid))
                 else:
-                    print "Failed to retrieve result for jobid %s"%(jobid)
+                    print("Failed to retrieve result for jobid %s"%(jobid))
             elif status == "None":
-                print "Your job with jobid %s does not exist! Please check you typing!"%(jobid)
+                print("Your job with jobid %s does not exist! Please check you typing!"%(jobid))
             else:
-                print "Your job with jobid %s is not ready, status = %s"%(jobid, status)
+                print("Your job with jobid %s is not ready, status = %s"%(jobid, status))
         else:
-            print "Failed to get job!"
+            print("Failed to get job!")
             return 1
 
     return 0

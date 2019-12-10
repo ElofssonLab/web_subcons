@@ -41,7 +41,7 @@ class ReadLineByBlock:#{{{
         try: 
             self.fpin = open(infile, "rb")
         except IOError:
-            print >> sys.stderr, "Failed to read file %s"%(self.filename)
+            print("Failed to read file %s"%(self.filename), file=sys.stderr)
             self.failure = True
             return None
         self.unprocessedBuff = ""
@@ -50,14 +50,14 @@ class ReadLineByBlock:#{{{
         try:
             self.fpin.close()
         except IOError:
-            print >> sys.stderr, "Failed to close file %s"%(self.filename)
+            print("Failed to close file %s"%(self.filename), file=sys.stderr)
             return 1
 #}}}
     def close(self):#{{{
         try:
             self.fpin.close()
         except IOError:
-            print >> sys.stderr, "Failed to close file %s"%(self.filename)
+            print("Failed to close file %s"%(self.filename), file=sys.stderr)
             return 1
 #}}}
     def readlines(self):#{{{

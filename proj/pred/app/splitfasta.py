@@ -59,7 +59,7 @@ Examples:
 """%(progname, progname, progname, progname, progname)
 
 def PrintHelp():
-    print usage
+    print(usage)
 
 
 def OutputSplittedSeq(seqWithAnno, rootname, cntsplit, #{{{
@@ -84,7 +84,7 @@ def OutputSplittedSeq(seqWithAnno, rootname, cntsplit, #{{{
             try:
                 fpout = open(outfile,"w")
             except IOError:
-                print >> sys.stderr ,"Failed to write to file %s"%outfile
+                print("Failed to write to file %s"%outfile, file=sys.stderr)
                 return 1
 
         fpout.write("%s"%seqWithAnno[0:begseq])
@@ -98,11 +98,11 @@ def OutputSplittedSeq(seqWithAnno, rootname, cntsplit, #{{{
             cntsplit += 1
         if g_params['verbose'] >= 2:
             if outfile != "":
-                print >> sys.stdout, "split %d\t%s output"%(cntsplit, outfile)
+                print("split %d\t%s output"%(cntsplit, outfile), file=sys.stdout)
     else:
         msg = "Error! cntseq_of_split (%d) >= numseq_per_split (%d)"
-        print >> sys.stderr,  msg%(cntseq_of_split,
-                g_params['numseq_per_split'])
+        print(msg%(cntseq_of_split,
+                g_params['numseq_per_split']), file=sys.stderr)
 
     return (cntsplit, cntseq_of_split, fpout)
 #}}}
@@ -117,7 +117,7 @@ def SplitFasta(inFile):#{{{
         if g_params['verbose'] >= 1:
             msg = "file %s (with %d sequences) is going to"\
                     "be splitted into %d files"
-            print  msg%(inFile, numTotalSeq, g_params['numsplit'])
+            print(msg%(inFile, numTotalSeq, g_params['numsplit']))
 
     rootname = os.path.basename(os.path.splitext(inFile)[0])
 
@@ -227,7 +227,7 @@ def main(g_params): #{{{
                 g_params['numseq_per_split'] = int(argv[i+1])
                 i = i + 2
             else:
-                print >> sys.stderr,("Error! Wrong argument:%s" % sys.argv[i])
+                print(("Error! Wrong argument:%s" % sys.argv[i]), file=sys.stderr)
                 return 1
         else:
             inFile = sys.argv[i]
@@ -237,10 +237,10 @@ def main(g_params): #{{{
         g_params['verbose'] = 0
 
     if inFile == "":
-        print sys.stderr, "infile not set. Exit."
+        print(sys.stderr, "infile not set. Exit.")
         return 1
     elif not os.path.exists(inFile):
-        print >> sys.stderr,"infile %s does not exist. Exit."%(inFile)
+        print("infile %s does not exist. Exit."%(inFile), file=sys.stderr)
         return 1
 
     if not os.path.exists(g_params['outpath']):
@@ -252,15 +252,15 @@ def main(g_params): #{{{
         g_params['isNameFileSequentially'] = True
     else:
         msg = "Wrong namemode (%d). Exit."
-        print >> sys.stderr, msg%(g_params['namemode'])
+        print(msg%(g_params['namemode']), file=sys.stderr)
         return 1
 
 #     print "namemode", g_params['namemode']
 #     print g_params['isNameFileSequentially']
     numSeq = SplitFasta(inFile)
     if g_params['verbose'] >= 1:
-        print "%d sequences are splitted and output to %s"%(
-            numSeq, g_params['outpath'])
+        print("%d sequences are splitted and output to %s"%(
+            numSeq, g_params['outpath']))
 
     return 0
 #}}}

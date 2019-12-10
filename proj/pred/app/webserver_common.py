@@ -32,11 +32,11 @@ def WriteSubconsTextResultFile(outfile, outpath_result, maplist,#{{{
             fpstat = open(statfile, "w")
 
         date_str = time.strftime(FORMAT_DATETIME)
-        print >> fpout, "##############################################################################"
-        print >> fpout, "Subcons result file"
-        print >> fpout, "Generated from %s at %s"%(base_www_url, date_str)
-        print >> fpout, "Total request time: %.1f seconds."%(runtime_in_sec)
-        print >> fpout, "##############################################################################"
+        print("##############################################################################", file=fpout)
+        print("Subcons result file", file=fpout)
+        print("Generated from %s at %s"%(base_www_url, date_str), file=fpout)
+        print("Total request time: %.1f seconds."%(runtime_in_sec), file=fpout)
+        print("##############################################################################", file=fpout)
         cnt = 0
         for line in maplist:
             strs = line.split('\t')
@@ -45,10 +45,10 @@ def WriteSubconsTextResultFile(outfile, outpath_result, maplist,#{{{
             desp = strs[2]
             seq = strs[3]
             seqid = myfunc.GetSeqIDFromAnnotation(desp)
-            print >> fpout, "Sequence number: %d"%(cnt+1)
-            print >> fpout, "Sequence name: %s"%(desp)
-            print >> fpout, "Sequence length: %d aa."%(length)
-            print >> fpout, "Sequence:\n%s\n\n"%(seq)
+            print("Sequence number: %d"%(cnt+1), file=fpout)
+            print("Sequence name: %s"%(desp), file=fpout)
+            print("Sequence length: %d aa."%(length), file=fpout)
+            print("Sequence:\n%s\n\n"%(seq), file=fpout)
 
             rstfile1 = "%s/%s/%s/query_0_final.csv"%(outpath_result, subfoldername, "plot")
             rstfile2 = "%s/%s/query_0_final.csv"%(outpath_result, subfoldername)
@@ -69,7 +69,7 @@ def WriteSubconsTextResultFile(outfile, outpath_result, maplist,#{{{
                         header_line = [x.strip() for x in header_line]
 
                     data_line = []
-                    for i in xrange(1, len(lines)):
+                    for i in range(1, len(lines)):
                         strs1 = lines[i].split("\t")
                         strs1 = [x.strip() for x in strs1]
                         data_line.append(strs1)
@@ -80,13 +80,13 @@ def WriteSubconsTextResultFile(outfile, outpath_result, maplist,#{{{
             if content == "":
                 content = "***No prediction could be produced with this method***"
 
-            print >> fpout, "Prediction results:\n\n%s\n\n"%(content)
+            print("Prediction results:\n\n%s\n\n"%(content), file=fpout)
 
-            print >> fpout, "##############################################################################"
+            print("##############################################################################", file=fpout)
             cnt += 1
 
     except IOError:
-        print "Failed to write to file %s"%(outfile)
+        print("Failed to write to file %s"%(outfile))
 #}}}
 def ReplaceDescriptionSingleFastaFile(infile, new_desp):#{{{
     """Replace the description line of the fasta file by the new_desp
@@ -121,7 +121,7 @@ def GetLocDef(predfile):#{{{
                 if strs0[1] == "LOC_DEF":
                     loc_def = strs1[1]
                     dt_score = {}
-                    for i in xrange(2, len(strs0)):
+                    for i in range(2, len(strs0)):
                         dt_score[strs0[i]] = strs1[i]
                     if loc_def in dt_score:
                         loc_def_score = dt_score[loc_def]
@@ -312,7 +312,7 @@ def ValidateSeq(rawseq, seqinfo, g_params):#{{{
 # checking for bad sequences in the query
 
     if seqinfo['isValidSeq']:
-        for i in xrange(numseq):
+        for i in range(numseq):
             seq = seqRecordList[i][2].strip()
             anno = seqRecordList[i][1].strip().replace('\t', ' ')
             seqid = seqRecordList[i][0].strip()
@@ -320,7 +320,7 @@ def ValidateSeq(rawseq, seqinfo, g_params):#{{{
             seq = re.sub("[\s\n\r\t]", '', seq)
             li1 = [m.start() for m in re.finditer("[^ABCDEFGHIKLMNPQRSTUVWYZX*-]", seq)]
             if len(li1) > 0:
-                for j in xrange(len(li1)):
+                for j in range(len(li1)):
                     msg = "Bad letter for amino acid in sequence %s (SeqNo. %d) "\
                             "at position %d (letter: '%s')"%(seqid, i+1,
                                     li1[j]+1, seq[li1[j]])
@@ -339,7 +339,7 @@ def ValidateSeq(rawseq, seqinfo, g_params):#{{{
 #    *, - will be deleted
     if seqinfo['isValidSeq']:
         li_newseq = []
-        for i in xrange(numseq):
+        for i in range(numseq):
             seq = seqRecordList[i][2].strip()
             anno = seqRecordList[i][1].strip()
             seqid = seqRecordList[i][0].strip()
@@ -350,7 +350,7 @@ def ValidateSeq(rawseq, seqinfo, g_params):#{{{
 
             li1 = [m.start() for m in re.finditer("[BZ]", seq)]
             if len(li1) > 0:
-                for j in xrange(len(li1)):
+                for j in range(len(li1)):
                     msg = "Amino acid in sequence %s (SeqNo. %d) at position %d "\
                             "(letter: '%s') has been replaced by 'X'"%(seqid,
                                     i+1, li1[j]+1, seq[li1[j]])
@@ -359,7 +359,7 @@ def ValidateSeq(rawseq, seqinfo, g_params):#{{{
 
             li1 = [m.start() for m in re.finditer("[U]", seq)]
             if len(li1) > 0:
-                for j in xrange(len(li1)):
+                for j in range(len(li1)):
                     msg = "Amino acid in sequence %s (SeqNo. %d) at position %d "\
                             "(letter: '%s') has been replaced by 'C'"%(seqid,
                                     i+1, li1[j]+1, seq[li1[j]])
@@ -368,7 +368,7 @@ def ValidateSeq(rawseq, seqinfo, g_params):#{{{
 
             li1 = [m.start() for m in re.finditer("[*]", seq)]
             if len(li1) > 0:
-                for j in xrange(len(li1)):
+                for j in range(len(li1)):
                     msg = "Translational stop in sequence %s (SeqNo. %d) at position %d "\
                             "(letter: '%s') has been deleted"%(seqid,
                                     i+1, li1[j]+1, seq[li1[j]])
@@ -377,7 +377,7 @@ def ValidateSeq(rawseq, seqinfo, g_params):#{{{
 
             li1 = [m.start() for m in re.finditer("[-]", seq)]
             if len(li1) > 0:
-                for j in xrange(len(li1)):
+                for j in range(len(li1)):
                     msg = "Gap in sequence %s (SeqNo. %d) at position %d "\
                             "(letter: '%s') has been deleted"%(seqid,
                                     i+1, li1[j]+1, seq[li1[j]])
@@ -407,7 +407,7 @@ def InsertFinishDateToDB(date_str, md5_key, seq, outdb):# {{{
     try:
         con = sqlite3.connect(outdb)
     except Exception as e:
-        print("Failed to connect to the database outdb %s"%(outdb))
+        print(("Failed to connect to the database outdb %s"%(outdb)))
     with con:
         cur = con.cursor()
         cur.execute("""
@@ -422,7 +422,7 @@ def InsertFinishDateToDB(date_str, md5_key, seq, outdb):# {{{
             cur.execute(cmd)
             return 0
         except Exception as e:
-            print >> sys.stderr, "Exception %s"%(str(e))
+            print("Exception %s"%(str(e)), file=sys.stderr)
             return 1
 
 # }}}
@@ -442,7 +442,7 @@ def RunCmd(cmd, logfile, errfile, verbose=False):# {{{
             msg = "workflow: %s"%(cmdline)
             myfunc.WriteFile("[%s] %s\n"%(date_str, msg),  logfile, "a", True)
         isCmdSuccess = True
-    except subprocess.CalledProcessError, e:
+    except subprocess.CalledProcessError as e:
         msg = "cmdline: %s\nFailed with message \"%s\""%(cmdline, str(e))
         myfunc.WriteFile("[%s] %s\n"%(date_str, msg),  errfile, "a", True)
         isCmdSuccess = False

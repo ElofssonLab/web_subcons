@@ -17,7 +17,7 @@ sys.path.append("%s/pred/app/"%(BASE_DIR))
 import myfunc
 
 try:
-    from shared_settings import *
+    from .shared_settings import *
 except ImportError:
     pass
 

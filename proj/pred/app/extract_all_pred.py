@@ -43,7 +43,7 @@ def OutputRecord(seqnumber, jobid, idx, path_result, fpout):
 
         return 0
     else:
-        print >> sys.stderr, "resultfile %s does not exist"%(resultfile)
+        print("resultfile %s does not exist"%(resultfile), file=sys.stderr)
         return 1
 
 
@@ -54,13 +54,13 @@ Usage: %s jobruntimeFile path_result [OUTFILE]
 try:
     jobruntimeFile = sys.argv[1]
 except:
-    print usage
+    print(usage)
     sys.exit(1)
 
 try:
     path_result = sys.argv[2]
 except:
-    print usage
+    print(usage)
     sys.exit(1)
 
 outfile=""

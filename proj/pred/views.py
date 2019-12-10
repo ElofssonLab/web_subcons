@@ -1069,25 +1069,7 @@ def get_reference(request):#{{{
 
 def get_serverstatus(request):#{{{
     info = {}
-
-    username = request.user.username
-    client_ip = request.META['REMOTE_ADDR']
-    if username in settings.SUPER_USER_LIST:
-        isSuperUser = True
-        divided_logfile_query =  "%s/%s/%s"%(SITE_ROOT,
-                "static/log", "submitted_seq.log")
-        divided_logfile_finished_jobid =  "%s/%s/%s"%(SITE_ROOT,
-                "static/log", "finished_job.log")
-    else:
-        isSuperUser = False
-        divided_logfile_query =  "%s/%s/%s"%(SITE_ROOT,
-                "static/log/divided", "%s_submitted_seq.log"%(client_ip))
-        divided_logfile_finished_jobid =  "%s/%s/%s"%(SITE_ROOT,
-                "static/log/divided", "%s_finished_job.log"%(client_ip))
-
-    info['username'] = username
-    info['isSuperUser'] = isSuperUser
-    info['client_ip'] = client_ip
+    set_basic_config(request, info)
 
     logfile_finished =  "%s/%s/%s"%(SITE_ROOT, "static/log", "finished_job.log")
     logfile_runjob =  "%s/%s/%s"%(SITE_ROOT, "static/log", "runjob_log.log")
@@ -1100,19 +1082,6 @@ def get_serverstatus(request):#{{{
 
 # get jobs queued locally (at the front end)
     num_seq_in_local_queue = 0
-    cmd = [suq_exec, "-b", suq_basedir, "ls"]
-    cmdline = " ".join(cmd)
-    try:
-        suq_ls_content =  myfunc.check_output(cmd, stderr=subprocess.STDOUT)
-        lines = suq_ls_content.split("\n")
-        cntjob = 0
-        for line in lines:
-            if line.find("runjob") != -1:
-                cntjob += 1
-        num_seq_in_local_queue = cntjob
-    except subprocess.CalledProcessError as e:
-        date_str = time.strftime(g_params['FORMAT_DATETIME'])
-        myfunc.WriteFile("[%s] %s\n"%(date_str, str(e)), gen_errfile, "a", True)
 
 # get jobs queued remotely ()
     runjob_dict = {}

@@ -307,7 +307,7 @@ def submit_seq(request):#{{{
             query['Cfix'] = Cfix
             query['fix_str'] = fix_str
             query['isForceRun'] = isForceRun
-            query['username'] = username
+            query['username'] = info['username']
             query['STATIC_URL'] = settings.STATIC_URL
 
             is_valid = webcom.ValidateQuery(request, query, g_params)

@@ -647,7 +647,7 @@ def SubmitJob(jobid, cntSubmitJobDict, numseq_this_user):#{{{
                 webcom.loginfo("Failed to access %s"%(wsdl_url), gen_errfile)
                 break
 
-            [cnt, maxnum] = cntSubmitJobDict[node]
+            [cnt, maxnum, queue_method] = cntSubmitJobDict[node]
             cnttry = 0
             while cnt < maxnum and iToRun < numToRun:
                 origIndex = int(toRunIndexList[iToRun])
@@ -689,6 +689,9 @@ def SubmitJob(jobid, cntSubmitJobDict, numseq_this_user):#{{{
                         query_para['name_software'] = "docker_subcons"
                     else:
                         query_para['name_software'] = "subcons"
+                    query_para['queue_method'] = queue_method
+                    if (queue_method == 'slurm'):
+                        query_para['name_software'] = "singularity_subcons"
 
                     para_str = json.dumps(query_para, sort_keys=True)
                     jobname = ""
@@ -1768,13 +1771,8 @@ def main(g_params):#{{{
 
     loop = 0
     while 1:
-        isOldRstdirDeleted = False
-        if loop % 500 == 50:
-            RunStatistics(path_result, path_log)
-            isOldRstdirDeleted = webcom.DeleteOldResult(path_result, path_log, gen_logfile, MAX_KEEP_DAYS=g_params['MAX_KEEP_DAYS'])
-            webcom.CleanServerFile(gen_logfile, gen_errfile)
-        webcom.ArchiveLogFile(path_log, threshold_logfilesize=threshold_logfilesize) 
-
+        if os.path.exists("%s/CACHE_CLEANING_IN_PROGRESS"%(path_result)):#pause when cache cleaning is in progress
+            continue
         # load the config file if exists
         configfile = "%s/config/config.json"%(basedir)
         config = {}
@@ -1791,13 +1789,19 @@ def main(g_params):#{{{
         os.environ['TZ'] = g_params['TZ']
         time.tzset()
 
-        avail_computenode_list = myfunc.ReadIDList2(computenodefile, col=0)
-        num_avail_node = len(avail_computenode_list)
+        avail_computenode = webcom.ReadComputeNode(computenodefile) # return value is a dict
         g_params['vip_user_list'] = myfunc.ReadIDList2(vip_email_file,  col=0)
-        if loop == 0:
-            webcom.loginfo("start %s. loop %d"%(progname, loop), gen_logfile)
-        else:
-            webcom.loginfo("loop %d"%(loop), gen_logfile)
+        num_avail_node = len(avail_computenode)
+
+        webcom.loginfo("loop %d"%(loop), gen_logfile)
+
+        isOldRstdirDeleted = False
+        if loop % g_params['STATUS_UPDATE_FREQUENCY'][0] == g_params['STATUS_UPDATE_FREQUENCY'][1]:
+            RunStatistics(path_result, path_log)
+            isOldRstdirDeleted = webcom.DeleteOldResult(path_result, path_log,
+                    gen_logfile, MAX_KEEP_DAYS=g_params['MAX_KEEP_DAYS'])
+            webcom.CleanServerFile(path_static, gen_logfile, gen_errfile)
+        webcom.ArchiveLogFile(path_log, threshold_logfilesize=threshold_logfilesize) 
 
         CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,
                 finishedjoblogfile, loop, isOldRstdirDeleted)
@@ -1823,15 +1827,15 @@ def main(g_params):#{{{
                             remotequeueDict[node].append(remotejobid)
 
         cntSubmitJobDict = {} # format of cntSubmitJobDict {'node_ip': INT, 'node_ip': INT}
-        for node in avail_computenode_list:
-            #num_queue_job = GetNumSuqJob(node)
+        for node in avail_computenode:
+            queue_method = avail_computenode[node]['queue_method']
             num_queue_job = len(remotequeueDict[node])
             if num_queue_job >= 0:
                 cntSubmitJobDict[node] = [num_queue_job,
-                        g_params['MAX_SUBMIT_JOB_PER_NODE']] #[num_queue_job, max_allowed_job]
+                        g_params['MAX_SUBMIT_JOB_PER_NODE'], queue_method]
             else:
                 cntSubmitJobDict[node] = [g_params['MAX_SUBMIT_JOB_PER_NODE'],
-                        g_params['MAX_SUBMIT_JOB_PER_NODE']] #[num_queue_job, max_allowed_job]
+                        g_params['MAX_SUBMIT_JOB_PER_NODE'], queue_method]
 
 # entries in runjoblogfile includes jobs in queue or running
         hdl = myfunc.ReadLineByBlock(runjoblogfile)
@@ -1896,6 +1900,7 @@ def InitGlobalParameter():#{{{
     g_params['FORMAT_DATETIME'] = webcom.FORMAT_DATETIME
     g_params['TZ'] = "Europe/Stockholm"
     g_params['MAX_CACHE_PROCESS'] = 200 # process at the maximum this cached sequences in one loop
+    g_params['STATUS_UPDATE_FREQUENCY'] = [500, 50]  # updated by if loop%$1 == $2
     return g_params
 #}}}
 if __name__ == '__main__' :

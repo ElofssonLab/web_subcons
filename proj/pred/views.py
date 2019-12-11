@@ -73,14 +73,6 @@ path_md5 = "%s/static/md5"%(SITE_ROOT)
 
 python_exec = os.path.realpath("%s/../../env/bin/python"%(SITE_ROOT))
 
-suq_basedir = "/tmp"
-if os.path.exists("/scratch"):
-    suq_basedir = "/scratch"
-elif os.path.exists("/tmp"):
-    suq_basedir = "/tmp"
-rundir = SITE_ROOT
-suq_exec = "/usr/bin/suq";
-
 qd_fe_scriptfile = "%s/qd_fe.py"%(path_app)
 gen_errfile = "%s/static/log/%s_err"%(SITE_ROOT, progname)
 gen_logfile = "%s/static/log/%s_log"%(SITE_ROOT, progname)

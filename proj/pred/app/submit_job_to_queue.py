@@ -27,10 +27,6 @@ basedir = os.path.realpath("%s/../"%(rundir))
 python_exec = os.path.realpath("%s/../../env/bin/python"%(basedir))
 virt_env_path = os.path.realpath("%s/../../env"%(basedir))   
 suq_basedir = "/tmp"
-if os.path.exists("/scratch"):
-    suq_basedir = "/scratch"
-elif os.path.exists("/tmp"):
-    suq_basedir = "/tmp"
 gen_errfile = "%s/static/log/%s.log"%(basedir, progname)
 
 usage_short="""

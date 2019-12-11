@@ -10,10 +10,11 @@
 #   try
 import os
 import sys
-import myfunc
 import subprocess
 import time
 import math
+from libpredweb import myfunc
+from libpredweb import webserver_common as webcom
 suq_exec = "/usr/bin/suq"
 progname =  os.path.basename(__file__)
 wspace = ''.join([" "]*len(progname))
@@ -166,7 +167,7 @@ def main(g_params):#{{{
     isNonOptionArg=False
     while i < numArgv:
         if isNonOptionArg == True:
-            print("Error! Wrong argument:", argv[i], file=g_params['fperr'])
+            webcom.loginfo("Error! Wrong argument: %s"% (argv[i]), gen_errfile)
             return 1
             isNonOptionArg = False
             i += 1
@@ -203,14 +204,14 @@ def main(g_params):#{{{
                 g_params['isQuiet'] = True
                 i += 1
             else:
-                print("Error! Wrong argument:", argv[i], file=g_params['fperr'])
+                webcom.loginfo("Error! Wrong argument: %s"%(argv[i]), gen_errfile)
                 return 1
         else:
-            print("Error! Wrong argument:", argv[i], file=g_params['fperr'])
+            webcom.loginfo("Error! Wrong argument: %s"%(argv[i]), gen_errfile)
             return 1
 
     if outpath == "":
-        print("outpath not set. exit", file=g_params['fperr'])
+        webcom.loginfo("outpath not set. exit", gen_errfile)
         return 1
     elif not os.path.exists(outpath):
         cmd =  ["mkdir", "-p", outpath]
@@ -222,17 +223,17 @@ def main(g_params):#{{{
             return 1
 
     if jobid == "":
-        print("%s: jobid not set. exit"%(sys.argv[0]), file=g_params['fperr'])
+        webcom.loginfo("%s: jobid not set. exit"%(sys.argv[0]), gen_errfile)
         return 1
 
     if datapath == "":
-        print("%s: datapath not set. exit"%(sys.argv[0]), file=g_params['fperr'])
+        webcom.loginfo("%s: datapath not set. exit"%(sys.argv[0]), gen_errfile)
         return 1
     elif not os.path.exists(datapath):
-        print("%s: datapath does not exist. exit"%(sys.argv[0]), file=g_params['fperr'])
+        webcom.loginfo("%s: datapath does not exist. exit"%(sys.argv[0]), gen_errfile)
         return 1
     elif not os.path.exists("%s/query.fa"%(datapath)):
-        print("%s: file %s/query.fa does not exist. exit"%(sys.argv[0], datapath), file=g_params['fperr'])
+        webcom.loginfo("%s: file %s/query.fa does not exist. exit"%(sys.argv[0], datapath), gen_errfile)
         return 1
 
     g_params['debugfile'] = "%s/debug.log"%(outpath)
@@ -248,19 +249,9 @@ def InitGlobalParameter():#{{{
     g_params['isQuiet'] = True
     g_params['isForceRun'] = False
     g_params['isOnlyGetCache'] = False
-    g_params['fperr'] = None
     return g_params
 #}}}
 if __name__ == '__main__' :
     g_params = InitGlobalParameter()
-    try:
-        g_params['fperr'] = open(gen_errfile, "a")
-    except IOError:
-        g_params['fperr'] = sys.stderr
-        pass
-    g_params = InitGlobalParameter()
-    status = main(g_params)
-    if g_params['fperr'] and g_params['fperr'] != sys.stderr:
-        g_params['fperr'].close()
-    sys.exit(status)
+    sys.exit(main(g_params))
 

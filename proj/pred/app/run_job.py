@@ -326,7 +326,7 @@ def RunJob(infile, outpath, tmpdir, email, jobid, g_params):#{{{
             else:
                 finish_status = "failed"
             webcom.SendEmail_on_finish(jobid, g_params['base_www_url'],
-                    finish_status, name_server="SubCons", from_email="SubCons@subcons.bioinfo.se)",
+                    finish_status, name_server="SubCons", from_email="no-reply.SubCons@bioinfo.se)",
                     to_email=email, contact_email=contact_email,
                     logfile=runjob_logfile, errfile=runjob_errfile)
 

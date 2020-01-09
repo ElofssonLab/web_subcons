@@ -150,7 +150,7 @@ def CreateRunJoblog(path_result, submitjoblogfile, runjoblogfile,#{{{
                     new_finished_list.append(li)
                 continue
 
-            status = webcom.get_job_status(jobid)
+            status = webcom.get_job_status(jobid, path_result)
             if 'DEBUG_JOB_STATUS' in g_params and g_params['DEBUG_JOB_STATUS']:
                 webcom.loginfo("status(%s): %s"%(jobid, status), gen_logfile)
 

@@ -225,6 +225,7 @@ def InitGlobalParameter():#{{{
     g_params['MAX_RESUBMIT'] = 2
     g_params['MAX_SUBMIT_TRY'] = 3
     g_params['MAX_TIME_IN_REMOTE_QUEUE'] = 3600*24 # one day in seconds
+    g_params['UPPER_WAIT_TIME_IN_SEC'] = 60
     g_params['FORMAT_DATETIME'] = webcom.FORMAT_DATETIME
     g_params['TZ'] = "Europe/Stockholm"
     g_params['MAX_CACHE_PROCESS'] = 200 # process at the maximum this cached sequences in one loop

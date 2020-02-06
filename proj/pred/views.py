@@ -310,15 +310,14 @@ def submit_seq(request):#{{{
 
 
                 if query['numseq'] < 0: #go to result page anyway
-                    query['jobcounter'] = GetJobCounter(client_ip, isSuperUser,
-                            divided_logfile_query, divided_logfile_finished_jobid)
-                    return render(request, 'pred/thanks.html', query)
+                    info['jobcounter'] = webcom.GetJobCounter(info)
+                    return render(request, 'pred/thanks.html', info)
                 else:
                     return get_results(request, jobid)
 
             else:
-                query['jobcounter'] = webcom.GetJobCounter(info)
-                return render(request, 'pred/badquery.html', query)
+                info['jobcounter'] = webcom.GetJobCounter(info)
+                return render(request, 'pred/badquery.html', info)
 
     # if a GET (or any other method) we'll create a blank form
     else:

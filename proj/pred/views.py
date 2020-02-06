@@ -128,7 +128,7 @@ def index(request):#{{{
 def findjob(request):#{{{
     info = {}
     errmsg = ""
-    set_basic_config(request, info)
+    webcom.set_basic_config(request, info, g_params)
     all_logfile_query =  "%s/%s/%s"%(SITE_ROOT, "static/log", "submitted_seq.log")
     info['header'] = ["No.", "JobID","JobName", "NumSeq", "Email", "Submit date"]
     matched_list = []

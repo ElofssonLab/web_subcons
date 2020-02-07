@@ -545,29 +545,6 @@ def oldtopcons(request):#{{{
 def download(request):#{{{
     info = {}
     webcom.set_basic_config(request, info, g_params)
-
-    info['zipfile_wholepackage'] = ""
-    info['zipfile_database'] = ""
-    info['size_wholepackage'] = ""
-    info['size_database'] = ""
-    size_wholepackage = 0
-    zipfile_wholepackage = "%s/%s/%s"%(SITE_ROOT, "static/download", "topcons2.0_Linux_x64_with_database.zip")
-    zipfile_database = "%s/%s/%s"%(SITE_ROOT, "static/download", "topcons2_database.zip")
-    md5file_database = "%s/%s/%s"%(SITE_ROOT, "static/download", "topcons2_database.zip.md5")
-    if os.path.exists(zipfile_wholepackage):
-        info['zipfile_wholepackage'] = os.path.basename(zipfile_wholepackage)
-        size_wholepackage = os.path.getsize(os.path.realpath(zipfile_wholepackage))
-        size_wholepackage_str = myfunc.Size_byte2human(size_wholepackage)
-        info['size_wholepackage'] = size_wholepackage_str
-    if os.path.exists(zipfile_database):
-        info['zipfile_database'] = os.path.basename(zipfile_database)
-        size_database = os.path.getsize(os.path.realpath(zipfile_database))
-        size_database_str = myfunc.Size_byte2human(size_database)
-        info['size_database'] = size_database_str
-    if os.path.exists(md5file_database):
-        md5_key = myfunc.ReadFile(md5file_database).strip()
-        info['md5_key_zipfile_database'] = md5_key
-
     info['jobcounter'] = webcom.GetJobCounter(info)
     return render(request, 'pred/download.html', info)
 #}}}

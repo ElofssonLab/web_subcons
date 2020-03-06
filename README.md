@@ -3,9 +3,9 @@
 ## Description
 
     This is the web-server implementation of the SubCons workflow.
-    The web-server is developed with Django 1.11.15 LTS
+    The web-server is developed with Django 2.2.7+ and Python 3.6+
 
-    This software is open source and licensed under the GPL-3.0 license
+    This software is open source and licensed under the MIT license
 
 ## Reference
 

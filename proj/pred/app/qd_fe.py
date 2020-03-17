@@ -132,7 +132,7 @@ def main(g_params):#{{{
                     gen_logfile, MAX_KEEP_DAYS=g_params['MAX_KEEP_DAYS'])
             webcom.CleanServerFile(path_static, gen_logfile, gen_errfile)
 
-        if g_params['DEBUG']:
+        if 'DEBUG_ARCHIVE' in g_params and g_params['DEBUG_ARCHIVE']:
             webcom.loginfo("Run ArchiveLogFile, path_log=%s, threshold_logfilesize=%d"%(path_log, threshold_logfilesize), gen_logfile)
         webcom.ArchiveLogFile(path_log, threshold_logfilesize=threshold_logfilesize) 
 

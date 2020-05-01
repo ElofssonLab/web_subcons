@@ -637,8 +637,8 @@ def loginfo(msg, outfile):# {{{
 # }}}
 def ArchiveLogFile(path_log, threshold_logfilesize=20*1024*1024):# {{{
     """Archive some of the log files if they are too big"""
-    gen_logfile = "%s/qd_fe.log"%(path_log)
-    gen_errfile = "%s/qd_fe.err"%(path_log)
+    gen_logfile = "%s/qd_fe.py.log"%(path_log)
+    gen_errfile = "%s/qd_fe.py.err"%(path_log)
     flist = [gen_logfile, gen_errfile,
             "%s/restart_qd_fe.cgi.log"%(path_log),
             "%s/debug.log"%(path_log),

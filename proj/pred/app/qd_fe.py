@@ -905,7 +905,7 @@ def GetResult(jobid):#{{{
                             gen_logfile, "a", True)
                     if myfunc.IsURLExist(result_url,timeout=5):
                         try:
-                            urllib.urlretrieve (result_url, outfile_zip)
+                            myfunc.urlretrieve (result_url, outfile_zip, timeout=10)
                             isRetrieveSuccess = True
                             myfunc.WriteFile(" succeeded\n", gen_logfile, "a", True)
                         except Exception,e:

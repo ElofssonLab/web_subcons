@@ -15,7 +15,6 @@ import time
 import math
 from libpredweb import myfunc
 from libpredweb import webserver_common as webcom
-suq_exec = "/usr/bin/suq"
 progname =  os.path.basename(__file__)
 wspace = ''.join([" "]*len(progname))
 
@@ -27,7 +26,6 @@ rundir = os.path.dirname(os.path.realpath(__file__))
 basedir = os.path.realpath("%s/../"%(rundir))
 python_exec = os.path.realpath("%s/../../env/bin/python"%(basedir))
 virt_env_path = os.path.realpath("%s/../../env"%(basedir))   
-suq_basedir = "/tmp"
 gen_errfile = "%s/static/log/%s.log"%(basedir, progname)
 
 usage_short="""
@@ -108,44 +106,9 @@ def SubmitJobToQueue(jobid, datapath, outpath, numseq, numseq_this_user, email, 
     myfunc.WriteFile("priority=%d\n"%(priority), g_params['debugfile'], "a",
             True)
 
-    st1 = SubmitSuqJob(suq_basedir, datapath, outpath, priority, scriptfile)
+    st1 = webcom.SubmitSlurmJob(datapath, outpath, scriptfile, g_params['debugfile'])
 
     return st1
-#}}}
-def SubmitSuqJob(suq_basedir, datapath, outpath, priority, scriptfile):#{{{
-    myfunc.WriteFile("Entering SubmitSuqJob()\n", g_params['debugfile'], "a",
-            True)
-    rmsg = ""
-    cmd = [suq_exec,"-b", suq_basedir, "run", "-d", outpath, "-p", "%d"%(priority), scriptfile]
-    cmdline = " ".join(cmd)
-    myfunc.WriteFile("cmdline: %s\n\n"%(cmdline), g_params['debugfile'], "a",
-            True)
-    MAX_TRY = 5
-    cnttry = 0
-    isSubmitSuccess = False
-    while cnttry < MAX_TRY:
-        try:
-            myfunc.WriteFile("run cmd: cnttry = %d, MAX_TRY=%d\n"%(cnttry,
-                MAX_TRY), g_params['debugfile'], "a", True)
-            rmsg = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-            isSubmitSuccess = True
-            break
-        except subprocess.CalledProcessError as e:
-            print(e)
-            print(rmsg)
-            myfunc.WriteFile(str(e)+"\n"+rmsg+"\n", g_params['debugfile'],
-                    "a", True)
-            pass
-        cnttry += 1
-        time.sleep(0.05+cnttry*0.03)
-    if isSubmitSuccess:
-        myfunc.WriteFile("Leaving SubmitSuqJob() with success\n\n",
-                g_params['debugfile'], "a", True)
-        return 0
-    else:
-        myfunc.WriteFile("Leaving SubmitSuqJob() with error\n\n",
-                g_params['debugfile'], "a", True)
-        return 1
 #}}}
 def main(g_params):#{{{
     argv = sys.argv

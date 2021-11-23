@@ -81,7 +81,7 @@ g_params['suq_basedir'] = "/tmp"
 g_params['suq_exec'] = "/usr/bin/suq";
 
 
-python_exec = os.path.realpath("%s/../../env/bin/python"%(SITE_ROOT))
+python_exec = "python"
 
 qd_fe_scriptfile = "%s/qd_fe.py"%(path_app)
 gen_errfile = "%s/static/log/%s_err"%(SITE_ROOT, progname)

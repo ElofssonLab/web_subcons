@@ -24,7 +24,7 @@ vip_user_list = [
 
 rundir = os.path.dirname(os.path.realpath(__file__))
 basedir = os.path.realpath("%s/../"%(rundir))
-python_exec = os.path.realpath("%s/../../env/bin/python"%(basedir))
+python_exec = "python"
 virt_env_path = os.path.realpath("%s/../../env"%(basedir))   
 gen_errfile = "%s/static/log/%s.log"%(basedir, progname)
 

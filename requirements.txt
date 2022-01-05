@@ -10,7 +10,7 @@ suds-py3>=1.3.4.0
 biopython==1.72
 
 matplotlib==2.2.3
-numpy==1.16.5
+numpy==1.22.0
 pandas==0.25.3
 
 pytz==2018.5

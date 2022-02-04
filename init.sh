@@ -23,7 +23,7 @@ $rundir/proj/pred/static/log/divided
 "
 
 echo "setting up file permissions"
-platform_info=`python -mplatform |  tr '[:upper:]' '[:lower:]'`
+platform_info=`python3 -mplatform |  tr '[:upper:]' '[:lower:]'`
 platform=
 case $platform_info in 
     *centos*)platform=centos;;
@@ -70,6 +70,17 @@ exec_cmd "sudo chown $user:$group $logfile_submit"
 if [ ! -f $rundir/proj/settings.py -a ! -L $rundir/proj/settings.py ];then
     pushd $rundir/proj; ln -s pro_settings.py settings.py; popd;
 fi
+
+# create allowed host
+conf_file_list="
+$rundir/proj/allowed_host_dev.txt
+$rundir/proj/allowed_host_pro.txt
+"
+for file in $conf_file_list; do
+    if [ ! -f $file ];then
+        cp ${file}.example ${file}
+    fi
+done
 
 # create example result
 example_folder_list="

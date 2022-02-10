@@ -548,6 +548,12 @@ def download(request):#{{{
     info['jobcounter'] = webcom.GetJobCounter(info)
     return render(request, 'pred/download.html', info)
 #}}}
+def privacy(request):#{{{
+    info = {}
+    webcom.set_basic_config(request, info, g_params)
+    info['jobcounter'] = webcom.GetJobCounter(info)
+    return render(request, 'pred/privacy.html', info)
+#}}}
 
 def get_results(request, jobid="1"):#{{{
     resultdict = {}

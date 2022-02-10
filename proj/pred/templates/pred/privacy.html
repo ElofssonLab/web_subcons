@@ -1,0 +1,15 @@
+{% extends "pred/base_layout.html" %}
+
+{%block content_right_panel %}
+    {% if username %}
+      {% include "pred/user_header.html" %}
+    {% endif %}
+  <h2>Privacy policy</h2>
+  <p>
+  SubCons gathers information about users solely to improve the usability
+  and usefulness of the website, and not for any commercial purposes. We store
+  IP addresses of visitors and use them for analyzing server usage and traffic
+  patterns but never share these IP addresses with any third party.
+  </p>
+{% endblock %}
+

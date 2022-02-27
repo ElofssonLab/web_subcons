@@ -243,11 +243,14 @@ def InitGlobalParameter():#{{{
     g_params['finished_date_db'] = finished_date_db
     g_params['gen_errfile'] = gen_errfile
     g_params['contact_email'] = contact_email
+    g_params['webserver_root'] = webserver_root
     return g_params
 #}}}
-if __name__ == '__main__' :
+
+
+if __name__ == '__main__':
     g_params = InitGlobalParameter()
     date_str = time.strftime(g_params['FORMAT_DATETIME'])
-    print("\n#%s#\n[Date: %s] qd_fe.py restarted"%('='*80,date_str))
+    print("\n#%s#\n[Date: %s] qd_fe.py restarted" % ('='*80, date_str))
     sys.stdout.flush()
     sys.exit(main(g_params))

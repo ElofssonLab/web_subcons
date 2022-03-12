@@ -3,7 +3,6 @@
 #              servers
 import os
 import sys
-import site
 
 rundir = os.path.dirname(os.path.realpath(__file__))
 webserver_root = os.path.realpath("%s/../../../"%(rundir))
@@ -127,7 +126,7 @@ def main(g_params):#{{{
 
         isOldRstdirDeleted = False
         if loop % g_params['STATUS_UPDATE_FREQUENCY'][0] == g_params['STATUS_UPDATE_FREQUENCY'][1]:
-            qdcom.RunStatistics_basic(webserver_root, gen_logfile, gen_errfile)
+            qdcom.RunStatistics(g_params)
             isOldRstdirDeleted = webcom.DeleteOldResult(path_result, path_log,
                     gen_logfile, MAX_KEEP_DAYS=g_params['MAX_KEEP_DAYS'])
             webcom.CleanServerFile(path_static, gen_logfile, gen_errfile)
@@ -225,6 +224,7 @@ def InitGlobalParameter():#{{{
     g_params['SLEEP_INTERVAL'] = 5    # sleep interval in seconds
     g_params['MAX_SUBMIT_JOB_PER_NODE'] = 200
     g_params['MAX_KEEP_DAYS'] = 60
+    g_params['MAX_KEEP_DAYS_CACHE'] = 480
     g_params['MAX_RESUBMIT'] = 2
     g_params['MAX_SUBMIT_TRY'] = 3
     g_params['MAX_TIME_IN_REMOTE_QUEUE'] = 3600*24 # one day in seconds

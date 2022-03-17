@@ -545,6 +545,27 @@ def oldtopcons(request):#{{{
 def download(request):#{{{
     info = {}
     webcom.set_basic_config(request, info, g_params)
+
+    for key in ["db_prodres", "db_subcons"]:
+        zipfile = os.path.join(path_static, "download", f"{key}.zip")
+        md5file = f"{zipfile}.md5"
+        if os.path.exists(zipfile):
+            filesize = os.path.getsize(os.path.realpath(zipfile))
+            filesize_humanreadable = myfunc.Size_byte2human(filesize)
+            info[f"size_{key}"] = filesize_humanreadable
+            info[f"zipfile_{key}"] = os.path.basename(zipfile)
+        else:
+            info[f"zipfile_{key}"] = ""
+            info[f"size_{key}"] = ""
+        if os.path.exists(md5file):
+            try:
+                md5_key = myfunc.ReadFile(md5file).strip().split()[0]
+                info[f"md5_key_{key}"] = md5_key
+            except (OSError, IndexError):
+                info[f"md5_key_{key}"] = ""
+        else:
+            info[f"md5_key_{key}"] = ""
+
     info['jobcounter'] = webcom.GetJobCounter(info)
     return render(request, 'pred/download.html', info)
 #}}}

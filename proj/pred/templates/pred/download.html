@@ -26,8 +26,30 @@
             <p style="margin-left:15px;">
             Next, you need to download the following two databases for SubCons and saved them to e.g. <font class="term">/data</font>, and then extracted the zipped files there <br>
             <ul>
-                <li><a href="{{STATIC_URL}}download/db_subcons.zip">db_subcons.zip (3.5 GB)</a></li>
-                <li><a href="{{STATIC_URL}}download/db_prodres.zip">db_prodres.zip (60 GB)</a></li>
+                {% if zipfile_db_subcons %}
+                    <li>
+                        <a href="{{STATIC_URL}}download/{{zipfile_db_subcons}}">{{zipfile_db_subcons}}</a>
+                        <ul>
+                            <li>size: {{size_db_subcons}} </li>
+                            <li>md5 checksum: {{md5_key_db_subcons}} </li>
+                        </ul>
+                    </li>
+                {% else  %}
+                    <li>N/A</li>
+                {% endif %}
+
+                {% if zipfile_db_prodres %}
+                    <li>
+                        <a href="{{STATIC_URL}}download/{{zipfile_db_prodres}}">{{zipfile_db_prodres}}</a>
+                        <ul>
+                            <li>size: {{size_db_prodres}} </li>
+                            <li>md5 checksum: {{md5_key_db_prodres}} </li>
+                        </ul>
+                    </li>
+                {% else  %}
+                    <li>N/A</li>
+                {% endif %}
+                
             </ul>
             </p>
 
